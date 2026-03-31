@@ -20,7 +20,7 @@ MindPath guides users through a simple, low-barrier experience:
 - **AI-driven matching**: natural language understanding to interpret user needs and surface the right resources
 - **Multilingual support**: designed to work across languages including English and Spanish
 - **Localized recommendations**: focused on providers and services within the user's geographic area
-- **Privacy-first**: supports anonymous use with no requirement to create an account
+- **Privacy-first**: supports anonymous use with no requirement to create an accountI
 - **Text and voice input**: accessible to users regardless of how they prefer to interact
 
 ## What It Is Not
