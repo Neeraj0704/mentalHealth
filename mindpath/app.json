@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "MindPath",
+    "slug": "mindpath",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4A8B9F"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.mindpath.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#4A8B9F"
+      },
+      "package": "com.mindpath.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

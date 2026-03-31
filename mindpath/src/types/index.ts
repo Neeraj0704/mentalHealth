@@ -1,0 +1,115 @@
+export type ProviderType =
+  | 'Psychiatrist'
+  | 'Psychologist'
+  | 'Licensed Clinical Social Worker'
+  | 'Marriage & Family Therapist'
+  | 'Licensed Professional Counselor'
+  | 'Licensed Mental Health Counselor'
+  | 'Neuropsychologist'
+  | 'Child & Adolescent Psychiatrist';
+
+export type Gender = 'Male' | 'Female' | 'Non-binary' | 'Prefer not to say';
+
+export interface Education {
+  degree: string;
+  school: string;
+  year?: number;
+}
+
+export interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  date: string;
+  content: string;
+  helpful_count?: number;
+}
+
+export interface Provider {
+  id: string;
+  name: string;
+  credentials: string;
+  provider_type: ProviderType;
+  image: string;
+  rating: number;
+  review_count: number;
+  years_experience: number;
+  practice_name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  specialties: string[];
+  expertise: string[];
+  conditions_treated: string[];
+  insurance_accepted: string[];
+  languages: string[];
+  gender: Gender;
+  telehealth_available: boolean;
+  in_person_available: boolean;
+  accepting_new_patients: boolean;
+  overview: string;
+  treatment_approaches: string[];
+  education: Education[];
+  reviews: Review[];
+  verified: boolean;
+  next_available?: string;
+  session_rate?: string;
+  featured?: boolean;
+}
+
+export interface SearchFilters {
+  specialty: string[];
+  provider_type: ProviderType[];
+  insurance: string[];
+  language: string[];
+  gender: Gender[];
+  telehealth_only: boolean;
+  in_person_only: boolean;
+  min_rating: number;
+  accepting_new_patients: boolean;
+  min_years_experience: number;
+}
+
+export const DEFAULT_FILTERS: SearchFilters = {
+  specialty: [],
+  provider_type: [],
+  insurance: [],
+  language: [],
+  gender: [],
+  telehealth_only: false,
+  in_person_only: false,
+  min_rating: 0,
+  accepting_new_patients: false,
+  min_years_experience: 0,
+};
+
+// Navigation types
+import { NavigatorScreenParams } from '@react-navigation/native';
+
+export type RootStackParamList = {
+  Onboarding: undefined;
+  MainTabs: undefined;
+  FilterModal: { currentFilters: SearchFilters };
+};
+
+export type HomeStackParamList = {
+  Home: undefined;
+  Results: { query: string; filters?: SearchFilters; specialty?: string };
+  ProviderDetail: { providerId: string };
+};
+
+export type SavedStackParamList = {
+  Saved: undefined;
+  ProviderDetail: { providerId: string };
+};
+
+export type ProfileStackParamList = {
+  Profile: undefined;
+};
+
+export type MainTabParamList = {
+  HomeTab: NavigatorScreenParams<HomeStackParamList>;
+  SavedTab: NavigatorScreenParams<SavedStackParamList>;
+  ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
+};
