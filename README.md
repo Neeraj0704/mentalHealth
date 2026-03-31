@@ -12,16 +12,16 @@ MindPath guides users through a simple, low-barrier experience:
 
 - Users describe what they are going through in their own words, in their own language
 - The app collects key preferences such as insurance status, language, desire for anonymity, and interest in free or low-cost services
-- AI interprets the input — including informal language and multilingual text — and matches the user to relevant local mental health providers
+- AI interprets the input - including informal language and multilingual text - and matches the user to relevant local mental health providers
 - Results are presented in a clear, easy-to-understand format
 
 ## Key Features
 
-- **AI-driven matching** — natural language understanding to interpret user needs and surface the right resources
-- **Multilingual support** — designed to work across languages including English and Spanish
-- **Localized recommendations** — focused on providers and services within the user's geographic area
-- **Privacy-first** — supports anonymous use with no requirement to create an account
-- **Text and voice input** — accessible to users regardless of how they prefer to interact
+- **AI-driven matching**: natural language understanding to interpret user needs and surface the right resources
+- **Multilingual support**: designed to work across languages including English and Spanish
+- **Localized recommendations**: focused on providers and services within the user's geographic area
+- **Privacy-first**: supports anonymous use with no requirement to create an account
+- **Text and voice input**: accessible to users regardless of how they prefer to interact
 
 ## What It Is Not
 
