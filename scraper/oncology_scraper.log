@@ -1,0 +1,136 @@
+2026-03-31 17:58:49,176 [INFO] Starting scrape for specialty: oncology
+2026-03-31 17:58:50,053 [INFO] Listing page 1: https://doctor.webmd.com/providers/specialty/oncology/illinois?pagenumber=1
+2026-03-31 17:58:53,288 [INFO]   Page 1: 65 profiles (65 new, 65 total unique)
+2026-03-31 17:58:53,288 [INFO] Reached max-pages limit (1) — stopping pagination
+2026-03-31 17:58:53,288 [INFO] Total unique profile URLs: 65
+2026-03-31 17:58:53,288 [INFO] [1/65] https://doctor.webmd.com/doctor/leonard-klein-jr-d97945b9-0ad5-4b14-af1d-2fd6ee86e4ab-overview
+2026-03-31 17:58:56,098 [INFO]   ✓ Dr. Leonard Marc Klein, MD | 6 IL locations | 0 reviews
+2026-03-31 17:58:56,098 [INFO] [2/65] https://doctor.webmd.com/doctor/lisa-baddi-8dd90866-2f0c-4bce-8012-90057299f5e4-overview
+2026-03-31 17:58:58,657 [INFO]   ✓ Dr. Lisa Lynne Baddi, DO | 4 IL locations | 0 reviews
+2026-03-31 17:58:58,657 [INFO] [3/65] https://doctor.webmd.com/doctor/john-eklund-005a5e5e-3ebc-47dc-a9ab-c1b09b081d1d-overview
+2026-03-31 17:59:01,135 [INFO]   ✓ Dr. John W Eklund, MD | 5 IL locations | 1 reviews
+2026-03-31 17:59:01,135 [INFO] [4/65] https://doctor.webmd.com/doctor/susan-brown-08cd9578-df36-4808-8f8c-f17b46d05e6f-overview
+2026-03-31 17:59:03,614 [INFO]   ✓ Dr. Susan Goldstein Brown, MD | 3 IL locations | 0 reviews
+2026-03-31 17:59:03,615 [INFO] [5/65] https://doctor.webmd.com/doctor/david-hakimian-c98e9f74-eb22-4345-9251-e1aeb44dfeaa-overview
+2026-03-31 17:59:06,168 [INFO]   ✓ Dr. David Hakimian, MD | 6 IL locations | 0 reviews
+2026-03-31 17:59:06,169 [INFO] [6/65] https://doctor.webmd.com/doctor/james-chandler-9c9bfcba-bd48-47bb-938a-53432a9f129c-overview
+2026-03-31 17:59:08,453 [INFO]   ✓ Dr. James P. Chandler, MD | 2 IL locations | 2 reviews
+2026-03-31 17:59:08,453 [INFO] [7/65] https://doctor.webmd.com/doctor/neel-shah-c6c280f2-1051-e111-ae23-001f29e3eb44-overview
+2026-03-31 17:59:11,242 [INFO]   ✓ Dr. Neel Bhupendra Shah, MD | 1 IL locations | 5 reviews
+2026-03-31 17:59:11,242 [INFO] [8/65] https://doctor.webmd.com/doctor/abdur-shakir-26da058a-6127-470a-b92d-730e4d9c9761-overview
+2026-03-31 17:59:13,649 [INFO]   ✓ Dr. Abdur R. Shakir, MD | 1 IL locations | 3 reviews
+2026-03-31 17:59:13,649 [INFO] [9/65] https://doctor.webmd.com/doctor/robinson-ortiz-9e76c2db-2ad0-44fc-af59-237d38423bf6-overview
+2026-03-31 17:59:15,920 [INFO]   ✓ Dr. Robinson O Ortiz, MD | 5 IL locations | 0 reviews
+2026-03-31 17:59:15,920 [INFO] [10/65] https://doctor.webmd.com/doctor/donald-sweet-jr-fc49309f-6998-4652-95ce-37edc89bb3c5-overview
+2026-03-31 17:59:18,352 [INFO]   ✓ Dr. Donald Lee Sweet, MD | 4 IL locations | 0 reviews
+2026-03-31 17:59:18,352 [INFO] [11/65] https://doctor.webmd.com/doctor/syed-zahir-7cf57535-8283-49d7-b3c3-3027ce767a3f-overview
+2026-03-31 17:59:20,873 [INFO]   ✓ Dr. Syed Aslam Zahir, MD | 3 IL locations | 1 reviews
+2026-03-31 17:59:20,873 [INFO] [12/65] https://doctor.webmd.com/doctor/halla-nimeiri-e9404f66-71ce-4a40-bccb-14b5fc91d2e8-overview
+2026-03-31 17:59:23,331 [INFO]   ✓ Dr. Halla Sayed Mohamed Nimeiri, MD | 6 IL locations | 0 reviews
+2026-03-31 17:59:23,331 [INFO] [13/65] https://doctor.webmd.com/doctor/joehar-hamdan-7edf6821-38c2-4e9c-88e8-2f24df318590-overview
+2026-03-31 17:59:25,685 [INFO]   ✓ Dr. Joehar Hamdan, DO | 2 IL locations | 1 reviews
+2026-03-31 17:59:25,685 [INFO] [14/65] https://doctor.webmd.com/doctor/ronald-shade-8760f08b-c15a-4b36-8645-33935ed2a0ba-overview
+2026-03-31 17:59:28,095 [INFO]   ✓ Dr. Ronald Jeffrey Shade, MD | 6 IL locations | 0 reviews
+2026-03-31 17:59:28,095 [INFO] [15/65] https://doctor.webmd.com/doctor/mark-talamonti-3c5fdeb0-c48e-474c-a9f7-9b4289ce8351-overview
+2026-03-31 17:59:30,622 [INFO]   ✓ Dr. Mark Sonny Talamonti, MD | 3 IL locations | 0 reviews
+2026-03-31 17:59:30,622 [INFO] [16/65] https://doctor.webmd.com/doctor/matthew-adess-4645174b-a40f-44f6-b831-0995f302902e-overview
+2026-03-31 17:59:32,870 [INFO]   ✓ Dr. Matthew Eric Adess, MD | 6 IL locations | 0 reviews
+2026-03-31 17:59:32,870 [INFO] [17/65] https://doctor.webmd.com/doctor/douglas-merkel-0e0dd070-bad4-4626-9bfe-2f01ad7ca13d-overview
+2026-03-31 17:59:35,158 [INFO]   ✓ Dr. Douglas Edward Merkel, MD | 4 IL locations | 0 reviews
+2026-03-31 17:59:35,158 [INFO] [18/65] https://doctor.webmd.com/doctor/david-winchester-jr-d3ac4c2d-6732-4810-9da8-6b196801c389-overview
+2026-03-31 17:59:37,675 [INFO]   ✓ Dr David J. Winchester, MD, FACS | 3 IL locations | 3 reviews
+2026-03-31 17:59:37,675 [INFO] [19/65] https://doctor.webmd.com/doctor/kent-perry-jr-5a4261ce-3a75-de11-86ed-001f29e3bb62-overview
+2026-03-31 17:59:40,036 [INFO]   ✓ Dr. Kent T. Perry, MD | 1 IL locations | 1 reviews
+2026-03-31 17:59:40,036 [INFO] [20/65] https://doctor.webmd.com/doctor/richard-siegel-75706f88-4ae0-4ddd-8343-b8b6896c2a3a-overview
+2026-03-31 17:59:42,665 [INFO]   ✓ Dr. Richard Scott Siegel, MD | 5 IL locations | 1 reviews
+2026-03-31 17:59:42,665 [INFO] [21/65] https://doctor.webmd.com/doctor/samir-undevia-f8af6f2f-d7de-4ca3-a24e-d8db406c3425-overview
+2026-03-31 17:59:45,091 [INFO]   ✓ Dr. Samir Dinesh Undevia, MD | 5 IL locations | 2 reviews
+2026-03-31 17:59:45,091 [INFO] [22/65] https://doctor.webmd.com/doctor/samer-attar-ac49be5b-d5db-4717-abc8-35465bad8503-overview
+2026-03-31 17:59:47,379 [INFO]   ✓ Dr. Samer Attar, MD | 1 IL locations | 0 reviews
+2026-03-31 17:59:47,379 [INFO] [23/65] https://doctor.webmd.com/doctor/ricardo-crisostomo-4a288a25-0ac4-43d6-b745-e5ecace12c9a-overview
+2026-03-31 17:59:49,648 [INFO]   ✓ Dr. Ricardo Herrarte Crisostomo, MD | 2 IL locations | 0 reviews
+2026-03-31 17:59:49,648 [INFO] [24/65] https://doctor.webmd.com/doctor/costas-constantinou-58f5f4ea-dabb-4cee-9eaf-68819ff54b0c-overview
+2026-03-31 17:59:52,096 [INFO]   ✓ Dr. Costas L Constantinou, MD | 2 IL locations | 0 reviews
+2026-03-31 17:59:52,096 [INFO] [25/65] https://doctor.webmd.com/doctor/patricia-madej-c78591a4-4d61-4eb6-8c2d-5c477fc00c72-overview
+2026-03-31 17:59:54,496 [INFO]   ✓ Dr. Patricia J Madej, MD | 4 IL locations | 0 reviews
+2026-03-31 17:59:54,496 [INFO] [26/65] https://doctor.webmd.com/doctor/philip-bonomi-b26b9319-d7c4-4545-96b1-2bbf5846abb3-overview
+2026-03-31 17:59:56,828 [INFO]   ✓ Dr. Philip David Bonomi, MD | 7 IL locations | 0 reviews
+2026-03-31 17:59:56,828 [INFO] [27/65] https://doctor.webmd.com/doctor/elyse-schneiderman-84e3957e-97bd-4ba6-af37-9acb88de09b7-overview
+2026-03-31 17:59:59,115 [INFO]   ✓ Dr. Elyse C Schneiderman, MD | 2 IL locations | 0 reviews
+2026-03-31 17:59:59,115 [INFO] [28/65] https://doctor.webmd.com/doctor/josh-tunca-6ea2d4cf-e4ae-4171-a661-6c067effd526-overview
+2026-03-31 18:00:01,533 [INFO]   ✓ Dr. Josh C Tunca, MD | 13 IL locations | 0 reviews
+2026-03-31 18:00:01,533 [INFO] [29/65] https://doctor.webmd.com/doctor/rajat-malhotra-1bbe035b-f44c-473d-9559-d922a48f3e8e-overview
+2026-03-31 18:00:03,991 [INFO]   ✓ Dr. Rajat Malhotra, MD | 3 IL locations | 0 reviews
+2026-03-31 18:00:03,991 [INFO] [30/65] https://doctor.webmd.com/doctor/edward-kaplan-5d43cd7a-1f21-40bb-821d-e9b28b59a174-overview
+2026-03-31 18:00:06,501 [INFO]   ✓ Dr Edward Kaplan, MD | 1 IL locations | 1 reviews
+2026-03-31 18:00:06,502 [INFO] [31/65] https://doctor.webmd.com/doctor/summer-dewdney-7d79ef9b-8b52-4dcd-b885-b0569a4af01a-overview
+2026-03-31 18:00:09,002 [INFO]   ✓ Dr. Summer B. Dewdney, MD | 4 IL locations | 1 reviews
+2026-03-31 18:00:09,002 [INFO] [32/65] https://doctor.webmd.com/doctor/terrance-peabody-e1a08fa3-0d3f-4077-9aca-2c77272d80bf-overview
+2026-03-31 18:00:11,463 [INFO]   ✓ Dr. Terrance D. Peabody, MD | 2 IL locations | 0 reviews
+2026-03-31 18:00:11,464 [INFO] [33/65] https://doctor.webmd.com/doctor/bassam-matar-d6125ed1-fb05-4459-ba5e-4c475c7b7abf-overview
+2026-03-31 18:00:13,695 [INFO]   ✓ Dr. Bassam Faour Matar, MD | 7 IL locations | 0 reviews
+2026-03-31 18:00:13,695 [INFO] [34/65] https://doctor.webmd.com/doctor/randy-rich-95c1ab6e-0c59-4158-a03b-cd2559b83477-overview
+2026-03-31 18:00:16,669 [INFO]   ✓ Dr. Randy Scott Rich, MD | 4 IL locations | 1 reviews
+2026-03-31 18:00:16,669 [INFO] [35/65] https://doctor.webmd.com/doctor/leo-gordon-786018c0-ca61-4769-aadd-07e8b3fb7d95-overview
+2026-03-31 18:00:18,995 [INFO]   ✓ Dr. Leo I Gordon, MD | 3 IL locations | 0 reviews
+2026-03-31 18:00:18,995 [INFO] [36/65] https://doctor.webmd.com/doctor/sudarshan-sharma-43cd3c79-d3c4-4eac-be3b-12511c79992e-overview
+2026-03-31 18:00:21,402 [INFO]   ✓ Dr. Sudarshan Kumar Sharma, MD | 1 IL locations | 1 reviews
+2026-03-31 18:00:21,402 [INFO] [37/65] https://doctor.webmd.com/doctor/ryan-engel-bdad2441-8733-46cf-91c6-790cb8453fa2-overview
+2026-03-31 18:00:24,165 [INFO]   ✓ Dr. Ryan H Engel, DO | 2 IL locations | 3 reviews
+2026-03-31 18:00:24,165 [INFO] [38/65] https://doctor.webmd.com/doctor/kathy-albain-aca8a602-71de-4c39-b1fc-3f690ddf2e21-overview
+2026-03-31 18:00:26,620 [INFO]   ✓ Dr. Kathy Sue Albain, MD | 1 IL locations | 0 reviews
+2026-03-31 18:00:26,620 [INFO] [39/65] https://doctor.webmd.com/doctor/stanley-nabrinsky-56102a21-550b-499c-b8c0-1160130d5a73-overview
+2026-03-31 18:00:29,154 [INFO]   ✓ Dr. Stanley Nabrinsky, MD | 8 IL locations | 0 reviews
+2026-03-31 18:00:29,154 [INFO] [40/65] https://doctor.webmd.com/doctor/patrick-stiff-58e04fb1-5314-4a1c-ab53-7b41932d3a31-overview
+2026-03-31 18:00:31,692 [INFO]   ✓ Dr. Patrick Joseph Stiff, MD | 2 IL locations | 0 reviews
+2026-03-31 18:00:31,692 [INFO] [41/65] https://doctor.webmd.com/doctor/subramanya-rao-76400c31-4061-4443-b0f7-3465b4e41a06-overview
+2026-03-31 18:00:34,129 [INFO]   ✓ Dr. Subramanya Sripathy Rao, MD | 1 IL locations | 0 reviews
+2026-03-31 18:00:34,129 [INFO] [42/65] https://doctor.webmd.com/doctor/tulio-rodriguez-fba59514-680d-4823-af72-dc0ad29b7970-overview
+2026-03-31 18:00:36,416 [INFO]   ✓ Dr Tulio Rodriguez, MD | 3 IL locations | 3 reviews
+2026-03-31 18:00:36,416 [INFO] [43/65] https://doctor.webmd.com/doctor/maqbool-ahmed-15f473dc-aa35-487a-9255-2ac01a88f202-overview
+2026-03-31 18:00:38,803 [INFO]   ✓ Dr. Maqbool A Ahmed, MD | 2 IL locations | 0 reviews
+2026-03-31 18:00:38,803 [INFO] [44/65] https://doctor.webmd.com/doctor/ellen-gustafson-e9a09e09-b339-4e9a-a6c6-cb18eacf8bc5-overview
+2026-03-31 18:00:41,040 [INFO]   ✓ Dr. Ellen Gustafson, MD | 1 IL locations | 2 reviews
+2026-03-31 18:00:41,041 [INFO] [45/65] https://doctor.webmd.com/doctor/jeffrey-wayne-1ee0c65c-ce72-de11-86ed-001f29e3bb62-overview
+2026-03-31 18:00:43,421 [INFO]   ✓ Dr. Jeffrey D. Wayne, MD | 2 IL locations | 1 reviews
+2026-03-31 18:00:43,421 [INFO] [46/65] https://doctor.webmd.com/doctor/kevin-barton-7d3c92f7-57a1-4ab8-8bde-bd22a4116f6d-overview
+2026-03-31 18:00:45,917 [INFO]   ✓ Dr. Kevin P Barton, MD | 2 IL locations | 0 reviews
+2026-03-31 18:00:45,917 [INFO] [47/65] https://doctor.webmd.com/doctor/melody-cobleigh-9013a719-dc26-46ab-9175-6017610bd303-overview
+2026-03-31 18:00:48,366 [INFO]   ✓ Dr. Melody A. Cobleigh, MD | 2 IL locations | 0 reviews
+2026-03-31 18:00:48,366 [INFO] [48/65] https://doctor.webmd.com/doctor/stewart-garneau-54fd6399-dada-410f-a34e-82d38fca52c5-overview
+2026-03-31 18:00:50,764 [INFO]   ✓ Dr. Stewart Charles Garneau, MD | 3 IL locations | 0 reviews
+2026-03-31 18:00:50,764 [INFO] [49/65] https://doctor.webmd.com/doctor/ellen-gaynor-cbf46bf3-5f02-428a-836c-c7864519556e-overview
+2026-03-31 18:00:53,138 [INFO]   ✓ Dr. Ellen Gaynor, MD | 4 IL locations | 0 reviews
+2026-03-31 18:00:53,139 [INFO] [50/65] https://doctor.webmd.com/doctor/jay-dalal-54e4cbad-3a4d-4ffa-b719-964981d11757-overview
+2026-03-31 18:00:55,554 [INFO]   ✓ Dr. Jay S Dalal, MD | 1 IL locations | 0 reviews
+2026-03-31 18:00:55,554 [INFO] [51/65] https://doctor.webmd.com/doctor/jon-richards-3a8fe2c8-06f5-4db5-b527-44af7c9d8196-overview
+2026-03-31 18:00:57,973 [INFO]   ✓ Dr. Jon Morgan Richards, MD | 3 IL locations | 0 reviews
+2026-03-31 18:00:57,973 [INFO] [52/65] https://doctor.webmd.com/doctor/shishir-maithel-7ff9b811-135c-4b3f-93fc-0cb137247f7a-overview
+2026-03-31 18:01:02,087 [INFO]   ✓ Dr. Shishir Kumar Maithel, MD | 2 IL locations | 0 reviews
+2026-03-31 18:01:02,087 [INFO] [53/65] https://doctor.webmd.com/doctor/ajaz-khan-e30572ef-be76-de11-86ed-001f29e3bb62-overview
+2026-03-31 18:01:04,474 [INFO]   ✓ Dr Ajaz M. Khan, MD, MBA, CPE | 2 IL locations | 0 reviews
+2026-03-31 18:01:04,474 [INFO] [54/65] https://doctor.webmd.com/doctor/elaine-wade-931b86e7-25e3-4605-9833-c78ba09cb6b2-overview
+2026-03-31 18:01:06,794 [INFO]   ✓ Dr. Elaine Lee Wade, MD | 4 IL locations | 1 reviews
+2026-03-31 18:01:06,794 [INFO] [55/65] https://doctor.webmd.com/doctor/syed-haider-b8755a86-c19a-4442-ac29-2677408054e7-overview
+2026-03-31 18:01:09,245 [INFO]   ✓ Dr. Syed Naqi Haider, MD | 1 IL locations | 2 reviews
+2026-03-31 18:01:09,245 [INFO] [56/65] https://doctor.webmd.com/doctor/maria-quejada-9df61d3b-6aab-442b-aba7-44bd4c724671-overview
+2026-03-31 18:01:11,770 [INFO]   ✓ Dr. Maria Imelda A Quejada, MD | 5 IL locations | 0 reviews
+2026-03-31 18:01:11,770 [INFO] [57/65] https://doctor.webmd.com/doctor/jean-paul-wolinsky-2969fea4-dec5-11e7-9f4c-005056a225bf-overview
+2026-03-31 18:01:14,005 [INFO]   ✓ Dr. Jean-Paul Wolinsky, MD | 1 IL locations | 1 reviews
+2026-03-31 18:01:14,005 [INFO] [58/65] https://doctor.webmd.com/doctor/ashley-ross-083ca92d-ac53-45cf-a38c-22257aaf55eb-overview
+2026-03-31 18:01:16,274 [INFO]   ✓ Dr. Ashley Evan Ross, MD,PhD | 2 IL locations | 1 reviews
+2026-03-31 18:01:16,274 [INFO] [59/65] https://doctor.webmd.com/doctor/michael-cochran-83955b0c-8491-4545-bb29-0ad81305c577-overview
+2026-03-31 18:01:18,734 [INFO]   ✓ Dr. Michael Kane Cochran, MD | 6 IL locations | 0 reviews
+2026-03-31 18:01:18,734 [INFO] [60/65] https://doctor.webmd.com/doctor/mark-connolly-20c87ac6-6f8f-4dad-a61a-ef3cb311a7d9-overview
+2026-03-31 18:01:21,191 [INFO]   ✓ Dr. Mark Michael Connolly, MD | 1 IL locations | 0 reviews
+2026-03-31 18:01:21,191 [INFO] [61/65] https://doctor.webmd.com/doctor/dina-elaraj-ec1922ae-405a-4a6c-b451-252a4594df0b-overview
+2026-03-31 18:01:23,964 [INFO]   ✓ Dr. Dina M. Elaraj, MD | 1 IL locations | 0 reviews
+2026-03-31 18:01:23,965 [INFO] [62/65] https://doctor.webmd.com/doctor/marilyn-smith-evrard-b6ff9867-9123-4da8-b03d-7f439cfb9408-overview
+2026-03-31 18:01:26,605 [INFO]   ✓ Dr. Marilyn Louise Smith Evrard, MD | 3 IL locations | 1 reviews
+2026-03-31 18:01:26,605 [INFO] [63/65] https://doctor.webmd.com/doctor/david-slivnick-959f50f2-8280-4612-8c95-b43d96dc894c-overview
+2026-03-31 18:01:29,048 [INFO]   ✓ Dr. David Joel Slivnick, MD | 6 IL locations | 0 reviews
+2026-03-31 18:01:29,048 [INFO] [64/65] https://doctor.webmd.com/doctor/jayesh-mehta-048e9a29-7346-44c6-b7b7-d5884a36b25a-overview
+2026-03-31 18:01:31,798 [INFO]   ✓ Dr. Jayesh Mehta, MD | 1 IL locations | 0 reviews
+2026-03-31 18:01:31,798 [INFO] [65/65] https://doctor.webmd.com/doctor/jessica-altman-99ceda4d-9afb-4278-a861-3b0dcafbeeca-overview
+2026-03-31 18:01:34,315 [INFO]   ✓ Dr. Jessica Kaplan Altman, MD | 5 IL locations | 0 reviews
+2026-03-31 18:01:34,369 [INFO] Done. Saved: 65 | Skipped: 0 | Reviews: 39

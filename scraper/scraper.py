@@ -1,14 +1,19 @@
 """
 Full WebMD Illinois psychiatry provider scraper.
 
+Usage:
+  python scraper.py
+
 Flow:
   1. Paginate state listing: /providers/specialty/psychiatry/illinois?pagenumber=N
-  2. Collect all unique profile URLs (~72 pages, ~65 per page)
+  2. Collect all unique profile URLs
   3. For each profile URL, scrape full provider data
   4. Apply IL-only location filter
   5. Store providers + reviews in webmd.db
+  6. Update review_count with actual scraped count
 """
 
+import argparse
 import json
 import logging
 import re
@@ -17,19 +22,10 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 import db
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("scraper.log"),
-        logging.StreamHandler(),
-    ],
-)
-log = logging.getLogger(__name__)
-
 BASE = "https://doctor.webmd.com"
-STATE_URL = f"{BASE}/providers/specialty/psychiatry/illinois"
 DELAY = 2.0
+
+log = logging.getLogger(__name__)
 
 
 def fetch(page, url, wait=DELAY):
@@ -50,14 +46,14 @@ def get_profile_urls_from_page(html):
     return urls
 
 
-def collect_all_profile_urls(page):
+def collect_all_profile_urls(page, state_url, max_pages=None):
     seen = set()
     profile_urls = []
     page_num = 1
-    low_yield_streak = 0  # consecutive pages with very few new profiles
+    low_yield_streak = 0
 
     while True:
-        url = f"{STATE_URL}?pagenumber={page_num}"
+        url = f"{state_url}?pagenumber={page_num}"
         log.info("Listing page %d: %s", page_num, url)
         html = fetch(page, url)
         urls = get_profile_urls_from_page(html)
@@ -75,7 +71,10 @@ def collect_all_profile_urls(page):
             log.info("No new profiles — stopping pagination")
             break
 
-        # Stop if we get 3 consecutive pages with fewer than 5 new profiles
+        if max_pages and page_num >= max_pages:
+            log.info("Reached max-pages limit (%d) — stopping pagination", max_pages)
+            break
+
         if len(new) < 5:
             low_yield_streak += 1
             if low_yield_streak >= 3:
@@ -112,6 +111,7 @@ def parse_profile(html, profile_url):
     jld = get_json_ld(soup)
     entity = jld.get("mainEntity", {})
 
+    # ---- Basic Info ----
     name = entity.get("name") or safe_text(soup.select_one("h1"))
 
     photo = None
@@ -124,17 +124,19 @@ def parse_profile(html, profile_url):
     if med_specs:
         specialty = med_specs[0].get("name") if isinstance(med_specs[0], dict) else med_specs[0]
 
+    # ---- Ratings ----
     agg = entity.get("aggregateRating", {})
     rating = agg.get("ratingValue")
-    review_count = agg.get("reviewCount")
-    rating_count = review_count
+    rating_count = agg.get("reviewCount")
 
+    # ---- Experience ----
     exp_years = None
     body_text = soup.get_text(" ", strip=True)
     m = re.search(r"(\d+)\s+Years?\s+Experience", body_text, re.IGNORECASE)
     if m:
         exp_years = int(m.group(1))
 
+    # ---- Contact ----
     phone = None
     tel_link = soup.select_one("a[href^='tel:']")
     if tel_link:
@@ -147,6 +149,10 @@ def parse_profile(html, profile_url):
     email = entity.get("email")
     overview = entity.get("description")
 
+    # ---- Average Wait Time ----
+    average_wait_time = safe_text(soup.select_one("dl.avg-wait-time dd"))
+
+    # ---- Locations — IL only, with split address fields ----
     raw_addresses = entity.get("address", [])
     if isinstance(raw_addresses, dict):
         raw_addresses = [raw_addresses]
@@ -156,14 +162,18 @@ def parse_profile(html, profile_url):
         state = addr.get("addressRegion", "").upper().strip()
         if state != "IL":
             continue
-        street = addr.get("streetAddress", "")
-        city = addr.get("addressLocality", "")
-        postal = addr.get("postalCode", "")
-        full_address = f"{street}, {city}, {state} {postal}".strip(", ")
+        street = addr.get("streetAddress") or None
+        city = addr.get("addressLocality") or None
+        zipcode = addr.get("postalCode") or None
+        parts = [p for p in [street, city, f"{state} {zipcode}".strip() if zipcode else state] if p]
+        full_address = ", ".join(parts) if parts else None
         locations.append({
-            "clinic_name": addr.get("name"),
-            "address": full_address,
+            "clinic_name": addr.get("name") or None,
+            "street": street,
+            "city": city,
             "state": "IL",
+            "zipcode": zipcode,
+            "full_address": full_address,
             "phone": phone,
             "office_hours": None,
             "virtual_hours": None,
@@ -173,29 +183,37 @@ def parse_profile(html, profile_url):
         log.warning("No IL locations — skipping: %s", profile_url)
         return None, []
 
+    # ---- Medical Info ----
     conditions = entity.get("knowsAbout", [])
     specialties_list = [
         s.get("name") if isinstance(s, dict) else s
         for s in entity.get("medicalSpecialty", [])
     ]
 
-    cred = entity.get("hasCredential", {})
-    if isinstance(cred, dict):
-        education = cred.get("name", [])
-        if isinstance(education, str):
-            education = [education]
-    else:
-        education = []
+    # ---- Licenses & Education from HTML ----
+    licenses = []
+    education = []
+    for sec in soup.select("div.education-subsection"):
+        sec_text = sec.get_text(" ", strip=True).upper()
+        wrappers = [w.get_text(" ", strip=True) for w in sec.select("div.education-wrapper") if w.get_text(strip=True)]
+        if "LICENSE" in sec_text:
+            licenses.extend(wrappers)
+        else:
+            education.extend(wrappers)
 
+    # ---- Additional Info ----
     languages = [
         l.get("name") if isinstance(l, dict) else l
         for l in entity.get("knowsLanguage", [])
     ]
     insurance = entity.get("healthPlanNetworkId", [])
 
-    accepting = "Accepting New Patients" in body_text
-    virtual = "Virtual Visit Available" in body_text
+    # ---- Availability from topcard HTML ----
+    new_patient_el = soup.select_one("span.new-patient-info")
+    accepting = new_patient_el is not None and "Accepting New Patients" in new_patient_el.get_text()
+    virtual = soup.select_one("div.topcard-content.virtual-visit-content") is not None
 
+    # ---- Reviews ----
     raw_reviews = entity.get("review", [])
     reviews = []
     for rv in raw_reviews:
@@ -214,8 +232,8 @@ def parse_profile(html, profile_url):
         "specialty": specialty,
         "rating": rating,
         "rating_count": rating_count,
-        "review_count": review_count,
-        "average_wait_time": None,
+        "review_count": 0,  # updated after inserting reviews
+        "average_wait_time": average_wait_time,
         "experience_years": exp_years,
         "phone": phone,
         "email": email,
@@ -223,9 +241,8 @@ def parse_profile(html, profile_url):
         "locations": locations,
         "conditions_treated": conditions,
         "specialties": specialties_list,
-        "licenses": [],
+        "licenses": licenses,
         "education": education,
-        "certifications": [],
         "languages": languages,
         "insurance": insurance,
         "accepting_new_patients": accepting,
@@ -239,7 +256,26 @@ def parse_profile(html, profile_url):
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--max-pages", type=int, default=None,
+                        help="Stop after this many listing pages (for testing)")
+    args = parser.parse_args()
+
+    state_url = f"{BASE}/providers/specialty/psychiatry/illinois"
+
     db.init_db()
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler("scraper.log"),
+            logging.StreamHandler(),
+        ],
+    )
+    global log
+    log = logging.getLogger(__name__)
+    log.info("Starting scrape for psychiatry providers in Illinois")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -249,7 +285,7 @@ def main():
             "Chrome/120.0.0.0 Safari/537.36"
         ))
 
-        profile_urls = collect_all_profile_urls(page)
+        profile_urls = collect_all_profile_urls(page, state_url, max_pages=args.max_pages)
 
         saved = 0
         skipped = 0
@@ -261,9 +297,11 @@ def main():
                 html = fetch(page, url)
                 provider, reviews = parse_profile(html, url)
                 if provider:
-                    db.insert_provider(provider)
+                    provider_id = db.insert_provider(provider)
                     for rv in reviews:
+                        rv["provider_id"] = provider_id
                         db.insert_review(rv)
+                    db.update_review_count(url, len(reviews))
                     total_reviews += len(reviews)
                     saved += 1
                     log.info("  ✓ %s | %d IL locations | %d reviews", provider["name"], len(provider["locations"]), len(reviews))
