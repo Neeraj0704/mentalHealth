@@ -56,6 +56,15 @@ def init_db():
     conn.close()
 
 
+def provider_exists(profile_url: str) -> bool:
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM providers WHERE profile_url = ?", (profile_url,))
+    exists = c.fetchone() is not None
+    conn.close()
+    return exists
+
+
 def insert_provider(data: dict):
     conn = get_conn()
     c = conn.cursor()

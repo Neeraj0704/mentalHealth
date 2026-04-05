@@ -292,6 +292,10 @@ def main():
         total_reviews = 0
 
         for i, url in enumerate(profile_urls, 1):
+            if db.provider_exists(url):
+                log.info("[%d/%d] Already in DB — skipping: %s", i, len(profile_urls), url)
+                skipped += 1
+                continue
             log.info("[%d/%d] %s", i, len(profile_urls), url)
             try:
                 html = fetch(page, url)
