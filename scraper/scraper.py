@@ -259,9 +259,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-pages", type=int, default=None,
                         help="Stop after this many listing pages (for testing)")
+    parser.add_argument("--specialty", type=str, default="psychiatry",
+                        help="WebMD specialty slug (e.g. psychiatry, psychology, child-and-adolescent-psychiatry)")
     args = parser.parse_args()
 
-    state_url = f"{BASE}/providers/specialty/psychiatry/illinois"
+    state_url = f"{BASE}/providers/specialty/{args.specialty}/illinois"
 
     db.init_db()
 
@@ -275,7 +277,7 @@ def main():
     )
     global log
     log = logging.getLogger(__name__)
-    log.info("Starting scrape for psychiatry providers in Illinois")
+    log.info("Starting scrape for %s providers in Illinois", args.specialty)
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
