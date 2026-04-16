@@ -58,6 +58,55 @@ export async function getNearby(lat: number, lng: number, limit = 10): Promise<P
   return data.providers as Provider[];
 }
 
+// ── Voice agent ──────────────────────────────────────────────────────────────
+
+export interface MindpathUI {
+  phase: 'conversing' | 'extracting' | 'completed' | string;
+  turn_count: number;
+  progress: number;
+  score: number | null;
+  severity: string | null;
+  options: string[] | null;
+  providers: Array<{
+    id: string;
+    name: string;
+    provider_type: string;
+    rating: number;
+    city: string;
+    state: string;
+    telehealth_available: boolean;
+    accepting_new_patients: boolean;
+    image: string;
+  }> | null;
+}
+
+export interface VoiceTurnResponse {
+  speech: string;
+  mindpath_ui: MindpathUI;
+}
+
+export async function sendVoiceTurn(
+  sessionId: string,
+  userMessage: string,
+): Promise<VoiceTurnResponse> {
+  const res = await fetch(`${BASE_URL}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'mindpath',
+      messages: [{ role: 'user', content: userMessage }],
+      conversation_id: sessionId,
+      stream: false,
+    }),
+  });
+  if (!res.ok) throw new Error(`Voice turn failed: ${res.status}`);
+  const data = await res.json();
+  return {
+    speech: data.choices[0].message.content,
+    mindpath_ui: data.mindpath_ui,
+  };
+}
+
 // ── Trending searches ────────────────────────────────────────────────────────
 
 const TRENDING_KEY = 'mindpath_trending_searches';

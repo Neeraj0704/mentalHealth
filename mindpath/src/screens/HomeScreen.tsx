@@ -180,6 +180,24 @@ export default function HomeScreen({ navigation }: Props) {
         </SafeAreaView>
       </LinearGradient>
 
+      {/* Voice Assessment Banner */}
+      <TouchableOpacity
+        style={styles.voiceBanner}
+        onPress={() => navigation.navigate('VoiceAssessment')}
+        activeOpacity={0.88}
+      >
+        <View style={styles.voiceBannerLeft}>
+          <View style={styles.voiceMicCircle}>
+            <Ionicons name="mic" size={20} color={Colors.textInverse} />
+          </View>
+          <View>
+            <Text style={styles.voiceBannerTitle}>Voice Assessment</Text>
+            <Text style={styles.voiceBannerSub}>Answer a quick screener by speaking</Text>
+          </View>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={Colors.primary} />
+      </TouchableOpacity>
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -356,4 +374,39 @@ const styles = StyleSheet.create({
   },
   howNumText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
   howText:    { fontSize: 14, color: Colors.textSecondary, flex: 1 },
+
+  voiceBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.surface,
+    marginHorizontal: Spacing.md,
+    marginTop: Spacing.md,
+    borderRadius: Radius.md,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.primary + '33',
+    ...Shadows.sm,
+  },
+  voiceBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  voiceMicCircle: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: Colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  voiceBannerTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginBottom: 2,
+  },
+  voiceBannerSub: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
 });

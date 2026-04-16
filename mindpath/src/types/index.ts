@@ -32,8 +32,8 @@ export interface Provider {
   provider_type: ProviderType;
   image: string;
   rating: number;
-  rating_count: number;
-  review_count: number;
+  rating_count?: number;
+  review_count?: number;
   years_experience: number;
   practice_name: string;
   address: string;
@@ -102,6 +102,7 @@ export type RootStackParamList = {
 export type HomeStackParamList = {
   Home: undefined;
   Assessment: undefined;
+  VoiceAssessment: undefined;
   Results: { query: string; filters?: SearchFilters; specialty?: string };
   ProviderDetail: { providerId: string };
 };

@@ -18,10 +18,12 @@ import { Colors, Shadows, Radius } from '../theme';
 
 // Screens
 import OnboardingScreen from '../screens/OnboardingScreen';
+import AssessmentScreen from '../screens/AssessmentScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import FilterScreen from '../screens/FilterScreen';
 import ProviderDetailScreen from '../screens/ProviderDetailScreen';
+import VoiceAssessmentScreen from '../screens/VoiceAssessmentScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -34,8 +36,10 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 function HomeNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="Assessment" component={AssessmentScreen} />
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Results" component={ResultsScreen} />
+      <HomeStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
       <HomeStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
     </HomeStack.Navigator>
   );

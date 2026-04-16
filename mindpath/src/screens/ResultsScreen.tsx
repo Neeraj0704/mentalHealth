@@ -53,7 +53,7 @@ function sortProviders(providers: Provider[], key: string): Provider[] {
     case 'experience':
       return sorted.sort((a, b) => b.years_experience - a.years_experience);
     case 'reviews':
-      return sorted.sort((a, b) => b.review_count - a.review_count);
+      return sorted.sort((a, b) => (b.review_count ?? 0) - (a.review_count ?? 0));
     default:
       return sorted;
   }
@@ -61,23 +61,24 @@ function sortProviders(providers: Provider[], key: string): Provider[] {
 
 export default function ResultsScreen({ navigation, route }: Props) {
   const { query, specialty } = route.params;
-  const { filters, activeFilterCount } = useFilters();
+  const { filters, activeFilterCount, resetFilters } = useFilters();
   const [loading, setLoading] = useState(true);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [sortKey, setSortKey] = useState('rating');
   const [showSortSheet, setShowSortSheet] = useState(false);
+  const [selectedChip, setSelectedChip] = useState<string | null>(null);
   const sortSheetAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     setLoading(true);
-    getProviders(filters, query, specialty)
+    getProviders(filters, query, selectedChip ?? specialty)
       .then((data) => {
         const results = applyFilters(data, filters);
         setProviders(sortProviders(results, sortKey));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [filters, sortKey, query, specialty]);
+  }, [filters, sortKey, query, specialty, selectedChip]);
 
   const toggleSortSheet = () => {
     if (!showSortSheet) {
@@ -178,7 +179,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
 
           <View style={styles.filterDivider} />
 
-          <ScrollableFilterChips />
+          <ScrollableFilterChips selected={selectedChip} onSelect={setSelectedChip} />
         </View>
       </SafeAreaView>
 
@@ -247,7 +248,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
           title="No providers found"
           description={`We couldn't find mental health providers matching your current filters in ${query}. Try adjusting your search.`}
           actionLabel="Clear Filters"
-          onAction={() => {}}
+          onAction={resetFilters}
         />
       ) : (
         <FlatList
@@ -266,9 +267,8 @@ export default function ResultsScreen({ navigation, route }: Props) {
 }
 
 // Small inline chip scroller for quick specialty filters
-function ScrollableFilterChips() {
+function ScrollableFilterChips({ selected, onSelect }: { selected: string | null; onSelect: (c: string | null) => void }) {
   const chips = ['Anxiety', 'Depression', 'Trauma', 'ADHD', 'Couples'];
-  const [selected, setSelected] = useState<string | null>(null);
   return (
     <ScrollView
       horizontal
@@ -283,7 +283,7 @@ function ScrollableFilterChips() {
             styles.quickFilterChip,
             selected === c && styles.quickFilterChipActive,
           ]}
-          onPress={() => setSelected(selected === c ? null : c)}
+          onPress={() => onSelect(selected === c ? null : c)}
           activeOpacity={0.8}
         >
           <Text

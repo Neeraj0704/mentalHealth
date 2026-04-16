@@ -1,0 +1,155 @@
+{
+  "GAD7": {
+    "condition": "Anxiety",
+    "type": "scale",
+    "stem": "Over the last two weeks, how often have you been bothered by the following problems?",
+    "answers": [
+      { "label": "Not at all", "value": 0 },
+      { "label": "Several days", "value": 1 },
+      { "label": "More than half the days", "value": 2 },
+      { "label": "Nearly every day", "value": 3 }
+    ],
+    "questions": [
+      "Feeling nervous, anxious, or on edge",
+      "Not being able to stop or control worrying",
+      "Worrying too much about different things",
+      "Trouble relaxing",
+      "Being so restless that it is hard to sit still",
+      "Becoming easily annoyed or irritable",
+      "Feeling afraid, as if something awful might happen"
+    ],
+    "scoring": [
+      { "min": 0, "max": 4, "severity": "Minimal", "label": "minimal anxiety" },
+      { "min": 5, "max": 9, "severity": "Mild", "label": "mild anxiety" },
+      { "min": 10, "max": 14, "severity": "Moderate", "label": "moderate anxiety" },
+      { "min": 15, "max": 21, "severity": "Severe", "label": "severe anxiety" }
+    ]
+  },
+  "PHQ9": {
+    "condition": "Depression",
+    "type": "scale",
+    "stem": "Over the last 2 weeks, how often have you been bothered by the following problems?",
+    "answers": [
+      { "label": "Not at all", "value": 0 },
+      { "label": "Several days", "value": 1 },
+      { "label": "More than half the days", "value": 2 },
+      { "label": "Nearly every day", "value": 3 }
+    ],
+    "questions": [
+      "Little interest or pleasure in doing things",
+      "Feeling down, depressed or hopeless",
+      "Trouble falling asleep, staying asleep, or sleeping too much",
+      "Feeling tired or having little energy",
+      "Poor appetite or overeating",
+      "Feeling bad about yourself - or that you're a failure or have let yourself or your family down",
+      "Trouble concentrating on things, such as reading the newspaper or watching television",
+      "Moving or speaking so slowly that other people could have noticed. Or, the opposite - being so fidgety or restless that you have been moving around a lot more than usual",
+      "Thoughts that you would be better off dead or of hurting yourself in some way"
+    ],
+    "crisis_question_index": 8,
+    "crisis_threshold": 1,
+    "scoring": [
+      { "min": 0, "max": 4, "severity": "None-minimal", "label": "minimal depression symptoms" },
+      { "min": 5, "max": 9, "severity": "Mild", "label": "mild depression" },
+      { "min": 10, "max": 14, "severity": "Moderate", "label": "moderate depression" },
+      { "min": 15, "max": 19, "severity": "Moderately Severe", "label": "moderately severe depression" },
+      { "min": 20, "max": 27, "severity": "Severe", "label": "severe depression" }
+    ]
+  },
+  "PCPTSD5": {
+    "condition": "Trauma",
+    "type": "yesno",
+    "gate_question": "Have you ever experienced a frightening, horrible, or traumatic event? For example: a serious accident or fire, a physical or sexual assault or abuse, an earthquake or flood, a war, seeing someone be killed or seriously injured, or having a loved one die through homicide or suicide.",
+    "stem": "In the past month, have you…",
+    "answers": [
+      { "label": "Yes", "value": 1 },
+      { "label": "No", "value": 0 }
+    ],
+    "questions": [
+      "Had nightmares about the event(s) or thought about the event(s) when you did not want to?",
+      "Tried hard not to think about the event(s) or went out of your way to avoid situations that reminded you of the event(s)?",
+      "Been constantly on guard, watchful, or easily startled?",
+      "Felt numb or detached from people, activities, or your surroundings?",
+      "Felt guilty or unable to stop blaming yourself or others for the event(s) or any problems the event(s) may have caused?"
+    ],
+    "positive_threshold": 3,
+    "scoring": [
+      { "positive": false, "severity": "Below threshold", "label": "below the threshold for PTSD" },
+      { "positive": true, "severity": "Screen positive", "label": "symptoms related to trauma" }
+    ]
+  },
+  "ASRS": {
+    "condition": "ADHD",
+    "type": "threshold",
+    "stem": "Please answer each question as best you can.",
+    "answers": [
+      { "label": "Never", "value": 0 },
+      { "label": "Rarely", "value": 1 },
+      { "label": "Sometimes", "value": 2 },
+      { "label": "Often", "value": 3 },
+      { "label": "Very Often", "value": 4 }
+    ],
+    "questions": [
+      "How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?",
+      "How often do you have difficulty getting things in order when you have to do a task that requires organization?",
+      "How often do you have problems remembering appointments or obligations?",
+      "When you have a task that requires a lot of thought, how often do you avoid or delay getting started?",
+      "How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?",
+      "How often do you feel overly active and compelled to do things, like you were driven by a motor?"
+    ],
+    "thresholds": [
+      { "question_index": 0, "positive_min_value": 2 },
+      { "question_index": 1, "positive_min_value": 2 },
+      { "question_index": 2, "positive_min_value": 2 },
+      { "question_index": 3, "positive_min_value": 3 },
+      { "question_index": 4, "positive_min_value": 3 },
+      { "question_index": 5, "positive_min_value": 3 }
+    ],
+    "positive_count_threshold": 4,
+    "scoring": [
+      { "positive": false, "severity": "Negative", "label": "ADHD symptoms not indicated" },
+      { "positive": true, "severity": "Positive", "label": "symptoms consistent with ADHD" }
+    ]
+  },
+  "MDQ": {
+    "condition": "Bipolar",
+    "type": "mdq",
+    "question1_stem": "Has there ever been a period of time when you were not your usual self and…",
+    "question1_items": [
+      "You felt so good or so hyper that other people thought you were not your normal self or you were so hyper that you got into trouble?",
+      "You were so irritable that you shouted at people or started fights or arguments?",
+      "You felt much more self-confident than usual?",
+      "You got much less sleep than usual and found you didn't really miss it?",
+      "You were much more talkative or spoke much faster than usual?",
+      "Thoughts raced through your head or you couldn't slow your mind down?",
+      "You were so easily distracted by things around you that you had trouble concentrating or staying on track?",
+      "You had much more energy than usual?",
+      "You were much more active or did many more things than usual?",
+      "You were much more social or outgoing than usual, for example, you telephoned friends in the middle of the night?",
+      "You were much more interested in sex than usual?",
+      "You did things that were unusual for you or that other people might have thought were excessive, foolish, or risky?",
+      "Spending money got you or your family into trouble?"
+    ],
+    "question1_answers": [
+      { "label": "Yes", "value": 1 },
+      { "label": "No", "value": 0 }
+    ],
+    "question1_positive_threshold": 7,
+    "question2": "If you checked YES to more than one of the above, have several of these ever happened during the same period of time?",
+    "question2_answers": [
+      { "label": "Yes", "value": true },
+      { "label": "No", "value": false }
+    ],
+    "question3": "How much of a problem did any of these cause you — such as being unable to work; having family, money, or legal troubles; getting into arguments or fights?",
+    "question3_answers": [
+      { "label": "No problem", "positive": false },
+      { "label": "Minor problem", "positive": false },
+      { "label": "Moderate problem", "positive": true },
+      { "label": "Serious problem", "positive": true }
+    ],
+    "scoring": [
+      { "positive": false, "severity": "Negative", "label": "bipolar symptoms not indicated" },
+      { "positive": true, "severity": "Positive", "label": "symptoms that may warrant further evaluation for mood disorders" }
+    ]
+  }
+}

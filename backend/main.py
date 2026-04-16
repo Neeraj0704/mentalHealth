@@ -1,6 +1,11 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import providers
+from voice.router import router as voice_router
+
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(title="MindPath API", version="1.0.0")
 
@@ -13,6 +18,10 @@ app.add_middleware(
 )
 
 app.include_router(providers.router)
+
+# Voice agent — ElevenLabs calls POST /chat/completions at the root
+# Mobile app polls GET /voice/state/{session_id}
+app.include_router(voice_router)
 
 
 @app.get("/health")

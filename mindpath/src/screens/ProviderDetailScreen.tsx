@@ -317,7 +317,7 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
               <Ionicons name="sparkles" size={15} color={Colors.primary} />
               <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>Patient Insights</Text>
             </View>
-            {provider.rating_count > 0 ? (
+            {(provider.rating_count ?? 0) > 0 ? (
               <View style={styles.insightsRatingRow}>
                 <Text style={styles.insightsRatingNum}>{provider.rating.toFixed(1)}</Text>
                 <RatingStars rating={provider.rating} showCount={false} showRating={false} size="sm" />
