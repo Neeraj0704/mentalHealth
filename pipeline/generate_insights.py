@@ -13,8 +13,8 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL = "llama3.2"
 ERROR_LOG = Path(__file__).parent / "pipeline_errors.log"
 
-DEBUG = True
-DRY_RUN = True
+DEBUG = False
+DRY_RUN = False
 
 
 def get_connection():

@@ -141,9 +141,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
               styles.filterBtn,
               activeFilterCount > 0 && styles.filterBtnActive,
             ]}
-            onPress={() => navigation.navigate('ProviderDetail', { providerId: '1' })}
-            // In a real implementation, navigate to FilterModal
-            // For demo: onPress={() => navigation.getParent()?.navigate('FilterModal', {})}
+            onPress={() => navigation.getParent()?.navigate('FilterModal', { currentFilters: filters })}
             activeOpacity={0.8}
           >
             <Ionicons
