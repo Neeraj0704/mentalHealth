@@ -79,7 +79,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({
 
           <RatingStars
             rating={provider.rating}
-            reviewCount={provider.review_count}
+            reviewCount={provider.rating_count}
             size="sm"
           />
         </View>

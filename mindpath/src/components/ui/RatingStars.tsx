@@ -8,6 +8,7 @@ interface RatingStarsProps {
   reviewCount?: number;
   size?: 'sm' | 'md' | 'lg';
   showCount?: boolean;
+  showRating?: boolean;
 }
 
 export const RatingStars: React.FC<RatingStarsProps> = ({
@@ -15,6 +16,7 @@ export const RatingStars: React.FC<RatingStarsProps> = ({
   reviewCount,
   size = 'md',
   showCount = true,
+  showRating = true,
 }) => {
   const starSize = size === 'sm' ? 12 : size === 'md' ? 14 : 18;
   const textSize = size === 'sm' ? 12 : size === 'md' ? 14 : 16;
@@ -38,14 +40,16 @@ export const RatingStars: React.FC<RatingStarsProps> = ({
           />
         ))}
       </View>
-      <Text
-        style={[
-          styles.ratingText,
-          { fontSize: textSize, color: Colors.textPrimary },
-        ]}
-      >
-        {rating.toFixed(1)}
-      </Text>
+      {showRating && (
+        <Text
+          style={[
+            styles.ratingText,
+            { fontSize: textSize, color: Colors.textPrimary },
+          ]}
+        >
+          {rating.toFixed(1)}
+        </Text>
+      )}
       {showCount && reviewCount !== undefined && (
         <Text
           style={[

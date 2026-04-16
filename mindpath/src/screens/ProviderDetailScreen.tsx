@@ -39,7 +39,7 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
 
   useEffect(() => {
     getProviderById(providerId)
-      .then(setProvider)
+      .then((p) => setProvider(p ?? null))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [providerId]);
@@ -179,7 +179,7 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
               </View>
               <RatingStars
                 rating={provider.rating}
-                reviewCount={provider.review_count}
+                reviewCount={provider.rating_count}
                 size="md"
               />
             </View>
@@ -194,8 +194,8 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{provider.review_count}</Text>
-            <Text style={styles.statLabel}>reviews</Text>
+            <Text style={styles.statValue}>{provider.rating_count}</Text>
+            <Text style={styles.statLabel}>ratings</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
@@ -266,7 +266,7 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
               <View style={styles.practiceText}>
                 <Text style={styles.practiceName}>{provider.practice_name}</Text>
                 <Text style={styles.practiceAddress}>
-                  {provider.address}, {provider.city}, {provider.state} {provider.zip_code}
+                  {[provider.address, provider.city, `${provider.state} ${provider.zip_code}`.trim()].filter(Boolean).join(', ')}
                 </Text>
               </View>
               <TouchableOpacity style={styles.directionsBtn} activeOpacity={0.8}>
@@ -283,7 +283,7 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
             style={styles.overviewText}
             numberOfLines={expandedAbout ? undefined : 4}
           >
-            {provider.overview}
+            {provider.profile_summary || provider.overview}
           </Text>
           <TouchableOpacity
             style={styles.readMoreBtn}
@@ -299,6 +299,54 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
               color={Colors.primary}
             />
           </TouchableOpacity>
+        </View>
+
+        {/* Patient Insights (rating + AI pros/cons) */}
+        <View style={[
+          styles.section,
+          styles.insightsSection,
+          {
+            borderLeftColor:
+              (provider.sentiment_score ?? 0.5) >= 0.7 ? Colors.success :
+              (provider.sentiment_score ?? 0.5) >= 0.4 ? Colors.warning :
+              Colors.border,
+          },
+        ]}>
+          <View style={styles.insightsHeader}>
+            <View style={styles.insightsHeaderLeft}>
+              <Ionicons name="sparkles" size={15} color={Colors.primary} />
+              <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>Patient Insights</Text>
+            </View>
+            {provider.rating_count > 0 ? (
+              <View style={styles.insightsRatingRow}>
+                <Text style={styles.insightsRatingNum}>{provider.rating.toFixed(1)}</Text>
+                <RatingStars rating={provider.rating} showCount={false} showRating={false} size="sm" />
+                <Text style={styles.insightsRatingCount}>({provider.rating_count})</Text>
+              </View>
+            ) : (
+              <Text style={styles.insightsRatingCount}>No ratings yet</Text>
+            )}
+          </View>
+          {provider.pros && provider.pros.length > 0 && (
+            <View style={[styles.insightGroup, { marginTop: 12 }]}>
+              {provider.pros.map((item, i) => (
+                <View key={i} style={styles.insightRow}>
+                  <View style={[styles.insightDot, { backgroundColor: Colors.success }]} />
+                  <Text style={styles.insightText}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+          {provider.cons && provider.cons.length > 0 && (
+            <View style={[styles.insightGroup, { marginTop: 10 }]}>
+              {provider.cons.map((item, i) => (
+                <View key={i} style={styles.insightRow}>
+                  <View style={[styles.insightDot, { backgroundColor: Colors.warning }]} />
+                  <Text style={styles.insightText}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Specialties */}
@@ -399,53 +447,6 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
               </View>
             ))}
           </View>
-        </View>
-
-        {/* Reviews */}
-        <View style={styles.section}>
-          <View style={styles.reviewsHeader}>
-            <Text style={styles.sectionTitle}>Patient Reviews</Text>
-            <View style={styles.overallRating}>
-              <Text style={styles.overallRatingNum}>{provider.rating.toFixed(1)}</Text>
-              <RatingStars rating={provider.rating} showCount={false} size="sm" />
-              <Text style={styles.overallRatingCount}>({provider.review_count})</Text>
-            </View>
-          </View>
-
-          <View style={styles.reviewsList}>
-            {provider.reviews.map((review) => (
-              <View key={review.id} style={styles.reviewCard}>
-                <View style={styles.reviewTop}>
-                  <View style={styles.reviewAvatar}>
-                    <Text style={styles.reviewAvatarText}>
-                      {review.author[0].toUpperCase()}
-                    </Text>
-                  </View>
-                  <View style={styles.reviewMeta}>
-                    <Text style={styles.reviewAuthor}>{review.author}</Text>
-                    <View style={styles.reviewRatingRow}>
-                      <RatingStars rating={review.rating} showCount={false} size="sm" />
-                      <Text style={styles.reviewDate}>{review.date}</Text>
-                    </View>
-                  </View>
-                </View>
-                <Text style={styles.reviewContent}>{review.content}</Text>
-                {review.helpful_count !== undefined && (
-                  <TouchableOpacity style={styles.helpfulBtn} activeOpacity={0.7}>
-                    <Ionicons name="thumbs-up-outline" size={13} color={Colors.textTertiary} />
-                    <Text style={styles.helpfulText}>Helpful ({review.helpful_count})</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            ))}
-          </View>
-
-          <TouchableOpacity style={styles.viewAllReviews} activeOpacity={0.8}>
-            <Text style={styles.viewAllReviewsText}>
-              View all {provider.review_count} reviews
-            </Text>
-            <Ionicons name="arrow-forward" size={14} color={Colors.primary} />
-          </TouchableOpacity>
         </View>
 
         {/* FAQ */}
@@ -748,6 +749,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  insightsSection: {
+    borderLeftWidth: 3,
+    borderRadius: Radius.md,
+  },
+  insightsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  insightsHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  insightsRatingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  insightsRatingNum: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+  },
+  insightsRatingCount: {
+    fontSize: 13,
+    color: Colors.textTertiary,
+  },
+  insightGroup: {
+    gap: 8,
+  },
+  insightRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  insightDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginTop: 6,
+  },
+  insightText: {
+    flex: 1,
+    fontSize: 14,
+    color: Colors.textSecondary,
+    lineHeight: 22,
+  },
   overviewText: {
     fontSize: 15,
     color: Colors.textSecondary,
@@ -882,106 +932,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     color: Colors.textSecondary,
-  },
-  reviewsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 14,
-  },
-  overallRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  overallRatingNum: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-  },
-  overallRatingCount: {
-    fontSize: 13,
-    color: Colors.textTertiary,
-  },
-  reviewsList: {
-    gap: 14,
-  },
-  reviewCard: {
-    backgroundColor: Colors.surfaceSubtle,
-    borderRadius: Radius.md,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-  },
-  reviewTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 10,
-  },
-  reviewAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.primaryBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reviewAvatarText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.primary,
-  },
-  reviewMeta: {
-    flex: 1,
-  },
-  reviewAuthor: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textPrimary,
-    marginBottom: 3,
-  },
-  reviewRatingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  reviewDate: {
-    fontSize: 12,
-    color: Colors.textTertiary,
-  },
-  reviewContent: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    lineHeight: 22,
-  },
-  helpfulBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginTop: 10,
-    alignSelf: 'flex-start',
-  },
-  helpfulText: {
-    fontSize: 12,
-    color: Colors.textTertiary,
-  },
-  viewAllReviews: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    marginTop: Spacing.md,
-    paddingVertical: 12,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.primaryBg,
-    borderWidth: 1.5,
-    borderColor: Colors.primaryLight,
-  },
-  viewAllReviewsText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.primary,
   },
   faqList: {
     gap: 8,

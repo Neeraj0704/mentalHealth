@@ -28,8 +28,8 @@ export const ProviderMiniCard: React.FC<Props> = ({ provider, onPress }) => (
         <Text style={styles.rating}>
           {provider.rating ? provider.rating.toFixed(1) : '—'}
         </Text>
-        {provider.review_count > 0 && (
-          <Text style={styles.reviewCount}>({provider.review_count})</Text>
+        {provider.rating_count > 0 && (
+          <Text style={styles.reviewCount}>({provider.rating_count})</Text>
         )}
       </View>
       <Text style={styles.city} numberOfLines={1}>

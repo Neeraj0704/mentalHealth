@@ -32,6 +32,7 @@ export interface Provider {
   provider_type: ProviderType;
   image: string;
   rating: number;
+  rating_count: number;
   review_count: number;
   years_experience: number;
   practice_name: string;
@@ -53,9 +54,14 @@ export interface Provider {
   education: Education[];
   reviews: Review[];
   verified: boolean;
+  phone?: string;
   next_available?: string;
   session_rate?: string;
   featured?: boolean;
+  profile_summary?: string;
+  pros?: string[];
+  cons?: string[];
+  sentiment_score?: number;
 }
 
 export interface SearchFilters {
@@ -95,6 +101,7 @@ export type RootStackParamList = {
 
 export type HomeStackParamList = {
   Home: undefined;
+  Assessment: undefined;
   Results: { query: string; filters?: SearchFilters; specialty?: string };
   ProviderDetail: { providerId: string };
 };
