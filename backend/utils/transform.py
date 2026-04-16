@@ -93,6 +93,10 @@ def db_row_to_provider(row: dict, reviews: list = None) -> dict:
         "featured": False,
         "profile_url": row.get("profile_url"),
         "locations": locations,
+        "profile_summary": row.get("profile_summary") or "",
+        "pros": parse_json_field(row.get("pros")),
+        "cons": parse_json_field(row.get("cons")),
+        "sentiment_score": float(row.get("sentiment_score") or 0.5),
     }
 
 

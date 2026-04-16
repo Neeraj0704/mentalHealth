@@ -60,7 +60,11 @@ def build_provider_query(
     order = order_map.get(sort, "rating DESC")
 
     count_sql = f"SELECT COUNT(*) FROM providers {where}"
-    data_sql = f"SELECT * FROM providers {where} ORDER BY {order} LIMIT ? OFFSET ?"
+    data_sql = (
+        f"SELECT p.*, pi.profile_summary, pi.pros, pi.cons, pi.sentiment_score "
+        f"FROM providers p LEFT JOIN provider_insights pi ON p.id = pi.provider_id "
+        f"{where} ORDER BY {order} LIMIT ? OFFSET ?"
+    )
 
     return count_sql, data_sql, params, limit, offset
 
@@ -158,7 +162,11 @@ def nearby(
     }
 
     conn = get_connection()
-    rows = conn.execute("SELECT * FROM providers ORDER BY rating DESC").fetchall()
+    rows = conn.execute(
+        "SELECT p.*, pi.profile_summary, pi.pros, pi.cons, pi.sentiment_score "
+        "FROM providers p LEFT JOIN provider_insights pi ON p.id = pi.provider_id "
+        "ORDER BY p.rating DESC"
+    ).fetchall()
     conn.close()
 
     results = []
@@ -189,7 +197,12 @@ def nearby(
 @router.get("/providers/{provider_id}")
 def get_provider(provider_id: str):
     conn = get_connection()
-    row = conn.execute("SELECT * FROM providers WHERE id = ?", (provider_id,)).fetchone()
+    row = conn.execute(
+        "SELECT p.*, pi.profile_summary, pi.pros, pi.cons, pi.sentiment_score "
+        "FROM providers p LEFT JOIN provider_insights pi ON p.id = pi.provider_id "
+        "WHERE p.id = ?",
+        (provider_id,)
+    ).fetchone()
     if not row:
         conn.close()
         raise HTTPException(status_code=404, detail="Provider not found")
