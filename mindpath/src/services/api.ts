@@ -51,11 +51,35 @@ export async function getTelehealth(limit = 10): Promise<Provider[]> {
   return fetchProviders({ telehealth_only: true, sort: 'rating', limit });
 }
 
-export async function getNearby(lat: number, lng: number, limit = 10): Promise<Provider[]> {
-  const res = await fetch(`${BASE_URL}/providers/nearby?lat=${lat}&lng=${lng}&limit=${limit}`);
+export async function getNearby(lat: number, lng: number, limit = 10, radiusMiles = 50): Promise<Provider[]> {
+  const res = await fetch(`${BASE_URL}/providers/nearby?lat=${lat}&lng=${lng}&limit=${limit}&radius=${radiusMiles}`);
   if (!res.ok) throw new Error('Failed to fetch nearby providers');
   const data = await res.json();
   return data.providers as Provider[];
+}
+
+export interface BookingPayload {
+  provider_id: string;
+  provider_name: string;
+  user_name: string;
+  user_email: string;
+  user_phone?: string;
+  preferred_time: string;
+  message?: string;
+  assessment_condition?: string;
+  assessment_severity?: string;
+  assessment_score?: number;
+  assessment_message?: string;
+}
+
+export async function bookAppointment(payload: BookingPayload): Promise<{ success: boolean; booking_id?: string }> {
+  const res = await fetch(`${BASE_URL}/bookings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Booking failed: ${res.status}`);
+  return res.json();
 }
 
 // ── Voice agent ──────────────────────────────────────────────────────────────

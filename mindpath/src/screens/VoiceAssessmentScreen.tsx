@@ -24,12 +24,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { AudioSession } from '@livekit/react-native';
 import * as FileSystem from 'expo-file-system';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '../types';
 import { MindpathUI, sendVoiceTurn } from '../services/api';
 import { speak, stopSpeech } from '../services/elevenLabsTTS';
+import { saveAssessmentSummary } from '../services/preferences';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'VoiceAssessment'>;
 
@@ -80,6 +80,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
   const [hint, setHint]             = useState('Tap the orb to start');
   const [showTextInput, setShowTextInput] = useState(false);
   const [textVal, setTextVal]       = useState('');
+  const [summaryText, setSummaryText] = useState('');
 
   const sessionId     = useRef(makeSessionId());
   const recordingRef  = useRef<Audio.Recording | null>(null);
@@ -147,7 +148,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
     silenceSince.current = null;
     stoppingRef.current = false;
     try { await rec.stopAndUnloadAsync(); } catch {}
-    try { await AudioSession.stopAudioSession(); } catch {}
+    try { await Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }); } catch {}
     return rec.getURI() ?? null;
   }, []);
 
@@ -175,9 +176,19 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
 
     if (response.mindpath_ui.phase === 'completed') {
       doneRef.current = true;
+      setSummaryText(response.speech);
       setPhase('completed');
       setHint('');
       stopAnims();
+      // Save summary so BookingScreen can attach it
+      if (response.mindpath_ui.condition || response.mindpath_ui.severity) {
+        saveAssessmentSummary({
+          condition: response.mindpath_ui.condition ?? '',
+          severity: response.mindpath_ui.severity ?? undefined,
+          score: response.mindpath_ui.score ?? undefined,
+          message: response.speech,
+        }).catch(() => {});
+      }
       Animated.parallel([
         Animated.spring(orbScale,  { toValue: ORB_SMALL / ORB_FULL, useNativeDriver: false, bounciness: 8 }),
         Animated.spring(providerY, { toValue: 0, useNativeDriver: false, bounciness: 5 }),
@@ -231,11 +242,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
 
     try {
       await stopSpeech();
-      await AudioSession.configureAudio({
-        ios: { defaultOutput: 'speaker' },
-        android: { preferredOutputList: ['speaker'] },
-      });
-      await AudioSession.startAudioSession();
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
 
       const { recording } = await Audio.Recording.createAsync({
         ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
@@ -265,7 +272,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
     } catch (e) {
       console.warn('startListening error', e);
       setHint('Could not start recording');
-      AudioSession.stopAudioSession().catch(() => {});
+      Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }).catch(() => {});
     }
   }, [triggerAutoStop]);
 
@@ -387,40 +394,80 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
         </KeyboardAvoidingView>
       )}
 
-      {/* Provider panel */}
-      {isCompleted && providers.length > 0 && (
+      {/* Summary + Provider panel */}
+      {isCompleted && (
         <Animated.View style={[styles.providerPane, { transform: [{ translateY: providerY }] }]}>
-          <View style={styles.paneHeader}>
-            {ui?.severity ? (
-              <Text style={[styles.severityLabel, { color: sevColor(ui.severity) }]}>{ui.severity}</Text>
-            ) : null}
-            {ui?.score != null && <Text style={styles.scoreLabel}>Score {ui.score}</Text>}
-            <Text style={styles.paneTitle}>
-              Matched providers{ui?.condition ? ` for ${ui.condition}` : ''}
-            </Text>
-          </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {providers.map((p) => (
-              <TouchableOpacity
-                key={p.id}
-                style={styles.providerCard}
-                onPress={() => navigation.navigate('ProviderDetail', { providerId: p.id })}
-                activeOpacity={0.8}
-              >
-                <View style={styles.avatar}>
-                  <Ionicons name="person" size={18} color="rgba(255,255,255,0.5)" />
+
+            {/* ── Assessment Summary ── */}
+            <View style={styles.summarySection}>
+              <View style={styles.summaryTitleRow}>
+                <Ionicons name="document-text-outline" size={16} color="rgba(255,255,255,0.6)" />
+                <Text style={styles.summaryTitle}>Your Assessment Summary</Text>
+              </View>
+
+              {/* Condition + Severity + Score */}
+              <View style={styles.summaryScoreRow}>
+                {ui?.condition ? (
+                  <View style={styles.summaryConditionPill}>
+                    <Text style={styles.summaryConditionText}>{ui.condition}</Text>
+                  </View>
+                ) : null}
+                {ui?.severity ? (
+                  <View style={[styles.summarySeverityPill, { borderColor: sevColor(ui.severity) + '60' }]}>
+                    <View style={[styles.severityDot, { backgroundColor: sevColor(ui.severity) }]} />
+                    <Text style={[styles.summarySeverityText, { color: sevColor(ui.severity) }]}>{ui.severity}</Text>
+                  </View>
+                ) : null}
+                {ui?.score != null && (
+                  <Text style={styles.summaryScoreText}>Score: {ui.score}</Text>
+                )}
+              </View>
+
+              {/* What the AI said as summary */}
+              {!!summaryText && (
+                <View style={styles.summaryMessageCard}>
+                  <Text style={styles.summaryMessageLabel}>What we found</Text>
+                  <Text style={styles.summaryMessageText}>{summaryText}</Text>
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.provName}>{p.name}</Text>
-                  <Text style={styles.provMeta}>{p.provider_type} · {p.city}, {p.state}</Text>
+              )}
+
+              <Text style={styles.summaryDisclaimer}>
+                This is not a clinical diagnosis. A licensed provider can give you a full evaluation.
+              </Text>
+            </View>
+
+            {/* ── Matched Providers ── */}
+            {providers.length > 0 && (
+              <>
+                <View style={styles.paneHeader}>
+                  <Text style={styles.paneTitle}>
+                    Matched providers{ui?.condition ? ` for ${ui.condition}` : ''}
+                  </Text>
                 </View>
-                <View style={styles.ratingPill}>
-                  <Ionicons name="star" size={10} color="#FBBF24" />
-                  <Text style={styles.ratingText}>{p.rating?.toFixed(1)}</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.3)" />
-              </TouchableOpacity>
-            ))}
+                {providers.map((p) => (
+                  <TouchableOpacity
+                    key={p.id}
+                    style={styles.providerCard}
+                    onPress={() => navigation.navigate('ProviderDetail', { providerId: p.id })}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.avatar}>
+                      <Ionicons name="person" size={18} color="rgba(255,255,255,0.5)" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.provName}>{p.name}</Text>
+                      <Text style={styles.provMeta}>{p.provider_type} · {p.city}, {p.state}</Text>
+                    </View>
+                    <View style={styles.ratingPill}>
+                      <Ionicons name="star" size={10} color="#FBBF24" />
+                      <Text style={styles.ratingText}>{p.rating?.toFixed(1)}</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.3)" />
+                  </TouchableOpacity>
+                ))}
+              </>
+            )}
             <View style={{ height: 40 }} />
           </ScrollView>
         </Animated.View>
@@ -469,10 +516,39 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.07)',
     paddingTop: 16,
   },
-  paneHeader:    { paddingHorizontal: 20, paddingBottom: 8, gap: 2 },
-  severityLabel: { fontSize: 22, fontWeight: '800' },
-  scoreLabel:    { fontSize: 12, color: 'rgba(255,255,255,0.35)' },
-  paneTitle:     { fontSize: 15, fontWeight: '700', color: 'rgba(255,255,255,0.85)', marginTop: 8 },
+  summarySection: {
+    paddingHorizontal: 20, paddingTop: 18, paddingBottom: 8,
+    borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.06)',
+    gap: 12,
+  },
+  summaryTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  summaryTitle:    { fontSize: 12, fontWeight: '700', color: 'rgba(255,255,255,0.45)', letterSpacing: 0.8, textTransform: 'uppercase' },
+  summaryScoreRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
+  summaryConditionPill: {
+    backgroundColor: 'rgba(79,70,229,0.3)', borderRadius: 20,
+    paddingHorizontal: 12, paddingVertical: 5,
+    borderWidth: 1, borderColor: 'rgba(79,70,229,0.5)',
+  },
+  summaryConditionText: { fontSize: 13, fontWeight: '700', color: '#A5B4FC' },
+  summarySeverityPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5,
+    borderWidth: 1, backgroundColor: 'rgba(255,255,255,0.05)',
+  },
+  severityDot: { width: 7, height: 7, borderRadius: 4 },
+  summarySeverityText: { fontSize: 13, fontWeight: '600' },
+  summaryScoreText: { fontSize: 13, color: 'rgba(255,255,255,0.4)', fontWeight: '500' },
+  summaryMessageCard: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12, padding: 14,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    gap: 6,
+  },
+  summaryMessageLabel: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.35)', letterSpacing: 0.6, textTransform: 'uppercase' },
+  summaryMessageText: { fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 22 },
+  summaryDisclaimer: { fontSize: 11, color: 'rgba(255,255,255,0.25)', lineHeight: 17, fontStyle: 'italic' },
+  paneHeader:    { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 },
+  paneTitle:     { fontSize: 15, fontWeight: '700', color: 'rgba(255,255,255,0.85)' },
 
   providerCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,

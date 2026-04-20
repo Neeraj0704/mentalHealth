@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '../types';
+import { saveAssessmentSummary } from '../services/preferences';
 import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Assessment'>;
@@ -265,6 +266,16 @@ export default function AssessmentScreen({ navigation }: Props) {
   const [mdqSubStep, setMdqSubStep] = useState<'q1' | 'q2' | 'q3'>('q1');
   const [result, setResult] = useState<ResultData | null>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (result) {
+      saveAssessmentSummary({
+        condition: result.condition,
+        severity: result.severity || undefined,
+        message: result.message,
+      }).catch(() => {});
+    }
+  }, [result]);
 
   const animateTransition = (callback: () => void) => {
     Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
@@ -594,18 +605,83 @@ export default function AssessmentScreen({ navigation }: Props) {
 
   const renderStep3 = () => {
     if (!result) return null;
+    const instrument = selectedCondition?.instrument;
+    const questions = instrument ? getQuestions(instrument) : [];
+    const answerOptions = instrument ? getAnswerOptions(instrument) : SCALE_ANSWERS;
+
+    const severityColor = ({
+      Minimal: Colors.success, Mild: Colors.info,
+      Moderate: Colors.warning, 'Moderately Severe': Colors.error,
+      Severe: Colors.error, Positive: Colors.warning, Negative: Colors.success,
+    } as Record<string, string>)[result.severity] ?? Colors.info;
+
     return (
-      <ScrollView contentContainerStyle={[styles.stepContent, { alignItems: 'center' }]} showsVerticalScrollIndicator={false}>
-        <View style={styles.resultIconWrapper}>
-          <Ionicons name="checkmark-circle" size={56} color={Colors.success} />
-        </View>
-        {result.severity ? (
-          <View style={styles.severityPill}>
-            <Text style={styles.severityText}>{result.severity}</Text>
+      <ScrollView contentContainerStyle={[styles.stepContent, { paddingTop: Spacing.md }]} showsVerticalScrollIndicator={false}>
+
+        {/* Result header card */}
+        <View style={[styles.summaryHeaderCard, { borderLeftColor: severityColor }]}>
+          <View style={styles.summaryHeaderTop}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.summaryConditionLabel}>{result.condition}</Text>
+              {result.severity ? (
+                <View style={[styles.severityPill, { backgroundColor: severityColor + '18', borderColor: severityColor + '40' }]}>
+                  <View style={[styles.severityDotInline, { backgroundColor: severityColor }]} />
+                  <Text style={[styles.severityText, { color: severityColor }]}>{result.severity}</Text>
+                </View>
+              ) : null}
+            </View>
+            <Ionicons name="checkmark-circle" size={40} color={severityColor} />
           </View>
-        ) : null}
-        <Text style={styles.resultCondition}>{result.condition}</Text>
-        <Text style={styles.resultMessage}>{result.message}</Text>
+          <Text style={styles.resultMessage}>{result.message}</Text>
+        </View>
+
+        {/* Question-answer breakdown */}
+        {questions.length > 0 && answers.length > 0 && (
+          <View style={styles.responsesSection}>
+            <View style={styles.responsesSectionHeader}>
+              <Ionicons name="list-outline" size={15} color={Colors.primary} />
+              <Text style={styles.responsesSectionTitle}>Your responses</Text>
+              {instrument && (
+                <View style={styles.instrumentBadge}>
+                  <Text style={styles.instrumentBadgeText}>{instrument}</Text>
+                </View>
+              )}
+            </View>
+            {questions.map((q, i) => {
+              const val = answers[i];
+              const label = answerOptions.find(a => a.value === val)?.label ?? String(val);
+              const intensity = val / (answerOptions.length - 1);
+              const dotColor = intensity > 0.6 ? Colors.error : intensity > 0.3 ? Colors.warning : Colors.success;
+              return (
+                <View key={i} style={styles.responseRow}>
+                  <View style={[styles.responseDot, { backgroundColor: dotColor }]} />
+                  <View style={{ flex: 1, gap: 3 }}>
+                    <Text style={styles.responseQuestion}>{q}</Text>
+                    <Text style={[styles.responseAnswer, { color: dotColor }]}>{label}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
+        {/* MDQ special case — show checkmark count */}
+        {instrument === 'MDQ' && mdqQ1.filter(Boolean).length > 0 && (
+          <View style={styles.responsesSection}>
+            <View style={styles.responsesSectionHeader}>
+              <Ionicons name="list-outline" size={15} color={Colors.primary} />
+              <Text style={styles.responsesSectionTitle}>Your responses</Text>
+              <View style={styles.instrumentBadge}>
+                <Text style={styles.instrumentBadgeText}>MDQ</Text>
+              </View>
+            </View>
+            <Text style={styles.mdqSummaryText}>
+              You endorsed {mdqQ1.filter(Boolean).length} of 13 mood symptoms.
+              {mdqQ2 !== null && ` Multiple symptoms occurred together: ${mdqQ2 ? 'Yes' : 'No'}.`}
+              {mdqQ3 && ` Impact level: ${mdqQ3}.`}
+            </Text>
+          </View>
+        )}
 
         {result.showCrisis && (
           <View style={styles.crisisCard}>
@@ -858,32 +934,109 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: '500',
   },
-  resultIconWrapper: { marginBottom: Spacing.md, marginTop: Spacing.lg },
-  severityPill: {
-    backgroundColor: Colors.primaryBg,
-    borderRadius: Radius.full,
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-    marginBottom: Spacing.sm,
+  summaryHeaderCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.primary,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: Spacing.md,
+    gap: 10,
+    ...Shadows.sm,
   },
+  summaryHeaderTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  summaryConditionLabel: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+    letterSpacing: -0.3,
+    marginBottom: 6,
+  },
+  severityPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+    borderRadius: Radius.full,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderWidth: 1,
+    marginBottom: 4,
+  },
+  severityDotInline: { width: 7, height: 7, borderRadius: 4 },
   severityText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.primary,
     letterSpacing: 0.3,
   },
-  resultCondition: {
-    ...Typography.heading2,
-    textAlign: 'center',
-    marginBottom: Spacing.md,
-  },
   resultMessage: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 26,
-    marginBottom: Spacing.lg,
-    paddingHorizontal: Spacing.md,
+    lineHeight: 22,
+  },
+  responsesSection: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: Spacing.md,
+    gap: 12,
+    ...Shadows.xs,
+  },
+  responsesSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    marginBottom: 4,
+  },
+  responsesSectionTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    flex: 1,
+  },
+  instrumentBadge: {
+    backgroundColor: Colors.primaryBg,
+    borderRadius: Radius.full,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+  },
+  instrumentBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.primary,
+    letterSpacing: 0.5,
+  },
+  responseRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+  },
+  responseDot: { width: 8, height: 8, borderRadius: 4, marginTop: 5 },
+  responseQuestion: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    lineHeight: 19,
+  },
+  responseAnswer: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  mdqSummaryText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    lineHeight: 22,
   },
   crisisCard: {
     flexDirection: 'row',
@@ -894,7 +1047,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.error,
     marginBottom: Spacing.md,
-    width: '100%',
   },
   crisisTitle: {
     fontSize: 14,
@@ -910,9 +1062,9 @@ const styles = StyleSheet.create({
   disclaimer: {
     fontSize: 12,
     color: Colors.textTertiary,
-    textAlign: 'center',
     lineHeight: 18,
-    paddingHorizontal: Spacing.md,
+    fontStyle: 'italic',
+    marginTop: 4,
   },
   bottomSafe: {
     backgroundColor: Colors.surface,

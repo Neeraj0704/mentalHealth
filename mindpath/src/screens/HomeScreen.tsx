@@ -23,6 +23,7 @@ import {
   getTopRated, getNearby,
   getTrendingSearches, saveTrendingSearch,
 } from '../services/api';
+import { getPreferences } from '../services/preferences';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
@@ -51,9 +52,12 @@ interface Section {
   loading: boolean;
 }
 
+const RADIUS_OPTIONS = [2, 5, 10, 25, 50];
+
 export default function HomeScreen({ navigation }: Props) {
   const [query, setQuery] = useState('');
   const [trending, setTrending] = useState<string[]>([]);
+  const [nearbyRadius, setNearbyRadius] = useState(25);
   const [sections, setSections] = useState<Record<string, { data: Provider[]; loading: boolean }>>({
     nearby:   { data: [], loading: true },
     topRated: { data: [], loading: true },
@@ -67,19 +71,24 @@ export default function HomeScreen({ navigation }: Props) {
 
   useEffect(() => {
     getTrendingSearches().then(setTrending);
+    getPreferences().then(p => setNearbyRadius(p.maxDistanceMiles));
     loadSections();
   }, []);
 
-  const loadSections = async () => {
+  const loadSections = async (radius?: number) => {
     const [topRated] = await Promise.allSettled([getTopRated(10)]);
     setSection('topRated', topRated.status === 'fulfilled' ? topRated.value : [], false);
+    await loadNearby(radius);
+  };
 
-    // Try location
+  const loadNearby = async (radius?: number) => {
+    const r = radius ?? nearbyRadius;
+    setSection('nearby', [], true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
         const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
-        const nearby = await getNearby(loc.coords.latitude, loc.coords.longitude, 10);
+        const nearby = await getNearby(loc.coords.latitude, loc.coords.longitude, 10, r);
         setSection('nearby', nearby, false);
       } else {
         setSection('nearby', [], false);
@@ -87,6 +96,11 @@ export default function HomeScreen({ navigation }: Props) {
     } catch {
       setSection('nearby', [], false);
     }
+  };
+
+  const handleRadiusChange = (r: number) => {
+    setNearbyRadius(r);
+    loadNearby(r);
   };
 
   const handleFocus = () => Animated.spring(inputScale, { toValue: 1.02, useNativeDriver: true, friction: 8 }).start();
@@ -238,6 +252,20 @@ export default function HomeScreen({ navigation }: Props) {
               title="📍 Near You"
               onSeeAll={() => goToResults({ query: 'Chicago' })}
             />
+            <View style={styles.radiusRow}>
+              {RADIUS_OPTIONS.map(r => (
+                <TouchableOpacity
+                  key={r}
+                  style={[styles.radiusChip, nearbyRadius === r && styles.radiusChipActive]}
+                  onPress={() => handleRadiusChange(r)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.radiusChipText, nearbyRadius === r && styles.radiusChipTextActive]}>
+                    {r === 50 ? 'Any' : `${r} mi`}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
             {renderMiniList(sections.nearby.data, sections.nearby.loading)}
           </View>
         )}
@@ -374,6 +402,29 @@ const styles = StyleSheet.create({
   },
   specialtyIcon: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   specialtyLabel:{ fontSize: 12, fontWeight: '600', textAlign: 'center' },
+  radiusRow: {
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: Spacing.md,
+    marginBottom: 10,
+  },
+  radiusChip: {
+    paddingHorizontal: 12, paddingVertical: 6,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surface,
+    borderWidth: 1.5,
+    borderColor: Colors.border,
+  },
+  radiusChipActive: {
+    backgroundColor: Colors.primaryBg,
+    borderColor: Colors.primary,
+  },
+  radiusChipText: {
+    fontSize: 12, fontWeight: '500', color: Colors.textSecondary,
+  },
+  radiusChipTextActive: {
+    color: Colors.primary, fontWeight: '700',
+  },
   howCard: {
     backgroundColor: Colors.surface, borderRadius: Radius.lg,
     padding: Spacing.md, marginHorizontal: Spacing.md, ...Shadows.sm,

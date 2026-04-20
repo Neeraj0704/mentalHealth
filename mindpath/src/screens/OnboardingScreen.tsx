@@ -120,7 +120,7 @@ export default function OnboardingScreen({ navigation }: Props) {
           <Animated.View style={[styles.ctaSection, { opacity: fadeAnim }]}>
             <TouchableOpacity
               style={styles.primaryButton}
-              onPress={() => navigation.replace('MainTabs')}
+              onPress={() => navigation.replace('PreferencesSetup')}
               activeOpacity={0.88}
             >
               <Text style={styles.primaryButtonText}>Get Started</Text>

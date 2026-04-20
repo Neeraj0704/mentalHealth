@@ -93,8 +93,16 @@ export const DEFAULT_FILTERS: SearchFilters = {
 // Navigation types
 import { NavigatorScreenParams } from '@react-navigation/native';
 
+export interface AssessmentSummary {
+  condition: string;
+  severity?: string;
+  score?: number;
+  message: string;
+}
+
 export type RootStackParamList = {
   Onboarding: undefined;
+  PreferencesSetup: undefined;
   MainTabs: undefined;
   FilterModal: { currentFilters: SearchFilters };
 };
@@ -105,11 +113,13 @@ export type HomeStackParamList = {
   VoiceAssessment: undefined;
   Results: { query: string; filters?: SearchFilters; specialty?: string };
   ProviderDetail: { providerId: string };
+  Booking: { providerId: string; providerName: string };
 };
 
 export type SavedStackParamList = {
   Saved: undefined;
   ProviderDetail: { providerId: string };
+  Booking: { providerId: string; providerName: string };
 };
 
 export type ProfileStackParamList = {

@@ -99,6 +99,7 @@ def nearby(
     lat: float = Query(...),
     lng: float = Query(...),
     limit: int = Query(10, ge=1, le=100),
+    radius: float = Query(50.0, ge=0.5, le=100.0),
 ):
     from math import radians, sin, cos, sqrt, atan2
 
@@ -183,7 +184,7 @@ def nearby(
             coords = IL_ZIP_COORDS.get(zipcode)
             if coords:
                 dist = haversine(lat, lng, coords[0], coords[1])
-                if dist <= 50:
+                if dist <= radius:
                     results.append((dist, row))
                     break
         if len(results) >= limit * 3:

@@ -213,17 +213,19 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
         <View style={styles.actionRow}>
           <TouchableOpacity
             style={[styles.actionBtn, styles.actionBtnOutline]}
+            onPress={() => provider.phone && Linking.openURL(`tel:${provider.phone}`)}
             activeOpacity={0.8}
           >
             <Ionicons name="call-outline" size={18} color={Colors.primary} />
             <Text style={styles.actionBtnOutlineText}>Call</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.actionBtn, styles.actionBtnOutline]}
-            activeOpacity={0.8}
+            style={[styles.actionBtn, styles.actionBtnPrimary]}
+            onPress={() => navigation.navigate('Booking', { providerId: provider.id, providerName: provider.name })}
+            activeOpacity={0.85}
           >
-            <Ionicons name="chatbubble-outline" size={18} color={Colors.primary} />
-            <Text style={styles.actionBtnOutlineText}>Message</Text>
+            <Ionicons name="calendar-outline" size={18} color={Colors.textInverse} />
+            <Text style={styles.actionBtnPrimaryText}>Book Appointment</Text>
           </TouchableOpacity>
         </View>
 
@@ -481,16 +483,23 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
       <View style={styles.stickyFooter}>
         <SafeAreaView edges={['bottom']} style={styles.stickyFooterInner}>
           <View style={styles.stickyFooterContent}>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.footerName} numberOfLines={1}>
                 {provider.name}
               </Text>
               {provider.next_available && (
                 <Text style={styles.footerAvailability}>
-                  <Ionicons name="calendar-outline" size={12} color={Colors.secondary} /> Next: {provider.next_available}
+                  Next: {provider.next_available}
                 </Text>
               )}
             </View>
+            <TouchableOpacity
+              style={styles.bookBtn}
+              onPress={() => navigation.navigate('Booking', { providerId: provider.id, providerName: provider.name })}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.bookBtnText}>Book</Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>

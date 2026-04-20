@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useSaved } from '../context/SavedContext';
+import { hasSetPreferences } from '../services/preferences';
 
 import {
   RootStackParamList,
@@ -18,12 +19,14 @@ import { Colors, Shadows, Radius } from '../theme';
 
 // Screens
 import OnboardingScreen from '../screens/OnboardingScreen';
+import OnboardingPreferencesScreen from '../screens/OnboardingPreferencesScreen';
 import AssessmentScreen from '../screens/AssessmentScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import FilterScreen from '../screens/FilterScreen';
 import ProviderDetailScreen from '../screens/ProviderDetailScreen';
 import VoiceAssessmentScreen from '../screens/VoiceAssessmentScreen';
+import BookingScreen from '../screens/BookingScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -36,11 +39,12 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 function HomeNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStack.Screen name="Assessment" component={AssessmentScreen} />
       <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="Assessment" component={AssessmentScreen} />
       <HomeStack.Screen name="Results" component={ResultsScreen} />
       <HomeStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
       <HomeStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
+      <HomeStack.Screen name="Booking" component={BookingScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -50,6 +54,7 @@ function SavedNavigator() {
     <SavedStack.Navigator screenOptions={{ headerShown: false }}>
       <SavedStack.Screen name="Saved" component={SavedScreen} />
       <SavedStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
+      <SavedStack.Screen name="Booking" component={BookingScreen} />
     </SavedStack.Navigator>
   );
 }
@@ -123,10 +128,26 @@ function MainTabs() {
 }
 
 export function AppNavigator() {
+  const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList | null>(null);
+
+  useEffect(() => {
+    // Check if user has already set preferences
+    // For demo: always show onboarding → preferences on first launch
+    hasSetPreferences().then(set => {
+      setInitialRoute(set ? 'MainTabs' : 'Onboarding');
+    });
+  }, []);
+
+  if (!initialRoute) return null;
+
   return (
     <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Navigator
+        initialRouteName={initialRoute}
+        screenOptions={{ headerShown: false }}
+      >
         <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
+        <RootStack.Screen name="PreferencesSetup" component={OnboardingPreferencesScreen} />
         <RootStack.Screen name="MainTabs" component={MainTabs} />
         <RootStack.Screen
           name="FilterModal"
