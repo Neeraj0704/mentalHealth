@@ -3,6 +3,7 @@
     "name": "MindPath",
     "slug": "mindpath",
     "version": "1.0.0",
+    "jsEngine": "jsc",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,14 +14,18 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.mindpath.app"
+      "bundleIdentifier": "com.mindpath.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "MindPath uses the microphone for real-time voice conversations."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#4A8B9F"
       },
-      "package": "com.mindpath.app"
+      "package": "com.mindpath.app",
+      "permissions": ["RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

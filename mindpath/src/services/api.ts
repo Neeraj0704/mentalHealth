@@ -66,6 +66,7 @@ export interface MindpathUI {
   progress: number;
   score: number | null;
   severity: string | null;
+  condition: string | null;
   options: string[] | null;
   providers: Array<{
     id: string;

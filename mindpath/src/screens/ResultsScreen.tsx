@@ -108,7 +108,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
       <Text style={styles.resultsCount}>
         {loading ? 'Searching...' : `${providers.length} providers found`}
       </Text>
-      {!loading && providers.length > 0 && (
+      {!loading && providers.length > 0 && !!query && (
         <Text style={styles.resultsSubtitle}>in {query}</Text>
       )}
     </View>
@@ -129,7 +129,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
           </TouchableOpacity>
           <View style={styles.titleSection}>
             <Text style={styles.title} numberOfLines={1}>
-              {query}
+              {query || 'All Providers'}
             </Text>
             <Text style={styles.subtitle}>Mental health providers</Text>
           </View>

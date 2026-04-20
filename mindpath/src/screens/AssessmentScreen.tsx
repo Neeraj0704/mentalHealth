@@ -374,11 +374,22 @@ export default function AssessmentScreen({ navigation }: Props) {
 
   const handleFindProviders = () => {
     if (!result) return;
+    if (!result.searchTerm) {
+      // "Not Sure" — go to Results with no filter so all providers are shown
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: 'Home' },
+          { name: 'Results', params: { query: '', specialty: '' } },
+        ],
+      });
+      return;
+    }
     navigation.reset({
       index: 1,
       routes: [
         { name: 'Home' },
-        { name: 'Results', params: { query: result.searchTerm || result.condition, specialty: result.searchTerm || undefined } },
+        { name: 'Results', params: { query: result.searchTerm, specialty: result.searchTerm } },
       ],
     });
   };
