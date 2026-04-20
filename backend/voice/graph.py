@@ -6,20 +6,25 @@ Each API turn:
 
 Phases:
   conversing  — Ollama drives a natural back-and-forth
-  extracting  — Ollama infers GAD-7 scores from the conversation
+  extracting  — Ollama infers scores from the conversation
   completed   — results ready
 """
 
+import re
 import logging
 from langgraph.graph import StateGraph, START, END
 
 from .state import ConversationState
-from .llm import SYSTEM_PROMPT, chat, extract_gad7_scores
-from .scoring import score_gad7
+from .llm import SYSTEM_PROMPT, chat, extract_gad7_scores, extract_phq9_scores
+from .scoring import score_gad7, score_phq9, score_generic
 
 logger = logging.getLogger(__name__)
 
-READY_TAG = "[READY_TO_MATCH]"
+READY_TAG_PATTERN = re.compile(r'\[READY_TO_MATCH(?::([^\]]+))?\]', re.IGNORECASE)
+
+SCORED_CONDITIONS   = {"Anxiety", "Depression"}
+GENERIC_CONDITIONS  = {"ADHD", "Trauma", "Bipolar", "Grief", "Relationships", "General"}
+VALID_CONDITIONS    = SCORED_CONDITIONS | GENERIC_CONDITIONS
 
 
 def _get_providers(condition: str) -> list:
@@ -47,24 +52,21 @@ async def converse_node(state: ConversationState) -> dict:
     messages = state.get("messages", [])
     user_input = state.get("user_input", "").strip()
 
-    # Build history — system prompt is always first
     history = [{"role": "system", "content": SYSTEM_PROMPT}]
-
-    # Append stored history
     history.extend(messages)
-
-    # Append this turn's user message
-    # On the very first turn user_input is empty — send a neutral kick-starter
     history.append({"role": "user", "content": user_input or "Hi"})
 
-    # Call Ollama
     reply = await chat(history)
 
-    # Check for ready signal
-    ready = READY_TAG in reply
-    clean_reply = reply.replace(READY_TAG, "").strip()
+    match = READY_TAG_PATTERN.search(reply)
+    ready = bool(match)
+    detected_condition = None
+    if match:
+        raw_cond = (match.group(1) or "").strip().title()
+        detected_condition = raw_cond if raw_cond in VALID_CONDITIONS else "General"
 
-    # Update stored messages
+    clean_reply = READY_TAG_PATTERN.sub("", reply).strip()
+
     updated_messages = list(messages)
     if user_input:
         updated_messages.append({"role": "user", "content": user_input})
@@ -74,6 +76,7 @@ async def converse_node(state: ConversationState) -> dict:
         "phase": "extracting" if ready else "conversing",
         "messages": updated_messages,
         "turn_count": state.get("turn_count", 0) + 1,
+        "detected_condition": detected_condition,
         "speech": clean_reply,
         "ui_options": None,
     }
@@ -83,16 +86,35 @@ async def converse_node(state: ConversationState) -> dict:
 
 async def extract_node(state: ConversationState) -> dict:
     messages = state.get("messages", [])
+    condition = state.get("detected_condition") or "Anxiety"
 
-    answers = await extract_gad7_scores(messages)
+    score = None
+    severity = None
+    instrument = None
 
-    # Fallback if extraction fails: assume mild (1 per item)
-    if not answers:
-        logger.warning("Score extraction failed — defaulting to mild (1s)")
-        answers = [1] * 7
+    if condition == "Anxiety":
+        instrument = "GAD7"
+        answers = await extract_gad7_scores(messages)
+        if not answers:
+            logger.warning("GAD-7 extraction failed — defaulting to mild (1s)")
+            answers = [1] * 7
+        score, severity, message = score_gad7(answers)
 
-    score, severity, message = score_gad7(answers)
-    providers = _get_providers("Anxiety")
+    elif condition == "Depression":
+        instrument = "PHQ9"
+        answers = await extract_phq9_scores(messages)
+        if not answers:
+            logger.warning("PHQ-9 extraction failed — defaulting to mild (1s)")
+            answers = [1] * 9
+        score, severity, message = score_phq9(answers)
+
+    else:
+        # No formal instrument for ADHD, Grief, Trauma, etc.
+        instrument = None
+        answers = None
+        score, severity, message = score_generic(condition)
+
+    providers = _get_providers(condition)
 
     provider_mention = ""
     if providers:
@@ -107,8 +129,8 @@ async def extract_node(state: ConversationState) -> dict:
 
     return {
         "phase": "completed",
-        "instrument": "GAD7",
-        "gad7_answers": answers,
+        "instrument": instrument,
+        "gad7_answers": answers if instrument == "GAD7" else None,
         "score": score,
         "severity": severity,
         "result_message": message,
@@ -141,7 +163,6 @@ builder.add_conditional_edges(
     {"converse": "converse", "extract": "extract", "__end__": END},
 )
 
-# After converse: if phase flipped to "extracting", chain immediately to extract
 def _after_converse(state: ConversationState) -> str:
     return "extract" if state.get("phase") == "extracting" else "__end__"
 

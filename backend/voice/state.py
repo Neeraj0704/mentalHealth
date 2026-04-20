@@ -6,6 +6,7 @@ class ConversationState(TypedDict):
     phase: str              # "conversing" | "extracting" | "completed"
     messages: List[dict]    # full chat history [{"role": "user/assistant", "content": "..."}]
     turn_count: int         # how many exchanges so far
+    detected_condition: Optional[str]   # e.g. "Anxiety", "Depression", "ADHD"
     # Populated after extraction
     instrument: Optional[str]
     gad7_answers: Optional[List[int]]
@@ -16,3 +17,4 @@ class ConversationState(TypedDict):
     # Per-turn output
     speech: str
     ui_options: Optional[List[str]]
+    user_input: str

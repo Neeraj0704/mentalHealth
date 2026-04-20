@@ -31,6 +31,7 @@ def _new_session(session_id: str) -> ConversationState:
         "phase": "conversing",
         "messages": [],
         "turn_count": 0,
+        "detected_condition": None,
         "instrument": None,
         "gad7_answers": None,
         "score": None,
@@ -79,6 +80,7 @@ def _build_ui(state: ConversationState) -> dict:
         "progress": progress,
         "score": state.get("score"),
         "severity": state.get("severity"),
+        "condition": state.get("detected_condition"),
         "options": state.get("ui_options"),
         "providers": providers_out,
     }

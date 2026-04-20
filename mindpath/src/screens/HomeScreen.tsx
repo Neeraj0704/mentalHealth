@@ -180,23 +180,35 @@ export default function HomeScreen({ navigation }: Props) {
         </SafeAreaView>
       </LinearGradient>
 
-      {/* Voice Assessment Banner */}
-      <TouchableOpacity
-        style={styles.voiceBanner}
-        onPress={() => navigation.navigate('VoiceAssessment')}
-        activeOpacity={0.88}
-      >
-        <View style={styles.voiceBannerLeft}>
-          <View style={styles.voiceMicCircle}>
-            <Ionicons name="mic" size={20} color={Colors.textInverse} />
-          </View>
-          <View>
-            <Text style={styles.voiceBannerTitle}>Voice Assessment</Text>
-            <Text style={styles.voiceBannerSub}>Answer a quick screener by speaking</Text>
-          </View>
+      {/* Get Matched — two-option cards */}
+      <View style={styles.matchSection}>
+        <Text style={styles.matchHeading}>How would you like to find a provider?</Text>
+        <View style={styles.matchRow}>
+          <TouchableOpacity
+            style={[styles.matchCard, styles.matchCardVoice]}
+            onPress={() => navigation.navigate('VoiceAssessment')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.matchIconCircle, { backgroundColor: Colors.primary }]}>
+              <Ionicons name="mic" size={22} color="#fff" />
+            </View>
+            <Text style={styles.matchCardTitle}>Talk to our AI</Text>
+            <Text style={styles.matchCardSub}>Chat with our bot — we'll match you</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.matchCard, styles.matchCardScreening]}
+            onPress={() => navigation.navigate('Assessment')}
+            activeOpacity={0.85}
+          >
+            <View style={[styles.matchIconCircle, { backgroundColor: Colors.accent }]}>
+              <Ionicons name="list" size={22} color="#fff" />
+            </View>
+            <Text style={styles.matchCardTitle}>Quick Screening</Text>
+            <Text style={styles.matchCardSub}>Answer a few questions to find the right match</Text>
+          </TouchableOpacity>
         </View>
-        <Ionicons name="chevron-forward" size={18} color={Colors.primary} />
-      </TouchableOpacity>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -375,38 +387,50 @@ const styles = StyleSheet.create({
   howNumText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
   howText:    { fontSize: 14, color: Colors.textSecondary, flex: 1 },
 
-  voiceBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.surface,
-    marginHorizontal: Spacing.md,
+  matchSection: {
+    paddingHorizontal: Spacing.md,
     marginTop: Spacing.md,
-    borderRadius: Radius.md,
-    padding: 14,
-    borderWidth: 1.5,
-    borderColor: Colors.primary + '33',
-    ...Shadows.sm,
+    gap: 10,
   },
-  voiceBannerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-  },
-  voiceMicCircle: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: Colors.primary,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  voiceBannerTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.textPrimary,
+  matchHeading: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.textSecondary,
     marginBottom: 2,
   },
-  voiceBannerSub: {
-    fontSize: 12,
+  matchRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  matchCard: {
+    flex: 1,
+    borderRadius: Radius.md,
+    padding: 16,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
+    ...Shadows.sm,
+  },
+  matchCardVoice: {
+    borderColor: Colors.primary + '44',
+  },
+  matchCardScreening: {
+    borderColor: Colors.accent + '44',
+  },
+  matchIconCircle: {
+    width: 42, height: 42, borderRadius: 21,
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 2,
+  },
+  matchCardTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+  matchCardSub: {
+    fontSize: 11,
     color: Colors.textSecondary,
+    lineHeight: 15,
   },
 });

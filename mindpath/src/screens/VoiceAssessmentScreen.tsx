@@ -1,15 +1,18 @@
 /**
- * VoiceAssessmentScreen
+ * VoiceAssessmentScreen — Option B
  *
- * Simple push-to-talk — runs in Expo Go, no native modules.
+ * Uses our custom backend (sendVoiceTurn) for conversation + provider matching.
+ * Uses AudioSession from @livekit/react-native for proper iOS audio routing.
+ * Adds silence-detection VAD so the conversation is hands-free after the first tap.
  *
  * Flow:
- *  1. Tap orb → start recording (mic opens)
- *  2. Tap orb again → stop recording, transcribe with ElevenLabs Scribe
- *  3. POST /chat/completions → get speech text + mindpath_ui
- *  4. ElevenLabs TTS plays response
- *  5. Orb returns to listening state automatically
+ *  1. Tap orb → AudioSession starts, recording begins with metering enabled
+ *  2. VAD watches dB level — after 1.5s of silence, auto-stops and transcribes
+ *  3. Transcript → sendVoiceTurn → get speech text + mindpath_ui
+ *  4. ElevenLabs TTS plays the response
+ *  5. After TTS finishes → auto-restart recording (loop, hands-free)
  *  6. When mindpath_ui.phase === 'completed' → orb shrinks, providers slide up
+ *  7. If STT fails (401/no plan) → text input fallback appears
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -21,6 +24,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import { AudioSession } from '@livekit/react-native';
 import * as FileSystem from 'expo-file-system';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '../types';
@@ -29,10 +33,12 @@ import { speak, stopSpeech } from '../services/elevenLabsTTS';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'VoiceAssessment'>;
 
-const EL_API_KEY = '6ded44660a946ccecacfd38dc72f2117ad08721ef3875ced2795041c9dd1ea4c';
-const STT_URL    = 'https://api.elevenlabs.io/v1/speech-to-text';
-const ORB_FULL   = 150;
-const ORB_SMALL  = 70;
+const EL_API_KEY     = '6ded44660a946ccecacfd38dc72f2117ad08721ef3875ced2795041c9dd1ea4c';
+const STT_URL        = 'https://api.elevenlabs.io/v1/speech-to-text';
+const ORB_FULL       = 150;
+const ORB_SMALL      = 70;
+const SILENCE_DB     = -38;   // dB threshold — below this is silence
+const SILENCE_MS     = 1500;  // ms of continuous silence before auto-stop
 
 type Phase = 'idle' | 'recording' | 'processing' | 'speaking' | 'completed';
 
@@ -69,19 +75,23 @@ function sevColor(s: string) {
 }
 
 export default function VoiceAssessmentScreen({ navigation }: Props) {
-  const [phase, setPhase]       = useState<Phase>('idle');
-  const [ui, setUi]             = useState<MindpathUI | null>(null);
-  const [hint, setHint]         = useState('Tap the orb to start speaking');
+  const [phase, setPhase]           = useState<Phase>('idle');
+  const [ui, setUi]                 = useState<MindpathUI | null>(null);
+  const [hint, setHint]             = useState('Tap the orb to start');
   const [showTextInput, setShowTextInput] = useState(false);
-  const [textVal, setTextVal]   = useState('');
+  const [textVal, setTextVal]       = useState('');
 
-  const sessionId    = useRef(makeSessionId());
-  const recordingRef = useRef<Audio.Recording | null>(null);
-  const doneRef      = useRef(false);
+  const sessionId     = useRef(makeSessionId());
+  const recordingRef  = useRef<Audio.Recording | null>(null);
+  const doneRef       = useRef(false);
+  const stoppingRef   = useRef(false);   // prevent double VAD trigger
+  const silenceSince  = useRef<number | null>(null);
 
-  // Animations — all useNativeDriver: false to avoid width/height conflict
-  // All size changes via transform:scale — never animate width/height directly
-  const orbScale  = useRef(new Animated.Value(1)).current;  // pulse + shrink on complete
+  // Ref-based bridge to break startListening ↔ sendTurn circular dependency
+  const startListeningRef = useRef<() => Promise<void>>(async () => {});
+
+  // ── Animations ──────────────────────────────────────────────────────────────
+  const orbScale  = useRef(new Animated.Value(1)).current;
   const ringScale = useRef(new Animated.Value(1)).current;
   const ringOpac  = useRef(new Animated.Value(0.25)).current;
   const spinVal   = useRef(new Animated.Value(0)).current;
@@ -128,7 +138,20 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
     loopAnim.current.start();
   }, [phase, stopAnims, orbScale, ringScale, ringOpac, spinVal]);
 
-  // ── Core conversation turn ────────────────────────────────────────────────
+  // ── Audio helpers ────────────────────────────────────────────────────────────
+
+  const stopRecording = useCallback(async (): Promise<string | null> => {
+    const rec = recordingRef.current;
+    if (!rec) return null;
+    recordingRef.current = null;
+    silenceSince.current = null;
+    stoppingRef.current = false;
+    try { await rec.stopAndUnloadAsync(); } catch {}
+    try { await AudioSession.stopAudioSession(); } catch {}
+    return rec.getURI() ?? null;
+  }, []);
+
+  // ── Core conversation turn ───────────────────────────────────────────────────
 
   const sendTurn = useCallback(async (transcript: string) => {
     if (!transcript || doneRef.current) return;
@@ -142,7 +165,8 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
       response = await sendVoiceTurn(sessionId.current, transcript);
     } catch (e) {
       console.warn('sendVoiceTurn error', e);
-      setPhase('idle'); setHint('Something went wrong. Tap to try again.');
+      setPhase('idle');
+      setHint('Something went wrong. Tap to try again.');
       return;
     }
 
@@ -164,9 +188,10 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
     setPhase('speaking');
     setHint('');
     await speak(response.speech);
+
+    // Auto-restart listening after TTS finishes
     if (!doneRef.current) {
-      setPhase('idle');
-      setHint('Tap the orb to respond');
+      await startListeningRef.current();
     }
   }, [orbScale, providerY, stopAnims]);
 
@@ -178,9 +203,8 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
     if (doneRef.current) return;
 
     if (!transcript) {
-      // STT failed (likely 401 / no plan) — fall back to text input
       setPhase('idle');
-      setHint('Voice transcription unavailable — type your response below');
+      setHint('Voice unavailable — type your response below');
       setShowTextInput(true);
       return;
     }
@@ -188,77 +212,114 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
     await sendTurn(transcript);
   }, [sendTurn]);
 
+  // ── VAD auto-stop ────────────────────────────────────────────────────────────
+
+  const triggerAutoStop = useCallback(async () => {
+    if (stoppingRef.current || doneRef.current) return;
+    stoppingRef.current = true;
+    const uri = await stopRecording();
+    if (uri && !doneRef.current) runTurn(uri);
+  }, [stopRecording, runTurn]);
+
+  // ── Start listening ──────────────────────────────────────────────────────────
+
+  const startListening = useCallback(async () => {
+    if (doneRef.current) return;
+
+    const { granted } = await Audio.requestPermissionsAsync();
+    if (!granted) { setHint('Microphone permission required'); return; }
+
+    try {
+      await stopSpeech();
+      await AudioSession.configureAudio({
+        ios: { defaultOutput: 'speaker' },
+        android: { preferredOutputList: ['speaker'] },
+      });
+      await AudioSession.startAudioSession();
+
+      const { recording } = await Audio.Recording.createAsync({
+        ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
+        isMeteringEnabled: true,
+      });
+
+      silenceSince.current = null;
+      stoppingRef.current = false;
+
+      recording.setOnRecordingStatusUpdate((status) => {
+        if (!status.isRecording || doneRef.current || stoppingRef.current) return;
+        const db = status.metering ?? 0;
+        if (db < SILENCE_DB) {
+          if (silenceSince.current === null) silenceSince.current = Date.now();
+          else if (Date.now() - silenceSince.current >= SILENCE_MS) {
+            triggerAutoStop();
+          }
+        } else {
+          silenceSince.current = null;
+        }
+      });
+      recording.setProgressUpdateInterval(100);
+
+      recordingRef.current = recording;
+      setPhase('recording');
+      setHint('Listening… speak naturally');
+    } catch (e) {
+      console.warn('startListening error', e);
+      setHint('Could not start recording');
+      AudioSession.stopAudioSession().catch(() => {});
+    }
+  }, [triggerAutoStop]);
+
+  // Keep the ref in sync so sendTurn can call it
+  useEffect(() => { startListeningRef.current = startListening; }, [startListening]);
+
+  // ── Orb tap handler ──────────────────────────────────────────────────────────
+
+  const handleOrbPress = useCallback(async () => {
+    if (phase === 'processing' || phase === 'speaking' || phase === 'completed') return;
+
+    if (phase === 'recording') {
+      // Manual stop — user tapped to end their turn early
+      const uri = await stopRecording();
+      if (uri) runTurn(uri);
+      return;
+    }
+
+    // idle → start listening
+    await startListening();
+  }, [phase, stopRecording, runTurn, startListening]);
+
   const handleTextSubmit = useCallback(() => {
     const text = textVal.trim();
     if (!text) return;
     sendTurn(text);
   }, [textVal, sendTurn]);
 
-  // ── Orb tap handler ───────────────────────────────────────────────────────
-
-  const handleOrbPress = useCallback(async () => {
-    if (phase === 'processing' || phase === 'speaking' || phase === 'completed') return;
-
-    if (phase === 'recording') {
-      // Stop recording → transcribe → send
-      if (!recordingRef.current) return;
-      const rec = recordingRef.current;
-      recordingRef.current = null;
-      try { await rec.stopAndUnloadAsync(); } catch {}
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true });
-      const uri = rec.getURI();
-      if (uri) runTurn(uri);
-      return;
-    }
-
-    // Start recording
-    const { granted } = await Audio.requestPermissionsAsync();
-    if (!granted) { setHint('Microphone permission required'); return; }
-
-    try {
-      await stopSpeech();
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY,
-      );
-      recordingRef.current = recording;
-      setPhase('recording');
-      setHint('Tap again when done speaking');
-    } catch (e) {
-      console.warn('startRecording error', e);
-      setHint('Could not start recording');
-    }
-  }, [phase, runTurn]);
-
-  // ── Cleanup ───────────────────────────────────────────────────────────────
+  // ── Cleanup ──────────────────────────────────────────────────────────────────
 
   const handleBack = useCallback(async () => {
     doneRef.current = true;
     stopAnims();
     await stopSpeech();
-    if (recordingRef.current) {
-      try { await recordingRef.current.stopAndUnloadAsync(); } catch {}
-      recordingRef.current = null;
-    }
+    await stopRecording();
     navigation.goBack();
-  }, [stopAnims, navigation]);
+  }, [stopAnims, stopRecording, navigation]);
 
   useEffect(() => () => {
     doneRef.current = true;
     stopSpeech().catch(() => {});
-    recordingRef.current?.stopAndUnloadAsync().catch(() => {});
-  }, []);
+    stopRecording().catch(() => {});
+  }, [stopRecording]);
 
-  // ── Derived ───────────────────────────────────────────────────────────────
+  // ── Derived ──────────────────────────────────────────────────────────────────
 
-  const orbColor = { idle: '#4F46E5', recording: '#EF4444', processing: '#6B7280', speaking: '#10B981', completed: '#4F46E5' }[phase];
-  const orbIcon  = { idle: 'mic-outline', recording: 'stop', processing: 'sync', speaking: 'volume-high', completed: 'checkmark' }[phase] as any;
-  const statusLabel = { idle: 'Ready', recording: 'Recording…', processing: 'Thinking…', speaking: 'Speaking…', completed: 'Done' }[phase];
+  const orbColor    = { idle: '#4F46E5', recording: '#EF4444', processing: '#6B7280', speaking: '#10B981', completed: '#4F46E5' }[phase];
+  const orbIcon     = { idle: 'mic-outline', recording: 'stop', processing: 'sync', speaking: 'volume-high', completed: 'checkmark' }[phase] as any;
+  const statusLabel = { idle: 'Ready', recording: 'Listening…', processing: 'Thinking…', speaking: 'Speaking…', completed: 'Done' }[phase];
 
   const providers   = ui?.providers ?? [];
   const isCompleted = phase === 'completed';
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
     <View style={styles.root}>
@@ -277,15 +338,12 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
       {/* Orb zone */}
       <View style={[styles.orbZone, isCompleted && styles.orbZoneCompact]}>
         <TouchableOpacity onPress={handleOrbPress} activeOpacity={0.85}>
-          {/* Fixed-size wrapper — size changes via transform:scale only */}
           <View style={{ width: ORB_FULL, height: ORB_FULL, alignItems: 'center', justifyContent: 'center' }}>
-            {/* Ring — fixed size, animated via scale + opacity */}
             <Animated.View style={[styles.ring, {
               borderColor: orbColor,
               opacity: ringOpac,
               transform: [{ scale: ringScale }],
             }]} />
-            {/* Orb — fixed size, transform handles both pulse and shrink */}
             <Animated.View style={[styles.orb, {
               backgroundColor: orbColor,
               transform: [
@@ -302,7 +360,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
         {!!hint && <Text style={styles.hintText}>{hint}</Text>}
       </View>
 
-      {/* Text input fallback — shown when STT is unavailable */}
+      {/* Text input fallback */}
       {showTextInput && !isCompleted && (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -438,8 +496,7 @@ const styles = StyleSheet.create({
   textInputBar: {
     position: 'absolute', left: 0, right: 0, bottom: 0,
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingHorizontal: 16, paddingVertical: 12,
-    paddingBottom: 28,
+    paddingHorizontal: 16, paddingVertical: 12, paddingBottom: 28,
     backgroundColor: '#13161E',
     borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)',
   },

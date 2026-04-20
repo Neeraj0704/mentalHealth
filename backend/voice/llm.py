@@ -33,15 +33,19 @@ Rules:
 - Ask one follow-up question at a time based on what they share.
 - Do NOT ask formal screening questions. Do NOT mention GAD-7, PHQ-9, or any clinical tools.
 - Naturally explore: anxiety/worry, low mood, sleep, energy, concentration, irritability, daily impact.
-- After 6 to 10 exchanges, once you have a clear picture, end your message with exactly: [READY_TO_MATCH]
+- After 6 to 10 exchanges, once you have a clear picture, determine the primary condition the person is dealing with.
+- Valid conditions: Anxiety, Depression, ADHD, Trauma, Bipolar, Grief, Relationships, General
+- End your message with exactly: [READY_TO_MATCH:Condition] where Condition is one of the valid values above.
 
 Example of good tone:
 User: "I've been feeling really on edge lately"
 You: "I'm sorry to hear that. Has it been hard to wind down, even when nothing specific is going on?"
 
+Example ready signal: [READY_TO_MATCH:Anxiety]
+
 Start the conversation by asking how they've been feeling lately."""
 
-EXTRACTION_PROMPT = """Based on the conversation below, rate the person's symptoms for each GAD-7 item.
+EXTRACTION_PROMPT_GAD7 = """Based on the conversation below, rate the person's symptoms for each GAD-7 item.
 
 Use this scale:
 0 = Not at all
@@ -59,6 +63,30 @@ Items:
 7. Feeling afraid as if something awful might happen
 
 Respond with ONLY 7 numbers separated by commas. Nothing else. Example: 2,1,2,0,1,2,1
+
+Conversation:
+{history}"""
+
+EXTRACTION_PROMPT_PHQ9 = """Based on the conversation below, rate the person's symptoms for each PHQ-9 item.
+
+Use this scale:
+0 = Not at all
+1 = Several days
+2 = More than half the days
+3 = Nearly every day
+
+Items:
+1. Little interest or pleasure in doing things
+2. Feeling down, depressed, or hopeless
+3. Trouble falling or staying asleep, or sleeping too much
+4. Feeling tired or having little energy
+5. Poor appetite or overeating
+6. Feeling bad about yourself
+7. Trouble concentrating on things
+8. Moving or speaking so slowly that other people could have noticed, or being fidgety/restless
+9. Thoughts that you would be better off dead or of hurting yourself
+
+Respond with ONLY 9 numbers separated by commas. Nothing else. Example: 2,1,2,0,1,2,1,0,0
 
 Conversation:
 {history}"""
@@ -132,19 +160,15 @@ async def chat(messages: list) -> str:
     return result
 
 
-async def extract_gad7_scores(history: list) -> Optional[list]:
-    """
-    Given conversation history, ask Ollama to infer GAD-7 scores.
-    Returns list of 7 ints (0-3), or None on failure.
-    """
-    # Build a readable transcript
-    transcript = "\n".join(
+def _build_transcript(history: list) -> str:
+    return "\n".join(
         f"{m['role'].capitalize()}: {m['content']}"
         for m in history
         if m["role"] in ("user", "assistant")
     )
-    prompt = EXTRACTION_PROMPT.format(history=transcript)
 
+
+async def _extract_scores(prompt: str, expected: int) -> Optional[list]:
     raw = await _ollama_chat([{"role": "user", "content": prompt}])
     if raw is None:
         raw = await _haiku_chat([
@@ -153,8 +177,19 @@ async def extract_gad7_scores(history: list) -> Optional[list]:
         ])
     if not raw:
         return None
-
     nums = re.findall(r"\b[0-3]\b", raw)
-    if len(nums) >= 7:
-        return [int(n) for n in nums[:7]]
+    if len(nums) >= expected:
+        return [int(n) for n in nums[:expected]]
     return None
+
+
+async def extract_gad7_scores(history: list) -> Optional[list]:
+    """Infer GAD-7 scores (7 items, 0-3) from conversation. Returns list or None."""
+    prompt = EXTRACTION_PROMPT_GAD7.format(history=_build_transcript(history))
+    return await _extract_scores(prompt, 7)
+
+
+async def extract_phq9_scores(history: list) -> Optional[list]:
+    """Infer PHQ-9 scores (9 items, 0-3) from conversation. Returns list or None."""
+    prompt = EXTRACTION_PROMPT_PHQ9.format(history=_build_transcript(history))
+    return await _extract_scores(prompt, 9)
