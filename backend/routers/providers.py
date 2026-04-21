@@ -8,6 +8,8 @@ router = APIRouter()
 
 def build_provider_query(
     q: Optional[str] = None,
+    zip_code: Optional[str] = None,
+    city: Optional[str] = None,
     condition: Optional[str] = None,
     telehealth_only: bool = False,
     accepting_only: bool = False,
@@ -24,8 +26,15 @@ def build_provider_query(
     params = []
 
     if q:
-        conditions.append("(name LIKE ? OR overview LIKE ? OR specialty LIKE ? OR locations LIKE ?)")
-        params.extend([f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%"])
+        conditions.append("(name LIKE ? OR overview LIKE ? OR specialty LIKE ? OR specialties LIKE ? OR conditions_treated LIKE ?)")
+        params.extend([f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%"])
+    if zip_code:
+        conditions.append('locations LIKE ?')
+        params.append(f'%"zipcode": "{zip_code.strip()}"%')
+    if city:
+        # Case-insensitive city match (DB stores mixed case: "Chicago", "CHICAGO")
+        conditions.append('LOWER(locations) LIKE ?')
+        params.append(f'%"city": "{city.strip().lower()}"%')
     if condition:
         conditions.append("conditions_treated LIKE ?")
         params.append(f"%{condition}%")
@@ -218,9 +227,11 @@ def get_provider(provider_id: str):
 
 @router.get("/providers")
 def list_providers(
-    limit: int = Query(20, ge=1, le=200),
+    limit: int = Query(20, ge=1, le=500),
     offset: int = Query(0, ge=0),
     q: Optional[str] = None,
+    zip_code: Optional[str] = None,
+    city: Optional[str] = None,
     condition: Optional[str] = None,
     gender: Optional[str] = None,
     telehealth_only: bool = False,
@@ -233,11 +244,11 @@ def list_providers(
     sort: Optional[str] = None,
 ):
     count_sql, data_sql, params, limit, offset = build_provider_query(
-        q=q, condition=condition, telehealth_only=telehealth_only,
-        accepting_only=accepting_only, insurance=insurance, language=language,
-        specialty=specialty, min_rating=min_rating,
-        min_years_experience=min_years_experience, sort=sort,
-        limit=limit, offset=offset,
+        q=q, zip_code=zip_code, city=city, condition=condition,
+        telehealth_only=telehealth_only, accepting_only=accepting_only,
+        insurance=insurance, language=language, specialty=specialty,
+        min_rating=min_rating, min_years_experience=min_years_experience,
+        sort=sort, limit=limit, offset=offset,
     )
 
     conn = get_connection()

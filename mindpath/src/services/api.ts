@@ -12,11 +12,22 @@ async function fetchProviders(params: Record<string, string | number | boolean>)
   return data.providers as Provider[];
 }
 
+const ZIP_RE = /^\d{5}$/;
+
 export async function getProviders(filters?: Partial<SearchFilters>, q?: string, specialty?: string): Promise<Provider[]> {
-  const params: Record<string, string | number | boolean> = { limit: 100 };
-  if (q) params.q = q;
+  const params: Record<string, string | number | boolean> = { limit: 500 };
+
+  if (q) {
+    const trimmed = q.trim();
+    if (ZIP_RE.test(trimmed)) {
+      // Route 5-digit ZIP codes as a dedicated filter for exact JSON match
+      params.zip_code = trimmed;
+    } else {
+      params.q = trimmed;
+    }
+  }
+
   if (specialty) params.condition = specialty;
-  if (filters?.gender?.length === 1) params.gender = filters.gender[0];
   if (filters?.telehealth_only) params.telehealth_only = true;
   if (filters?.accepting_new_patients) params.accepting_only = true;
   if (filters?.insurance?.length) params.insurance = filters.insurance[0];

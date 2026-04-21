@@ -16,7 +16,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.mindpath.app",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "MindPath uses the microphone for real-time voice conversations."
+        "NSMicrophoneUsageDescription": "MindPath uses the microphone for real-time voice conversations.",
+        "NSLocationWhenInUseUsageDescription": "MindPath uses your location to show mental health providers near you."
       }
     },
     "android": {
@@ -25,13 +26,19 @@
         "backgroundColor": "#4A8B9F"
       },
       "package": "com.mindpath.app",
-      "permissions": ["RECORD_AUDIO"]
+      "permissions": ["RECORD_AUDIO", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "MindPath uses your location to show mental health providers near you."
+        }
+      ]
     ]
   }
 }

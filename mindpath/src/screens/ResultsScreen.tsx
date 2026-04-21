@@ -15,7 +15,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeStackParamList, Provider, SearchFilters } from '../types';
 import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
 import { getProviders, getNearby } from '../services/api';
-import * as Location from 'expo-location';
+import { useLocation } from '../context/LocationContext';
 import ProviderCard from '../components/ProviderCard';
 import { LoadingCard } from '../components/LoadingCard';
 import { EmptyState } from '../components/EmptyState';
@@ -63,6 +63,7 @@ function sortProviders(providers: Provider[], key: string): Provider[] {
 export default function ResultsScreen({ navigation, route }: Props) {
   const { query, specialty } = route.params;
   const { filters, activeFilterCount, resetFilters } = useFilters();
+  const { userLocation, locationGranted, locationLoading, locationDenied, openLocationSettings } = useLocation();
   const [loading, setLoading] = useState(true);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [sortKey, setSortKey] = useState('rating');
@@ -74,27 +75,37 @@ export default function ResultsScreen({ navigation, route }: Props) {
     let cancelled = false;
     const load = async () => {
       setLoading(true);
+      console.log('[Results] load() — max_distance_miles:', filters.max_distance_miles, 'locationLoading:', locationLoading, 'locationGranted:', locationGranted, 'userLocation:', userLocation);
       try {
         let data: Provider[];
-        if (filters.max_distance_miles > 0) {
-          const { status } = await Location.requestForegroundPermissionsAsync();
-          if (status !== 'granted') {
-            // Permission denied — fall back to all providers
-            data = await getProviders(filters, query, selectedChip ?? specialty);
-          } else {
-            const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-            data = await getNearby(loc.coords.latitude, loc.coords.longitude, 200, filters.max_distance_miles);
-            // Filter by specialty/condition client-side since nearby endpoint returns all
-            const cond = selectedChip ?? specialty;
-            if (cond) {
-              data = data.filter(p =>
-                p.specialties.some(s => s.toLowerCase().includes(cond.toLowerCase())) ||
-                p.conditions_treated.some(c => c.toLowerCase().includes(cond.toLowerCase()))
-              );
-            }
+        if (filters.max_distance_miles > 0 && locationLoading) {
+          console.log('[Results] waiting for location...');
+          return;
+        }
+        if (filters.max_distance_miles > 0 && locationGranted && userLocation) {
+          // If device is outside Illinois bounds, fall back to Chicago center
+          const IL_BOUNDS = { latMin: 36.9, latMax: 42.6, lngMin: -91.6, lngMax: -87.0 };
+          const CHICAGO = { lat: 41.8827, lng: -87.6294 };
+          const inIllinois = userLocation.lat >= IL_BOUNDS.latMin && userLocation.lat <= IL_BOUNDS.latMax &&
+            userLocation.lng >= IL_BOUNDS.lngMin && userLocation.lng <= IL_BOUNDS.lngMax;
+          const searchLoc = inIllinois ? userLocation : CHICAGO;
+          console.log('[Results] calling getNearby lat:', searchLoc.lat, 'lng:', searchLoc.lng, 'radius:', filters.max_distance_miles, 'inIllinois:', inIllinois);
+          data = await getNearby(searchLoc.lat, searchLoc.lng, 500, filters.max_distance_miles);
+          console.log('[Results] getNearby returned', data.length, 'providers');
+          const cond = selectedChip ?? specialty;
+          if (cond) {
+            data = data.filter(p =>
+              p.specialties.some(s => s.toLowerCase().includes(cond.toLowerCase())) ||
+              p.conditions_treated.some(c => c.toLowerCase().includes(cond.toLowerCase()))
+            );
           }
+        } else if (filters.max_distance_miles > 0 && locationDenied) {
+          console.log('[Results] location denied, showing empty');
+          data = [];
         } else {
+          console.log('[Results] calling getProviders, query:', query);
           data = await getProviders(filters, query, selectedChip ?? specialty);
+          console.log('[Results] getProviders returned', data.length, 'providers');
         }
         if (!cancelled) {
           const results = applyFilters(data, filters);
@@ -108,7 +119,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
     };
     load();
     return () => { cancelled = true; };
-  }, [filters, sortKey, query, specialty, selectedChip]);
+  }, [filters, sortKey, query, specialty, selectedChip, userLocation, locationGranted, locationLoading]);
 
   const toggleSortSheet = () => {
     if (!showSortSheet) {
@@ -136,7 +147,7 @@ export default function ResultsScreen({ navigation, route }: Props) {
   const renderHeader = () => (
     <View style={styles.listHeader}>
       <Text style={styles.resultsCount}>
-        {loading ? 'Searching...' : `${providers.length} providers found`}
+        {loading ? 'Searching...' : `${providers.length >= 500 ? '500+' : providers.length} providers found`}
       </Text>
       {!loading && providers.length > 0 && !!query && (
         <Text style={styles.resultsSubtitle}>in {query}</Text>
@@ -266,17 +277,35 @@ export default function ResultsScreen({ navigation, route }: Props) {
         </TouchableOpacity>
       )}
 
+      {filters.max_distance_miles > 0 && locationDenied && (
+        <TouchableOpacity style={styles.locationBanner} onPress={openLocationSettings} activeOpacity={0.8}>
+          <Ionicons name="location-outline" size={16} color="#b45309" />
+          <Text style={styles.locationBannerText}>
+            Location access needed for distance filter.{' '}
+            <Text style={styles.locationBannerLink}>Open Settings</Text>
+          </Text>
+        </TouchableOpacity>
+      )}
+
       {loading ? (
         <View style={styles.loadingContainer}>
           {[1, 2, 3].map((k) => (
             <LoadingCard key={k} />
           ))}
         </View>
+      ) : providers.length === 0 && filters.max_distance_miles > 0 && locationDenied ? (
+        <EmptyState
+          icon="location-outline"
+          title="Location access needed"
+          description="Enable location access to find providers near you. Tap the banner above to open Settings."
+          actionLabel="Open Settings"
+          onAction={openLocationSettings}
+        />
       ) : providers.length === 0 ? (
         <EmptyState
           icon="search-outline"
           title="No providers found"
-          description={`We couldn't find mental health providers matching your current filters in ${query}. Try adjusting your search.`}
+          description={`We couldn't find mental health providers matching your current filters${query ? ` in ${query}` : ''}. Try adjusting your search.`}
           actionLabel="Clear Filters"
           onAction={resetFilters}
         />
@@ -340,6 +369,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
     ...Shadows.xs,
+  },
+  locationBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#fef3c7',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#fde68a',
+  },
+  locationBannerText: {
+    fontSize: 13,
+    color: '#92400e',
+    flex: 1,
+  },
+  locationBannerLink: {
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   topBar: {
     flexDirection: 'row',

@@ -62,8 +62,12 @@ async def converse_node(state: ConversationState) -> dict:
     ready = bool(match)
     detected_condition = None
     if match:
-        raw_cond = (match.group(1) or "").strip().title()
-        detected_condition = raw_cond if raw_cond in VALID_CONDITIONS else "General"
+        raw_cond = (match.group(1) or "").strip()
+        # Case-insensitive lookup so "ADHD", "adhd", "Adhd" all resolve correctly
+        detected_condition = next(
+            (c for c in VALID_CONDITIONS if c.lower() == raw_cond.lower()),
+            "General"
+        )
 
     clean_reply = READY_TAG_PATTERN.sub("", reply).strip()
 

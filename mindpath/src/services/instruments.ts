@@ -142,7 +142,10 @@ const INSTRUMENT_MAP: Record<string, Instrument> = {
 };
 
 export function getInstrument(condition: string): Instrument | null {
-  return INSTRUMENT_MAP[condition] ?? null;
+  const key = Object.keys(INSTRUMENT_MAP).find(
+    k => k.toLowerCase() === condition.toLowerCase()
+  );
+  return key ? INSTRUMENT_MAP[key] : null;
 }
 
 // ── Scoring ───────────────────────────────────────────────────────────────────

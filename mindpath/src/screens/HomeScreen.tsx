@@ -66,9 +66,11 @@ export default function HomeScreen({ navigation }: Props) {
   const [query, setQuery] = useState('');
   const [trending, setTrending] = useState<string[]>([]);
   const [nearbyRadius, setNearbyRadius] = useState(25);
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [sections, setSections] = useState<Record<string, { data: Provider[]; loading: boolean }>>({
     nearby:   { data: [], loading: true },
     topRated: { data: [], loading: true },
+    forYou:   { data: [], loading: true },
   });
 
   const inputScale = useRef(new Animated.Value(1)).current;
@@ -79,19 +81,75 @@ export default function HomeScreen({ navigation }: Props) {
 
   useEffect(() => {
     getTrendingSearches().then(setTrending);
-    getPreferences().then(p => setNearbyRadius(p.maxDistanceMiles));
-    loadSections();
+    getPreferences().then(p => {
+      setNearbyRadius(p.maxDistanceMiles);
+      loadSections(p.maxDistanceMiles, p);
+    });
   }, []);
 
-  const loadSections = async (radius?: number) => {
+  const loadSections = async (radius?: number, prefs?: Awaited<ReturnType<typeof getPreferences>>) => {
     const [topRated] = await Promise.allSettled([getTopRated(10)]);
     setSection('topRated', topRated.status === 'fulfilled' ? topRated.value : [], false);
-    await loadNearby(radius);
+    await loadNearbyAndForYou(radius, prefs);
+  };
+
+  const loadNearbyAndForYou = async (radius?: number, prefs?: Awaited<ReturnType<typeof getPreferences>>) => {
+    const r = radius ?? nearbyRadius;
+    setSection('nearby', [], true);
+    setSection('forYou', [], true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+        const coords = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+
+        // Illinois bounds fallback (providers are Chicago-area only)
+        const IL_BOUNDS = { latMin: 36.9, latMax: 42.6, lngMin: -91.6, lngMax: -87.0 };
+        const CHICAGO = { lat: 41.8827, lng: -87.6294 };
+        const inIllinois = coords.lat >= IL_BOUNDS.latMin && coords.lat <= IL_BOUNDS.latMax &&
+          coords.lng >= IL_BOUNDS.lngMin && coords.lng <= IL_BOUNDS.lngMax;
+        const searchCoords = inIllinois ? coords : CHICAGO;
+        setUserCoords(searchCoords);
+
+        const [nearby, forYouRaw] = await Promise.all([
+          getNearby(searchCoords.lat, searchCoords.lng, 10, r),
+          prefs ? getNearby(searchCoords.lat, searchCoords.lng, 20, prefs.maxDistanceMiles) : Promise.resolve([]),
+        ]);
+        setSection('nearby', nearby, false);
+
+        // Apply preference filters client-side
+        let forYou = forYouRaw;
+        if (prefs?.insurance) {
+          forYou = forYou.filter(p => p.insurance_accepted.some(ins =>
+            ins.toLowerCase().includes(prefs.insurance.toLowerCase())
+          ));
+        }
+        if (prefs?.providerGenderPreference && prefs.providerGenderPreference !== 'No preference') {
+          forYou = forYou.filter(p => p.gender === prefs.providerGenderPreference);
+        }
+        setSection('forYou', forYou, false);
+      } else {
+        setSection('nearby', [], false);
+        setSection('forYou', [], false);
+      }
+    } catch {
+      setSection('nearby', [], false);
+      setSection('forYou', [], false);
+    }
   };
 
   const loadNearby = async (radius?: number) => {
     const r = radius ?? nearbyRadius;
     setSection('nearby', [], true);
+    if (userCoords) {
+      try {
+        const nearby = await getNearby(userCoords.lat, userCoords.lng, 10, r);
+        setSection('nearby', nearby, false);
+      } catch {
+        setSection('nearby', [], false);
+      }
+      return;
+    }
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
@@ -256,6 +314,17 @@ export default function HomeScreen({ navigation }: Props) {
           />
           {renderMiniList(sections.topRated.data, sections.topRated.loading)}
         </View>
+
+        {/* For You */}
+        {(sections.forYou.loading || sections.forYou.data.length > 0) && (
+          <View style={styles.section}>
+            <SectionHeader
+              title="Based on Your Preferences"
+              onSeeAll={() => goToResults({ query: '' })}
+            />
+            {renderMiniList(sections.forYou.data, sections.forYou.loading)}
+          </View>
+        )}
 
         {/* Browse by Specialty */}
         <View style={styles.section}>
