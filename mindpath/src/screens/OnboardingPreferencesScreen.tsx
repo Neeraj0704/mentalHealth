@@ -50,14 +50,30 @@ export default function OnboardingPreferencesScreen({ navigation }: Props) {
   const [anonymous, setAnonymous] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const goToScreening = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{
+        name: 'MainTabs',
+        state: {
+          routes: [{
+            name: 'HomeTab',
+            state: { routes: [{ name: 'Home' }, { name: 'Assessment' }], index: 1 },
+          }],
+          index: 0,
+        },
+      }],
+    });
+  };
+
   const handleContinue = async () => {
     setSaving(true);
     await savePreferences({ gender, ageGroup, race, insurance, providerGenderPreference: providerGender, maxDistanceMiles: maxDistance, anonymousMode: anonymous });
-    navigation.replace('MainTabs');
+    goToScreening();
   };
 
   const handleSkip = () => {
-    navigation.replace('MainTabs');
+    goToScreening();
   };
 
   return (
@@ -70,7 +86,7 @@ export default function OnboardingPreferencesScreen({ navigation }: Props) {
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.headerSub}>Help us show you the most relevant providers. All fields are optional.</Text>
+        <Text style={styles.headerSub}>Help us show you the most relevant providers.</Text>
       </SafeAreaView>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

@@ -127,7 +127,9 @@ export type ProfileStackParamList = {
 };
 
 export type MainTabParamList = {
+  ScreeningTab: NavigatorScreenParams<HomeStackParamList>;
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
+  AITab: undefined;
   SavedTab: NavigatorScreenParams<SavedStackParamList>;
   ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
 };

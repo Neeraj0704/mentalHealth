@@ -54,6 +54,14 @@ interface Section {
 
 const RADIUS_OPTIONS = [2, 5, 10, 25, 50];
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Good morning';
+  if (hour >= 12 && hour < 17) return 'Good afternoon';
+  if (hour >= 17 && hour < 22) return 'Good evening';
+  return 'Still up?';
+}
+
 export default function HomeScreen({ navigation }: Props) {
   const [query, setQuery] = useState('');
   const [trending, setTrending] = useState<string[]>([]);
@@ -158,7 +166,7 @@ export default function HomeScreen({ navigation }: Props) {
         <SafeAreaView edges={['top']} style={styles.headerInner}>
           <View style={styles.headerTop}>
             <View>
-              <Text style={styles.greeting}>Good morning 👋</Text>
+              <Text style={styles.greeting}>{getGreeting()}</Text>
               <Text style={styles.headerTitle}>Find your provider</Text>
             </View>
             <TouchableOpacity style={styles.notifBtn}>
@@ -194,36 +202,6 @@ export default function HomeScreen({ navigation }: Props) {
         </SafeAreaView>
       </LinearGradient>
 
-      {/* Get Matched — two-option cards */}
-      <View style={styles.matchSection}>
-        <Text style={styles.matchHeading}>How would you like to find a provider?</Text>
-        <View style={styles.matchRow}>
-          <TouchableOpacity
-            style={[styles.matchCard, styles.matchCardVoice]}
-            onPress={() => navigation.navigate('VoiceAssessment')}
-            activeOpacity={0.85}
-          >
-            <View style={[styles.matchIconCircle, { backgroundColor: Colors.primary }]}>
-              <Ionicons name="mic" size={22} color="#fff" />
-            </View>
-            <Text style={styles.matchCardTitle}>Talk to our AI</Text>
-            <Text style={styles.matchCardSub}>Chat with our bot — we'll match you</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.matchCard, styles.matchCardScreening]}
-            onPress={() => navigation.navigate('Assessment')}
-            activeOpacity={0.85}
-          >
-            <View style={[styles.matchIconCircle, { backgroundColor: Colors.accent }]}>
-              <Ionicons name="list" size={22} color="#fff" />
-            </View>
-            <Text style={styles.matchCardTitle}>Quick Screening</Text>
-            <Text style={styles.matchCardSub}>Answer a few questions to find the right match</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -249,7 +227,7 @@ export default function HomeScreen({ navigation }: Props) {
         {(sections.nearby.loading || sections.nearby.data.length > 0) && (
           <View style={styles.section}>
             <SectionHeader
-              title="📍 Near You"
+              title="Near You"
               onSeeAll={() => goToResults({ query: 'Chicago' })}
             />
             <View style={styles.radiusRow}>
@@ -273,7 +251,7 @@ export default function HomeScreen({ navigation }: Props) {
         {/* Top Rated */}
         <View style={styles.section}>
           <SectionHeader
-            title="⭐ Top Rated"
+            title="Top Rated"
             onSeeAll={() => goToResults({ query: '', specialty: undefined })}
           />
           {renderMiniList(sections.topRated.data, sections.topRated.loading)}
@@ -438,50 +416,4 @@ const styles = StyleSheet.create({
   howNumText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
   howText:    { fontSize: 14, color: Colors.textSecondary, flex: 1 },
 
-  matchSection: {
-    paddingHorizontal: Spacing.md,
-    marginTop: Spacing.md,
-    gap: 10,
-  },
-  matchHeading: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    marginBottom: 2,
-  },
-  matchRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  matchCard: {
-    flex: 1,
-    borderRadius: Radius.md,
-    padding: 16,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.surface,
-    ...Shadows.sm,
-  },
-  matchCardVoice: {
-    borderColor: Colors.primary + '44',
-  },
-  matchCardScreening: {
-    borderColor: Colors.accent + '44',
-  },
-  matchIconCircle: {
-    width: 42, height: 42, borderRadius: 21,
-    alignItems: 'center', justifyContent: 'center',
-    marginBottom: 2,
-  },
-  matchCardTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-  },
-  matchCardSub: {
-    fontSize: 11,
-    color: Colors.textSecondary,
-    lineHeight: 15,
-  },
 });

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSaved } from '../context/SavedContext';
-import { hasSetPreferences } from '../services/preferences';
 
 import {
   RootStackParamList,
@@ -15,7 +15,7 @@ import {
   MainTabParamList,
 } from '../types';
 
-import { Colors, Shadows, Radius } from '../theme';
+import { Colors, Shadows } from '../theme';
 
 // Screens
 import OnboardingScreen from '../screens/OnboardingScreen';
@@ -32,6 +32,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const ScreeningStack = createNativeStackNavigator<HomeStackParamList>();
 const SavedStack = createNativeStackNavigator<SavedStackParamList>();
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -46,6 +47,19 @@ function HomeNavigator() {
       <HomeStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
       <HomeStack.Screen name="Booking" component={BookingScreen} />
     </HomeStack.Navigator>
+  );
+}
+
+function ScreeningNavigator() {
+  return (
+    <ScreeningStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Assessment">
+      <ScreeningStack.Screen name="Assessment" component={AssessmentScreen} />
+      <ScreeningStack.Screen name="Results" component={ResultsScreen} />
+      <ScreeningStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
+      <ScreeningStack.Screen name="Booking" component={BookingScreen} />
+      <ScreeningStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
+      <ScreeningStack.Screen name="Home" component={HomeScreen} />
+    </ScreeningStack.Navigator>
   );
 }
 
@@ -76,6 +90,28 @@ function TabBadge({ count }: { count: number }) {
   );
 }
 
+function AIOrbButton({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.orbWrapper} activeOpacity={0.85}>
+      <View style={styles.orbShadow}>
+        <LinearGradient
+          colors={['#2E6A7E', '#4A8B9F']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.orbGradient}
+        >
+          <View style={styles.orbInner}>
+            <View style={styles.orbPulse1} />
+            <View style={styles.orbPulse2} />
+            <Ionicons name="aperture-outline" size={24} color="#fff" />
+          </View>
+        </LinearGradient>
+      </View>
+      <Text style={styles.orbLabel}>Mira</Text>
+    </TouchableOpacity>
+  );
+}
+
 function MainTabs() {
   const { savedIds } = useSaved();
 
@@ -88,9 +124,12 @@ function MainTabs() {
         tabBarInactiveTintColor: Colors.textTertiary,
         tabBarLabelStyle: styles.tabBarLabel,
         tabBarItemStyle: styles.tabBarItem,
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused, color }) => {
+          if (route.name === 'AITab') return null;
           let iconName: keyof typeof Ionicons.glyphMap = 'home';
-          if (route.name === 'HomeTab') {
+          if (route.name === 'ScreeningTab') {
+            iconName = focused ? 'clipboard' : 'clipboard-outline';
+          } else if (route.name === 'HomeTab') {
             iconName = focused ? 'search' : 'search-outline';
           } else if (route.name === 'SavedTab') {
             iconName = focused ? 'bookmark' : 'bookmark-outline';
@@ -109,9 +148,24 @@ function MainTabs() {
       })}
     >
       <Tab.Screen
+        name="ScreeningTab"
+        component={ScreeningNavigator}
+        options={{ tabBarLabel: 'Screening' }}
+      />
+      <Tab.Screen
         name="HomeTab"
         component={HomeNavigator}
         options={{ tabBarLabel: 'Discover' }}
+      />
+      <Tab.Screen
+        name="AITab"
+        component={HomeNavigator}
+        options={({ navigation }) => ({
+          tabBarLabel: '',
+          tabBarButton: () => (
+            <AIOrbButton onPress={() => navigation.navigate('HomeTab', { screen: 'VoiceAssessment' } as any)} />
+          ),
+        })}
       />
       <Tab.Screen
         name="SavedTab"
@@ -128,22 +182,10 @@ function MainTabs() {
 }
 
 export function AppNavigator() {
-  const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList | null>(null);
-
-  useEffect(() => {
-    // Check if user has already set preferences
-    // For demo: always show onboarding → preferences on first launch
-    hasSetPreferences().then(set => {
-      setInitialRoute(set ? 'MainTabs' : 'Onboarding');
-    });
-  }, []);
-
-  if (!initialRoute) return null;
-
   return (
     <NavigationContainer>
       <RootStack.Navigator
-        initialRouteName={initialRoute}
+        initialRouteName="Onboarding"
         screenOptions={{ headerShown: false }}
       >
         <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
@@ -200,6 +242,58 @@ const styles = StyleSheet.create({
     color: Colors.textInverse,
     fontSize: 9,
     fontWeight: '700',
+  },
+  orbWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -16,
+    flex: 1,
+  },
+  orbShadow: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#2E6A7E',
+    shadowColor: '#2E6A7E',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  orbGradient: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orbInner: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orbPulse1: {
+    position: 'absolute',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+  },
+  orbPulse2: {
+    position: 'absolute',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  orbLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginTop: 4,
+    letterSpacing: 0.3,
   },
 });
 
