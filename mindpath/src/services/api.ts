@@ -132,6 +132,21 @@ export async function sendVoiceTurn(
   };
 }
 
+export async function generateConversationSummary(
+  conversation: Array<{ role: string; content: string }>,
+  qaItems: Array<{ question: string; answer: string }>,
+  condition: string,
+): Promise<string> {
+  const res = await fetch(`${BASE_URL}/voice/summary`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ conversation, qa_items: qaItems, condition }),
+  });
+  if (!res.ok) throw new Error('Summary failed');
+  const data = await res.json();
+  return data.summary as string;
+}
+
 // ── Trending searches ────────────────────────────────────────────────────────
 
 const TRENDING_KEY = 'mindpath_trending_searches';

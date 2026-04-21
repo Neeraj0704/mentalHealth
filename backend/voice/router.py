@@ -17,6 +17,7 @@ from fastapi.responses import StreamingResponse, JSONResponse
 
 from .state import ConversationState
 from .graph import assessment_graph
+from .llm import chat
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -212,6 +213,48 @@ async def get_voice_state(session_id: str):
         "session_id": session_id,
         "mindpath_ui": _build_ui(state),
     }
+
+
+# ── POST /voice/summary ───────────────────────────────────────────────────────
+
+@router.post("/voice/summary")
+async def generate_summary(request: Request):
+    """
+    Generate a short LLM summary of the full intake session.
+    Body: { conversation: [{role, content}], qa_items: [{question, answer}], condition: str }
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "Invalid JSON"}, status_code=400)
+
+    conversation: list = body.get("conversation", [])
+    qa_items: list = body.get("qa_items", [])
+    condition: str = body.get("condition", "")
+
+    conv_text = "\n".join(
+        f"{m['role'].capitalize()}: {m['content']}"
+        for m in conversation
+        if m.get("role") in ("user", "assistant")
+    )
+
+    qa_text = ""
+    if qa_items:
+        qa_text = f"\nScreening responses ({condition}):\n" + "\n".join(
+            f"- {item['question']}: {item['answer']}"
+            for item in qa_items
+        )
+
+    prompt = (
+        "Write a 2-3 sentence clinical summary of this mental health intake conversation. "
+        "Write in third person (e.g. 'The individual reported...'). "
+        "Capture their emotional state, main concerns, and what the screening revealed. "
+        "Be warm, factual, and avoid jargon. Do not mention instrument names or numerical scores.\n\n"
+        f"Conversation:\n{conv_text}{qa_text}\n\nSummary:"
+    )
+
+    summary = await chat([{"role": "user", "content": prompt}])
+    return {"summary": summary}
 
 
 # ── GET /voice/sessions (debug only) ─────────────────────────────────────────

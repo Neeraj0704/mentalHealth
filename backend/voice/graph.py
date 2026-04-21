@@ -73,7 +73,7 @@ async def converse_node(state: ConversationState) -> dict:
     updated_messages.append({"role": "assistant", "content": clean_reply})
 
     return {
-        "phase": "extracting" if ready else "conversing",
+        "phase": "instrument" if ready else "conversing",
         "messages": updated_messages,
         "turn_count": state.get("turn_count", 0) + 1,
         "detected_condition": detected_condition,
@@ -116,15 +116,9 @@ async def extract_node(state: ConversationState) -> dict:
 
     providers = _get_providers(condition)
 
-    provider_mention = ""
-    if providers:
-        names = [p["name"] for p in providers[:2]]
-        provider_mention = f" I've found some specialists who can help, including {' and '.join(names)}."
-
     speech = (
         f"Based on our conversation, {message.lower()}"
-        f"{provider_mention}"
-        " You can see their full profiles in the app."
+        " You can browse matched providers in the app."
     )
 
     return {
@@ -146,7 +140,7 @@ def _entry_router(state: ConversationState) -> str:
     phase = state.get("phase", "conversing")
     if phase == "extracting":
         return "extract"
-    if phase == "completed":
+    if phase in ("completed", "instrument"):
         return "__end__"
     return "converse"
 
@@ -164,7 +158,7 @@ builder.add_conditional_edges(
 )
 
 def _after_converse(state: ConversationState) -> str:
-    return "extract" if state.get("phase") == "extracting" else "__end__"
+    return "__end__"
 
 builder.add_conditional_edges(
     "converse",

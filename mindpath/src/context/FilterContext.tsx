@@ -22,6 +22,7 @@ const countActiveFilters = (f: SearchFilters): number => {
   if (f.min_rating > 0) count++;
   if (f.accepting_new_patients) count++;
   if (f.min_years_experience > 0) count++;
+  if (f.max_distance_miles > 0) count++;
   return count;
 };
 

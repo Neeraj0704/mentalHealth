@@ -98,8 +98,8 @@ def telehealth(limit: int = Query(20, ge=1, le=100)):
 def nearby(
     lat: float = Query(...),
     lng: float = Query(...),
-    limit: int = Query(10, ge=1, le=100),
-    radius: float = Query(50.0, ge=0.5, le=100.0),
+    limit: int = Query(10, ge=1, le=500),
+    radius: float = Query(50.0, ge=0.5, le=200.0),
 ):
     from math import radians, sin, cos, sqrt, atan2
 

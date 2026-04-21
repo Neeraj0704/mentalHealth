@@ -14,7 +14,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeStackParamList, Provider, SearchFilters } from '../types';
 import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
-import { getProviders } from '../services/api';
+import { getProviders, getNearby } from '../services/api';
+import * as Location from 'expo-location';
 import ProviderCard from '../components/ProviderCard';
 import { LoadingCard } from '../components/LoadingCard';
 import { EmptyState } from '../components/EmptyState';
@@ -70,14 +71,43 @@ export default function ResultsScreen({ navigation, route }: Props) {
   const sortSheetAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    setLoading(true);
-    getProviders(filters, query, selectedChip ?? specialty)
-      .then((data) => {
-        const results = applyFilters(data, filters);
-        setProviders(sortProviders(results, sortKey));
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      try {
+        let data: Provider[];
+        if (filters.max_distance_miles > 0) {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            // Permission denied — fall back to all providers
+            data = await getProviders(filters, query, selectedChip ?? specialty);
+          } else {
+            const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+            data = await getNearby(loc.coords.latitude, loc.coords.longitude, 200, filters.max_distance_miles);
+            // Filter by specialty/condition client-side since nearby endpoint returns all
+            const cond = selectedChip ?? specialty;
+            if (cond) {
+              data = data.filter(p =>
+                p.specialties.some(s => s.toLowerCase().includes(cond.toLowerCase())) ||
+                p.conditions_treated.some(c => c.toLowerCase().includes(cond.toLowerCase()))
+              );
+            }
+          }
+        } else {
+          data = await getProviders(filters, query, selectedChip ?? specialty);
+        }
+        if (!cancelled) {
+          const results = applyFilters(data, filters);
+          setProviders(sortProviders(results, sortKey));
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
   }, [filters, sortKey, query, specialty, selectedChip]);
 
   const toggleSortSheet = () => {

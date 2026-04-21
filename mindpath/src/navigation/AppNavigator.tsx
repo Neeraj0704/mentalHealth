@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -26,6 +26,8 @@ import ResultsScreen from '../screens/ResultsScreen';
 import FilterScreen from '../screens/FilterScreen';
 import ProviderDetailScreen from '../screens/ProviderDetailScreen';
 import VoiceAssessmentScreen from '../screens/VoiceAssessmentScreen';
+import MiraChatScreen from '../screens/MiraChatScreen';
+import AssessmentResultScreen from '../screens/AssessmentResultScreen';
 import BookingScreen from '../screens/BookingScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -43,6 +45,8 @@ function HomeNavigator() {
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Assessment" component={AssessmentScreen} />
       <HomeStack.Screen name="Results" component={ResultsScreen} />
+      <HomeStack.Screen name="MiraChat" component={MiraChatScreen} />
+      <HomeStack.Screen name="AssessmentResult" component={AssessmentResultScreen} />
       <HomeStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
       <HomeStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
       <HomeStack.Screen name="Booking" component={BookingScreen} />
@@ -55,6 +59,7 @@ function ScreeningNavigator() {
     <ScreeningStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Assessment">
       <ScreeningStack.Screen name="Assessment" component={AssessmentScreen} />
       <ScreeningStack.Screen name="Results" component={ResultsScreen} />
+      <ScreeningStack.Screen name="AssessmentResult" component={AssessmentResultScreen} />
       <ScreeningStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
       <ScreeningStack.Screen name="Booking" component={BookingScreen} />
       <ScreeningStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
@@ -112,72 +117,89 @@ function AIOrbButton({ onPress }: { onPress: () => void }) {
   );
 }
 
-function MainTabs() {
-  const { savedIds } = useSaved();
+
+function MiraIntroPopup({ onDismiss }: { onDismiss: () => void }) {
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(opacity, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+    const timer = setTimeout(onDismiss, 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.textTertiary,
-        tabBarLabelStyle: styles.tabBarLabel,
-        tabBarItemStyle: styles.tabBarItem,
-        tabBarIcon: ({ focused, color }) => {
-          if (route.name === 'AITab') return null;
-          let iconName: keyof typeof Ionicons.glyphMap = 'home';
-          if (route.name === 'ScreeningTab') {
-            iconName = focused ? 'clipboard' : 'clipboard-outline';
-          } else if (route.name === 'HomeTab') {
-            iconName = focused ? 'search' : 'search-outline';
-          } else if (route.name === 'SavedTab') {
-            iconName = focused ? 'bookmark' : 'bookmark-outline';
-          } else if (route.name === 'ProfileTab') {
-            iconName = focused ? 'person' : 'person-outline';
-          }
-          return (
-            <View style={styles.tabIconWrapper}>
-              <Ionicons name={iconName} size={22} color={color} />
-              {route.name === 'SavedTab' && (
-                <TabBadge count={savedIds.size} />
-              )}
+    <Modal transparent animationType="none" onRequestClose={onDismiss}>
+      <TouchableOpacity style={styles.popupOverlay} activeOpacity={1} onPress={onDismiss}>
+        <Animated.View style={[styles.popupBubble, { opacity }]}>
+          <View style={styles.popupIconRow}>
+            <View style={styles.popupOrbDot}>
+              <Ionicons name="aperture-outline" size={16} color="#fff" />
             </View>
-          );
-        },
-      })}
-    >
-      <Tab.Screen
-        name="ScreeningTab"
-        component={ScreeningNavigator}
-        options={{ tabBarLabel: 'Screening' }}
-      />
-      <Tab.Screen
-        name="HomeTab"
-        component={HomeNavigator}
-        options={{ tabBarLabel: 'Discover' }}
-      />
-      <Tab.Screen
-        name="AITab"
-        component={HomeNavigator}
-        options={({ navigation }) => ({
-          tabBarLabel: '',
-          tabBarButton: () => (
-            <AIOrbButton onPress={() => navigation.navigate('HomeTab', { screen: 'VoiceAssessment' } as any)} />
-          ),
+            <Text style={styles.popupOrbName}>Mira</Text>
+          </View>
+          <Text style={styles.popupText}>
+            Speak to our AI assistant Mira to help us understand what's been affecting you lately
+          </Text>
+          <Text style={styles.popupHint}>Tap anywhere to dismiss</Text>
+          <View style={styles.popupArrow} />
+        </Animated.View>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+function MainTabs() {
+  const { savedIds } = useSaved();
+  const [showIntro, setShowIntro] = useState(true);
+
+  return (
+    <>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarStyle: styles.tabBar,
+          tabBarActiveTintColor: Colors.primary,
+          tabBarInactiveTintColor: Colors.textTertiary,
+          tabBarLabelStyle: styles.tabBarLabel,
+          tabBarItemStyle: styles.tabBarItem,
+          tabBarIcon: ({ focused, color }) => {
+            if (route.name === 'AITab') return null;
+            let iconName: keyof typeof Ionicons.glyphMap = 'home';
+            if (route.name === 'ScreeningTab') {
+              iconName = focused ? 'clipboard' : 'clipboard-outline';
+            } else if (route.name === 'HomeTab') {
+              iconName = focused ? 'search' : 'search-outline';
+            } else if (route.name === 'SavedTab') {
+              iconName = focused ? 'bookmark' : 'bookmark-outline';
+            } else if (route.name === 'ProfileTab') {
+              iconName = focused ? 'person' : 'person-outline';
+            }
+            return (
+              <View style={styles.tabIconWrapper}>
+                <Ionicons name={iconName} size={22} color={color} />
+                {route.name === 'SavedTab' && <TabBadge count={savedIds.size} />}
+              </View>
+            );
+          },
         })}
-      />
-      <Tab.Screen
-        name="SavedTab"
-        component={SavedNavigator}
-        options={{ tabBarLabel: 'Saved' }}
-      />
-      <Tab.Screen
-        name="ProfileTab"
-        component={ProfileNavigator}
-        options={{ tabBarLabel: 'Profile' }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen name="ScreeningTab" component={ScreeningNavigator} options={{ tabBarLabel: 'Screening' }} />
+        <Tab.Screen name="HomeTab" component={HomeNavigator} options={{ tabBarLabel: 'Discover' }} />
+        <Tab.Screen
+          name="AITab"
+          component={HomeNavigator}
+          options={({ navigation }) => ({
+            tabBarLabel: '',
+            tabBarButton: () => (
+              <AIOrbButton onPress={() => navigation.navigate('HomeTab', { screen: 'MiraChat' } as any)} />
+            ),
+          })}
+        />
+        <Tab.Screen name="SavedTab" component={SavedNavigator} options={{ tabBarLabel: 'Saved' }} />
+        <Tab.Screen name="ProfileTab" component={ProfileNavigator} options={{ tabBarLabel: 'Profile' }} />
+      </Tab.Navigator>
+      {showIntro && <MiraIntroPopup onDismiss={() => setShowIntro(false)} />}
+    </>
   );
 }
 
@@ -294,6 +316,63 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     marginTop: 4,
     letterSpacing: 0.3,
+  },
+  popupOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 110,
+  },
+  popupBubble: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    width: 280,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: Colors.primary + '22',
+  },
+  popupIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  popupOrbDot: {
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: Colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  popupOrbName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+  popupText: {
+    fontSize: 14,
+    color: Colors.textPrimary,
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  popupHint: {
+    fontSize: 11,
+    color: Colors.textTertiary,
+  },
+  popupArrow: {
+    position: 'absolute',
+    bottom: -8,
+    alignSelf: 'center',
+    width: 16,
+    height: 16,
+    backgroundColor: Colors.surface,
+    transform: [{ rotate: '45deg' }],
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: Colors.primary + '22',
   },
 });
 

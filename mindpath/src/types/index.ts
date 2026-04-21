@@ -75,6 +75,7 @@ export interface SearchFilters {
   min_rating: number;
   accepting_new_patients: boolean;
   min_years_experience: number;
+  max_distance_miles: number; // 0 = no distance filter
 }
 
 export const DEFAULT_FILTERS: SearchFilters = {
@@ -88,6 +89,7 @@ export const DEFAULT_FILTERS: SearchFilters = {
   min_rating: 0,
   accepting_new_patients: false,
   min_years_experience: 0,
+  max_distance_miles: 0,
 };
 
 // Navigation types
@@ -111,6 +113,15 @@ export type HomeStackParamList = {
   Home: undefined;
   Assessment: undefined;
   VoiceAssessment: undefined;
+  MiraChat: undefined;
+  AssessmentResult: {
+    condition: string;
+    severity: string;
+    score: number;
+    instrumentId: string;
+    qaItems: Array<{ question: string; answer: string }>;
+    conversation: Array<{ role: string; content: string }>;
+  };
   Results: { query: string; filters?: SearchFilters; specialty?: string };
   ProviderDetail: { providerId: string };
   Booking: { providerId: string; providerName: string };

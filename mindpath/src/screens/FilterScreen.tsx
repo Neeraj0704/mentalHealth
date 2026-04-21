@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import {
   View,
   Text,
@@ -23,6 +23,62 @@ import {
 import { useFilters } from '../context/FilterContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'FilterModal'>;
+
+const DISTANCE_OPTIONS = [
+  { label: 'Any', value: 0 },
+  { label: '5 mi', value: 5 },
+  { label: '10 mi', value: 10 },
+  { label: '25 mi', value: 25 },
+  { label: '50 mi', value: 50 },
+];
+
+function DistanceSlider({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const selIdx = Math.max(0, DISTANCE_OPTIONS.findIndex(o => o.value === value));
+  return (
+    <View style={sliderStyles.wrap}>
+      <View style={sliderStyles.trackRow}>
+        {DISTANCE_OPTIONS.map((opt, i) => (
+          <Fragment key={opt.value}>
+            {i > 0 && (
+              <View style={[sliderStyles.trackLine, i <= selIdx && sliderStyles.trackLineActive]} />
+            )}
+            <TouchableOpacity onPress={() => onChange(opt.value)} hitSlop={{ top: 14, bottom: 14, left: 10, right: 10 }} activeOpacity={0.75}>
+              <View style={[sliderStyles.dot, i <= selIdx && sliderStyles.dotActive, i === selIdx && sliderStyles.dotSelected]}>
+                {i === selIdx && <View style={sliderStyles.dotInner} />}
+              </View>
+            </TouchableOpacity>
+          </Fragment>
+        ))}
+      </View>
+      <View style={sliderStyles.labelsRow}>
+        {DISTANCE_OPTIONS.map((opt, i) => (
+          <Text key={opt.value} style={[sliderStyles.label, i === selIdx && sliderStyles.labelActive]}>
+            {opt.label}
+          </Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const sliderStyles = StyleSheet.create({
+  wrap: { paddingHorizontal: 4 },
+  trackRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  trackLine: { flex: 1, height: 3, backgroundColor: Colors.border },
+  trackLineActive: { backgroundColor: Colors.primary },
+  dot: {
+    width: 20, height: 20, borderRadius: 10,
+    backgroundColor: Colors.surface,
+    borderWidth: 2.5, borderColor: Colors.border,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  dotActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  dotSelected: { width: 22, height: 22, borderRadius: 11 },
+  dotInner: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#fff' },
+  labelsRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  label: { fontSize: 11, color: Colors.textTertiary, fontWeight: '400', textAlign: 'center', minWidth: 36 },
+  labelActive: { color: Colors.primary, fontWeight: '700' },
+});
 
 const GENDER_OPTIONS: Gender[] = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 const RATING_OPTIONS = [
@@ -79,6 +135,20 @@ export default function FilterScreen({ navigation }: Props) {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* Distance */}
+          <View style={styles.section}>
+            <View style={styles.sectionTitleRow}>
+              <Text style={styles.sectionTitleInline}>Distance From Me</Text>
+              {local.max_distance_miles > 0 && (
+                <Text style={styles.sectionValue}>{local.max_distance_miles} mi</Text>
+              )}
+            </View>
+            <DistanceSlider
+              value={local.max_distance_miles}
+              onChange={(v) => setLocal({ ...local, max_distance_miles: v })}
+            />
+          </View>
+
           {/* Availability */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Availability</Text>
@@ -331,11 +401,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
   },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  sectionTitleInline: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
   sectionTitle: {
     fontSize: 15,
     fontWeight: '700',
     color: Colors.textPrimary,
     marginBottom: 12,
+  },
+  sectionValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.primary,
   },
   chipGrid: {
     flexDirection: 'row',
