@@ -87,6 +87,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
   const doneRef       = useRef(false);
   const stoppingRef   = useRef(false);   // prevent double VAD trigger
   const silenceSince  = useRef<number | null>(null);
+  const hasSpokeRef   = useRef(false);   // don't trigger silence until user has spoken
 
   // Ref-based bridge to break startListening ↔ sendTurn circular dependency
   const startListeningRef = useRef<() => Promise<void>>(async () => {});
@@ -251,17 +252,20 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
 
       silenceSince.current = null;
       stoppingRef.current = false;
+      hasSpokeRef.current = false;
 
       recording.setOnRecordingStatusUpdate((status) => {
         if (!status.isRecording || doneRef.current || stoppingRef.current) return;
-        const db = status.metering ?? 0;
-        if (db < SILENCE_DB) {
+        const db = status.metering ?? -160; // null metering = silence, not max volume
+        if (db >= SILENCE_DB) {
+          hasSpokeRef.current = true;
+          silenceSince.current = null;
+        } else if (hasSpokeRef.current) {
+          // only detect silence after user has spoken at least once
           if (silenceSince.current === null) silenceSince.current = Date.now();
           else if (Date.now() - silenceSince.current >= SILENCE_MS) {
             triggerAutoStop();
           }
-        } else {
-          silenceSince.current = null;
         }
       });
       recording.setProgressUpdateInterval(100);

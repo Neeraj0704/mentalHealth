@@ -70,7 +70,7 @@ export default function AssessmentResultScreen({ navigation, route }: Props) {
           <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Results', { query: '', specialty: condition })}
+          onPress={() => navigation.navigate('Results', { query: condition, specialty: condition })}
           activeOpacity={0.7}
         >
           <Text style={styles.skipText}>Skip</Text>
@@ -143,7 +143,7 @@ export default function AssessmentResultScreen({ navigation, route }: Props) {
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.findBtn}
-            onPress={() => navigation.navigate('Results', { query: '', specialty: condition })}
+            onPress={() => navigation.navigate('Results', { query: condition, specialty: condition })}
             activeOpacity={0.85}
           >
             <Text style={styles.findBtnText}>Find Providers</Text>

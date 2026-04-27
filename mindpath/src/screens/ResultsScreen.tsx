@@ -172,7 +172,9 @@ export default function ResultsScreen({ navigation, route }: Props) {
             <Text style={styles.title} numberOfLines={1}>
               {query || 'All Providers'}
             </Text>
-            <Text style={styles.subtitle}>Mental health providers</Text>
+            <Text style={styles.subtitle}>
+              {specialty ? `Specialists in ${specialty}` : 'Mental health providers'}
+            </Text>
           </View>
         </View>
 
