@@ -32,6 +32,13 @@ import BookingScreen from '../screens/BookingScreen';
 import FacilityDetailScreen from '../screens/FacilityDetailScreen';
 import FacilitiesListScreen from '../screens/FacilitiesListScreen';
 import ClinicFilterModal from '../screens/ClinicFilterModal';
+import ConsentScreen from '../screens/ConsentScreen';
+import WellnessScreen from '../screens/WellnessScreen';
+import BreathingScreen from '../screens/BreathingScreen';
+import PanicModeScreen from '../screens/PanicModeScreen';
+import GroundingScreen from '../screens/GroundingScreen';
+import SafeSpaceScreen from '../screens/SafeSpaceScreen';
+import SOSScreen from '../screens/SOSScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -55,6 +62,12 @@ function HomeNavigator() {
       <HomeStack.Screen name="Booking" component={BookingScreen} />
       <HomeStack.Screen name="FacilityDetail" component={FacilityDetailScreen} />
       <HomeStack.Screen name="FacilitiesList" component={FacilitiesListScreen} />
+      <HomeStack.Screen name="Wellness" component={WellnessScreen} />
+      <HomeStack.Screen name="Breathing" component={BreathingScreen} />
+      <HomeStack.Screen name="PanicMode" component={PanicModeScreen} />
+      <HomeStack.Screen name="Grounding" component={GroundingScreen} />
+      <HomeStack.Screen name="SafeSpace" component={SafeSpaceScreen} />
+      <HomeStack.Screen name="SOSResources" component={SOSScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -155,7 +168,7 @@ function MiraIntroPopup({ onDismiss }: { onDismiss: () => void }) {
 }
 
 function MainTabs() {
-  const { savedIds } = useSaved();
+  const { savedIds, savedFacilityIds } = useSaved();
   const [showIntro, setShowIntro] = useState(true);
 
   return (
@@ -183,7 +196,7 @@ function MainTabs() {
             return (
               <View style={styles.tabIconWrapper}>
                 <Ionicons name={iconName} size={22} color={color} />
-                {route.name === 'SavedTab' && <TabBadge count={savedIds.size} />}
+                {route.name === 'SavedTab' && <TabBadge count={savedIds.size + savedFacilityIds.size} />}
               </View>
             );
           },
@@ -213,9 +226,10 @@ export function AppNavigator() {
   return (
     <NavigationContainer>
       <RootStack.Navigator
-        initialRouteName="Onboarding"
+        initialRouteName="Consent"
         screenOptions={{ headerShown: false }}
       >
+        <RootStack.Screen name="Consent" component={ConsentScreen} />
         <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
         <RootStack.Screen name="PreferencesSetup" component={OnboardingPreferencesScreen} />
         <RootStack.Screen name="MainTabs" component={MainTabs} />

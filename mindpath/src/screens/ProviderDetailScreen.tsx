@@ -271,7 +271,18 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
                   {[provider.address, provider.city, `${provider.state} ${provider.zip_code}`.trim()].filter(Boolean).join(', ')}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.directionsBtn} activeOpacity={0.8}>
+              <TouchableOpacity
+                style={styles.directionsBtn}
+                activeOpacity={0.8}
+                onPress={() => {
+                  const addr = encodeURIComponent(
+                    [provider.practice_name, provider.address, provider.city, provider.state, provider.zip_code].filter(Boolean).join(', ')
+                  );
+                  Linking.openURL(`maps://maps.apple.com/?q=${addr}`).catch(() =>
+                    Linking.openURL(`https://maps.google.com/?q=${addr}`)
+                  );
+                }}
+              >
                 <Ionicons name="navigate-outline" size={16} color={Colors.primary} />
               </TouchableOpacity>
             </View>

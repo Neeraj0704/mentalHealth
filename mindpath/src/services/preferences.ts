@@ -11,8 +11,12 @@ export interface UserPreferences {
   ageGroup: string;
   race: string;
   insurance: string;
+  language: string;
   providerGenderPreference: string;
   maxDistanceMiles: number;
+  sessionType: 'any' | 'telehealth' | 'in-person';
+  serviceType: string;
+  costPreference: 'any' | 'free' | 'sliding' | 'medicaid';
   anonymousMode: boolean;
 }
 
@@ -22,8 +26,12 @@ export const DEFAULT_PREFS: UserPreferences = {
   ageGroup: 'Prefer not to say',
   race: 'Prefer not to say',
   insurance: '',
+  language: '',
   providerGenderPreference: 'No preference',
   maxDistanceMiles: 25,
+  sessionType: 'any',
+  serviceType: '',
+  costPreference: 'any',
   anonymousMode: false,
 };
 

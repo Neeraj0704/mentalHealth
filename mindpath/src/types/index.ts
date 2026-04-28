@@ -126,6 +126,7 @@ export interface AssessmentSummary {
 }
 
 export type RootStackParamList = {
+  Consent: undefined;
   Onboarding: undefined;
   PreferencesSetup: undefined;
   MainTabs: undefined;
@@ -151,6 +152,12 @@ export type HomeStackParamList = {
   Booking: { providerId: string; providerName: string };
   FacilityDetail: { facilityId: number };
   FacilitiesList: { facilities: Facility[]; lat: number; lng: number };
+  Wellness: undefined;
+  Breathing: { pattern?: 'box' | '4-6' | 'panic' };
+  PanicMode: undefined;
+  Grounding: undefined;
+  SafeSpace: undefined;
+  SOSResources: undefined;
 };
 
 export type SavedStackParamList = {

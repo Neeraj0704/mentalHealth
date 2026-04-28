@@ -355,6 +355,21 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
+        {/* Support Tools card */}
+        <TouchableOpacity
+          style={styles.supportCard}
+          onPress={() => navigation.navigate('Wellness')}
+          activeOpacity={0.85}
+        >
+          <View style={styles.supportLeft}>
+            <Text style={styles.supportTitle}>Feeling overwhelmed?</Text>
+            <Text style={styles.supportSub}>Breathing, grounding & crisis support</Text>
+          </View>
+          <View style={styles.supportIcon}>
+            <Ionicons name="heart-outline" size={22} color="#fff" />
+          </View>
+        </TouchableOpacity>
+
         {/* Near You */}
         {(sections.nearby.loading || sections.nearby.data.length > 0) && (
           <View style={styles.section}>
@@ -607,5 +622,18 @@ const styles = StyleSheet.create({
   },
   howNumText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
   howText:    { fontSize: 14, color: Colors.textSecondary, flex: 1 },
-
+  supportCard: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#1a3a47', borderRadius: Radius.lg,
+    padding: Spacing.md, marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md, ...Shadows.md,
+  },
+  supportLeft: { flex: 1 },
+  supportTitle: { fontSize: 16, fontWeight: '800', color: '#fff', marginBottom: 3 },
+  supportSub: { fontSize: 12, color: 'rgba(255,255,255,0.65)' },
+  supportIcon: {
+    width: 44, height: 44, borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center', justifyContent: 'center',
+  },
 });
