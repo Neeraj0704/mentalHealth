@@ -1,4 +1,36 @@
+# Environment
 .env
-.claude/
+
+# Databases (large files — get webmd.db from a team member)
 *.db
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Logs
+*.log
+pipeline/processed_profiles.txt
+pipeline/discovered_urls.txt
+
+# Node / Expo
+node_modules/
+mindpath/.expo/
+mindpath/dist/
+
+# iOS build artifacts
+mindpath/ios/build/
+mindpath/ios/Pods/
+*.xcworkspace/
+*.xcuserdata/
+
+# macOS
+.DS_Store
+
+# Claude Code internal
+.claude/
 CLAUDE.md
