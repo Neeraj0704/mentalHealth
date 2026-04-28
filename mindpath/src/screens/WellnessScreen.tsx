@@ -13,12 +13,12 @@ import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
 type Props = NativeStackScreenProps<HomeStackParamList, 'Wellness'>;
 
 const MOODS = [
-  { emoji: '😰', label: 'Anxious',     tool: 'Breathing' as const, pattern: 'box' as const },
-  { emoji: '😢', label: 'Sad',         tool: 'SafeSpace' as const },
-  { emoji: '😡', label: 'Angry',       tool: 'Breathing' as const, pattern: '4-6' as const },
-  { emoji: '😵', label: 'Overwhelmed', tool: 'Grounding' as const },
-  { emoji: '😴', label: 'Exhausted',   tool: 'SafeSpace' as const },
-  { emoji: '😐', label: 'Numb',        tool: 'Grounding' as const },
+  { icon: 'alert-circle-outline' as const, color: '#f59e0b', label: 'Anxious',     tool: 'Breathing' as const, pattern: 'box' as const },
+  { icon: 'water-outline' as const,        color: '#60a5fa', label: 'Sad',         tool: 'SafeSpace' as const },
+  { icon: 'flame-outline' as const,        color: '#f87171', label: 'Angry',       tool: 'Breathing' as const, pattern: '4-6' as const },
+  { icon: 'thunderstorm-outline' as const, color: '#c084fc', label: 'Overwhelmed', tool: 'Grounding' as const },
+  { icon: 'moon-outline' as const,         color: '#94a3b8', label: 'Exhausted',   tool: 'SafeSpace' as const },
+  { icon: 'remove-circle-outline' as const,color: '#6ee7b7', label: 'Numb',        tool: 'Grounding' as const },
 ];
 
 const TOOLS = [
@@ -64,7 +64,7 @@ export default function WellnessScreen({ navigation }: Props) {
               onPress={() => handleMoodSelect(i)}
               activeOpacity={0.8}
             >
-              <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+              <Ionicons name={mood.icon} size={28} color={mood.color} />
               <Text style={styles.moodLabel}>{mood.label}</Text>
             </TouchableOpacity>
           ))}
@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md, backgroundColor: 'rgba(255,255,255,0.1)',
   },
   moodBtnSelected: { backgroundColor: 'rgba(255,255,255,0.3)' },
-  moodEmoji: { fontSize: 26, marginBottom: 4 },
   moodLabel: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.9)' },
   content: { padding: Spacing.md, paddingBottom: 60, gap: 16 },
   panicBtn: {

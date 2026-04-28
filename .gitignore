@@ -1,8 +1,6 @@
 # Environment
 .env
 
-# Databases (large files — get webmd.db from a team member)
-*.db
 
 # Python
 **/__pycache__/
