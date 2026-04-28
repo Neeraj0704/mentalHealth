@@ -92,6 +92,29 @@ export const DEFAULT_FILTERS: SearchFilters = {
   max_distance_miles: 0,
 };
 
+export interface Facility {
+  id: number;
+  name: string;
+  address: string;
+  zip: string;
+  phone: string;
+  hours: string;
+  languages: string[];
+  payment: string[];
+  ages_served: string;
+  services: string[];
+  telehealth: boolean;
+  website: string;
+  crisis_line: string | null;
+  emergency_serves: string;
+  inpatient_outpatient: string;
+  keywords: string;
+  google_maps_link: string;
+  num_of_beds: number;
+  acuity: string;
+  types: string[];
+}
+
 // Navigation types
 import { NavigatorScreenParams } from '@react-navigation/native';
 
@@ -107,6 +130,7 @@ export type RootStackParamList = {
   PreferencesSetup: undefined;
   MainTabs: undefined;
   FilterModal: { currentFilters: SearchFilters };
+  ClinicFilterModal: undefined;
 };
 
 export type HomeStackParamList = {
@@ -125,12 +149,15 @@ export type HomeStackParamList = {
   Results: { query: string; filters?: SearchFilters; specialty?: string };
   ProviderDetail: { providerId: string };
   Booking: { providerId: string; providerName: string };
+  FacilityDetail: { facilityId: number };
+  FacilitiesList: { facilities: Facility[]; lat: number; lng: number };
 };
 
 export type SavedStackParamList = {
   Saved: undefined;
   ProviderDetail: { providerId: string };
   Booking: { providerId: string; providerName: string };
+  FacilityDetail: { facilityId: number };
 };
 
 export type ProfileStackParamList = {

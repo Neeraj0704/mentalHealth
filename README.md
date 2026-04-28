@@ -85,7 +85,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 The server runs at `http://localhost:8000`. API docs available at `http://localhost:8000/docs`.
 
-> The database (`webmd.db`) is gitignored due to size. Ask a team member for a copy and place it at the repo root.
+> The database (`webmd.db`) is gitignored due to size. Ask a team member for a copy and place it at `data/webmd.db`.
 
 ### 3. Mobile app
 

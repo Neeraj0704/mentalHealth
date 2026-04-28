@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "webmd.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "webmd.db")
 
 
 def get_connection():

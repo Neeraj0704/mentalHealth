@@ -1,0 +1,2496 @@
+[
+  {
+    "name": "Alivio Medical Center",
+    "address": "2355 S. Western Ave., Chicago, IL 60608",
+    "zip": "60608",
+    "phone": "773-254-1400",
+    "hours": "Mon/Tue/Thu/Fri 8:00-16:30, Wed 10:30-19:00",
+    "languages": [
+      "English",
+      "Spanish",
+      "Chinese"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Behavioral & mental health; Psychiatry; Counseling; Trauma-informed care"
+    ],
+    "telehealth": true,
+    "website": "https://alivio.org/services/mental/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Counseling, Psychiatry, Family Therapy, Domestic Violence, Trauma",
+    "google_maps_link": "https://maps.app.goo.gl/CsMhS6h2HVssFjP56",
+    "num_of_beds": 0,
+    "acuity": "Chronic",
+    "types": [
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Asian Human Services Family Health Center",
+    "address": "2424 W. Peterson Ave., Chicago, IL 60659",
+    "zip": "60659",
+    "phone": "773-293-8488",
+    "hours": "Mon/Wed/Thu/Fri 9:00-17:00, Tue 11:00-19:00",
+    "languages": [
+      "English",
+      "Spanish",
+      "Chinese",
+      "Mandarin",
+      "Polish",
+      "Hindi",
+      "Russian",
+      "Tagalog",
+      "Portuguese",
+      "Urdu"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Behavioral health counseling; Immigrant/refugee support; General mental health services"
+    ],
+    "telehealth": true,
+    "website": "https://ahsfhc.org/skokie/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Counseling, Family Medicine, Support for Immigrant/Refugee Communities",
+    "google_maps_link": "https://maps.app.goo.gl/VwKPBSrMTwzpPsKQ9",
+    "num_of_beds": 0,
+    "acuity": "Chronic",
+    "types": [
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Cook County Health - Austin Health Center",
+    "address": "4800 W. Chicago Ave., Chicago, IL 60651",
+    "zip": "60651",
+    "phone": "312-864-0200",
+    "hours": "Mon-Fri: 8:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale",
+      "Uninsured"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Integrated behavioral health in primary care; Psychiatry; Mental health therapy; Case management"
+    ],
+    "telehealth": true,
+    "website": "https://cookcountyhealth.org/locations/austin-health-center/?utm_source=GMBSocialClimb&utm_medium=CookCountyHealthAustinHealthCenter",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Integrated Behavioral Health, Psychiatry, Mental Health Therapy, Case Management",
+    "google_maps_link": "https://maps.app.goo.gl/xhJYf5ujFrqLzFGt7",
+    "num_of_beds": 0,
+    "acuity": "Chronic",
+    "types": [
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Cook County Health - Bronzeville Health Center",
+    "address": "467 E. 31st St., Chicago, IL 60616",
+    "zip": "60616",
+    "phone": "312-864-0200",
+    "hours": "Mon-Fri: 8:00-16:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale",
+      "Uninsured"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Integrated behavioral health; Psychiatry; Mental health therapy"
+    ],
+    "telehealth": true,
+    "website": "https://cookcountyhealth.org/locations/bronzeville-health-center/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Integrated Behavioral Health, Psychiatry, Mental Health Therapy",
+    "google_maps_link": "https://maps.app.goo.gl/QQCQqKTyRjLAD2oL8",
+    "num_of_beds": 0,
+    "acuity": "Chronic",
+    "types": [
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Community Counseling Centers of Chicago - Clark",
+    "address": "4740 N. Clark St., Chicago, IL 60640",
+    "zip": "60640",
+    "phone": "773-769-0205",
+    "hours": "Mon-Thu: 8:30-20:00, Fri: 8:30-17:00",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Crisis response; Individual therapy; Group therapy; Walk-in crisis services"
+    ],
+    "telehealth": true,
+    "website": "http://www.c4chicago.org/",
+    "fax": "872-235-0712",
+    "crisis_line": "872-235-0600",
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Crisis Response, Individual Therapy, Group Therapy, Case Management, Psychiatry, Walk-in Crisis Services, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/NwNRcnNb6cF1hAiA6",
+    "num_of_beds": 0,
+    "acuity": "Acute, Chronic",
+    "types": [
+      "Acute",
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Community Counseling Centers of Chicago - Broadway",
+    "address": "5710 N. Broadway St., Chicago, IL 60660",
+    "zip": "60660",
+    "phone": "773-728-1000",
+    "hours": "Mon-Fri: 8:30-17:00",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Individual therapy; Group therapy; Psychiatry; Case management"
+    ],
+    "telehealth": true,
+    "website": "https://www.c4chicago.org/",
+    "fax": "872-235-0741",
+    "crisis_line": "872-235-0600",
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Individual Therapy, Group Therapy, Case Management, Psychiatry",
+    "google_maps_link": "https://maps.app.goo.gl/GvRrhnL5fBvWpwvd6",
+    "num_of_beds": 0
+  },
+  {
+    "name": "Community Counseling Centers of Chicago - North",
+    "address": "2542 W. North Ave., Chicago, IL 60647",
+    "zip": "60647",
+    "phone": "773-365-7277",
+    "hours": "Mon-Thu: 8:30-20:00, Fri: 8:30-17:00",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Individual therapy; Group therapy; Psychiatry; Case management"
+    ],
+    "telehealth": true,
+    "website": "http://www.c4chicago.org/",
+    "fax": "872-235-0719",
+    "crisis_line": "872-235-0600",
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Individual Therapy, Group Therapy, Case Management, Psychiatry",
+    "google_maps_link": "https://maps.app.goo.gl/g85YZU4xUWkyWyYi7",
+    "num_of_beds": 0,
+    "acuity": "Chronic",
+    "types": [
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Pilsen Wellness Center - Main (Damen)",
+    "address": "2259 S. Damen Ave., Chicago, IL 60608",
+    "zip": "60608",
+    "phone": "872-281-7575",
+    "hours": "Mon-Fri: 9:00-20:00, Sat: 9:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Mental health counseling; Crisis care; Youth services; Substance use treatment"
+    ],
+    "telehealth": true,
+    "website": "http://pilsenwellnesscenter.org/",
+    "fax": "773-801-0084",
+    "crisis_line": "773-820-9003",
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Mental Health Counseling, Crisis Care, Substance Use Treatment, Youth Services, Residential Services, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/UGbqpQe4Si6VAMyh8",
+    "num_of_beds": 0,
+    "acuity": "Acute, Chronic",
+    "types": [
+      "Acute",
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Pilsen Wellness Center - Cermak",
+    "address": "2015 W. Cermak Rd., Chicago, IL 60608",
+    "zip": "60608",
+    "phone": "773-890-0645",
+    "hours": "Mon-Fri: 9:00-20:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Mental health counseling; Substance use treatment"
+    ],
+    "telehealth": true,
+    "website": "http://www.pilsenwellnesscenter.org/",
+    "fax": "773-890-1257",
+    "crisis_line": "773-820-9003",
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Mental Health Counseling, Substance Use Treatment",
+    "google_maps_link": "https://maps.app.goo.gl/vUjvZWvh46tUbEVG8",
+    "num_of_beds": 0,
+    "acuity": "Chronic",
+    "types": [
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Pilsen Wellness Center - Berwyn",
+    "address": "2600 Ridgeland Ave., Berwyn, IL 60402",
+    "zip": "60402",
+    "phone": "708-317-5926",
+    "hours": "Mon-Fri: 9:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Mental health counseling; TMS (Transcranial Magnetic Stimulation)"
+    ],
+    "telehealth": true,
+    "website": "http://www.pilsenwellnesscenter.org/",
+    "fax": null,
+    "crisis_line": "773-820-9003",
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Mental Health Counseling, Private Insurance Services, TMS Treatment",
+    "google_maps_link": "https://maps.app.goo.gl/fYn1VGnbgczBPYdT9",
+    "num_of_beds": 0
+  },
+  {
+    "name": "ACCESS Auburn-Gresham Family Health Center",
+    "address": "8234 S. Ashland Ave., Chicago, IL 60620",
+    "zip": "60620",
+    "phone": "773-874-1400",
+    "hours": "Mon-Fri: 8:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Behavioral health integrated with primary care; Family medicine"
+    ],
+    "telehealth": true,
+    "website": "https://www.achn.net/services--programs/behavioral-health/",
+    "fax": "773-962-2880",
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Behavioral Health, Primary Care, Family Medicine",
+    "google_maps_link": "https://maps.app.goo.gl/VTzEit4k47drjGmV6",
+    "num_of_beds": 0
+  },
+  {
+    "name": "ACCESS Brandon Family Health Center",
+    "address": "2822 E. 83rd St., Chicago, IL 60617",
+    "zip": "60617",
+    "phone": "773-721-7600",
+    "hours": "Mon-Fri: 8:00-17:00, Sat: 9:00-13:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Behavioral health; Psychiatry; Medication Assisted Recovery"
+    ],
+    "telehealth": true,
+    "website": "https://www.achn.net/services--programs/behavioral-health/",
+    "fax": "773-721-7618",
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Behavioral Health, Primary Care, Psychiatry, Medication Assisted Recovery",
+    "google_maps_link": "https://maps.app.goo.gl/xSjPH9sKdDPDukSU6",
+    "num_of_beds": 0
+  },
+  {
+    "name": "ACCESS Booker Family Health Center",
+    "address": "654 E. 47th St., Chicago, IL 60653",
+    "zip": "60653",
+    "phone": "773-624-4800",
+    "hours": "Mon-Fri: 8:00-17:00, Sat: 9:00-13:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Behavioral health; Primary care; Medication Assisted Recovery"
+    ],
+    "telehealth": true,
+    "website": "https://www.achn.net/services--programs/behavioral-health/",
+    "fax": "773-624-5028",
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Behavioral Health, Primary Care, Medication Assisted Recovery",
+    "google_maps_link": "https://maps.app.goo.gl/ziMkj6t6PG1Hn6dc8",
+    "num_of_beds": 0
+  },
+  {
+    "name": "ACCESS Rogers Park Family Health Center",
+    "address": "1555 W. Howard St., Chicago, IL 60626",
+    "zip": "60626",
+    "phone": "773-764-7146",
+    "hours": "Mon-Fri: 8:00-17:00, Sat: 8:00-12:00 (2nd and 4th)",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Psychiatry; Behavioral health; Substance use support"
+    ],
+    "telehealth": true,
+    "website": "https://www.achn.net/services--programs/behavioral-health/",
+    "fax": "773-764-3774",
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Behavioral Health, Primary Care, Psychiatry",
+    "google_maps_link": "https://maps.app.goo.gl/JZ3VCpBx6BJCcBr98",
+    "num_of_beds": 0
+  },
+  {
+    "name": "CDPH Englewood Mental Health Center",
+    "address": "641 W. 63rd St., Chicago, IL 60621",
+    "zip": "60621",
+    "phone": "312-747-7496",
+    "hours": "Mon-Fri: 8:30-16:30",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Free",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Outpatient mental health counseling"
+    ],
+    "telehealth": false,
+    "website": "https://www.chicago.gov/city/en/depts/cdph/supp_info/behavioral-health/mental_health_centers.html",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Outpatient Counseling",
+    "google_maps_link": "https://maps.app.goo.gl/nPN4RkMqj8uMxC7LA",
+    "num_of_beds": 0
+  },
+  {
+    "name": "CDPH Greater Grand/Mid-South Mental Health Center",
+    "address": "4314 S. Cottage Grove, Chicago, IL 60653",
+    "zip": "60653",
+    "phone": "312-747-0036",
+    "hours": "Mon-Fri: 8:30-16:30",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Free",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Individual & group therapy; psychiatric medication management; case management; crisis intervention."
+    ],
+    "telehealth": false,
+    "website": "https://www.chicago.gov/city/en/depts/cdph/supp_info/behavioral-health/mental_health_centers.html",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Outpatient Counseling",
+    "google_maps_link": "https://maps.app.goo.gl/ZgnVxASaatTugyfr7",
+    "num_of_beds": 0
+  },
+  {
+    "name": "CDPH Greater Lawn Mental Health Center",
+    "address": "4150 W. 55th St., Chicago, IL 60632",
+    "zip": "60632",
+    "phone": "312-747-1020",
+    "hours": "Mon-Fri: 8:30-16:30",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Free",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Outpatient individual & group therapy; psychiatric assessment & medication support."
+    ],
+    "telehealth": false,
+    "website": "https://www.chicago.gov/city/en/depts/cdph/supp_info/behavioral-health/mental_health_centers.html",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Outpatient Counseling",
+    "google_maps_link": "https://maps.app.goo.gl/DeMAVXgGnAHCNTTq6",
+    "num_of_beds": 0
+  },
+  {
+    "name": "CDPH Lawndale Mental Health Center",
+    "address": "1105 S WESTERN AVE, Chicago, IL 60612",
+    "zip": "60612",
+    "phone": "312-746-5905",
+    "hours": "Mon-Fri: 8:30-16:30",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Free",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Outpatient mental health counseling; group therapy; medication services."
+    ],
+    "telehealth": false,
+    "website": "https://www.chicago.gov/city/en/depts/cdph/supp_info/behavioral-health/mental_health_centers.html",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Outpatient Counseling",
+    "google_maps_link": "https://maps.app.goo.gl/eLmKKirQ1QVQRmdE6",
+    "num_of_beds": 0
+  },
+  {
+    "name": "CDPH North River Mental Health Center",
+    "address": "5801 N. Pulaski Rd., Chicago, IL 60646",
+    "zip": "60646",
+    "phone": "312-744-1906",
+    "hours": "Mon-Fri: 8:30-16:30",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Free",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Outpatient individual",
+      "family",
+      "and group therapy; psychiatric consultation; community resource coordination."
+    ],
+    "telehealth": false,
+    "website": "https://www.chicago.gov/city/en/depts/cdph/supp_info/behavioral-health/mental_health_centers.html",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "General Mental Health, Outpatient Counseling",
+    "google_maps_link": "https://maps.app.goo.gl/834cHCD9XdFXsBtv6",
+    "num_of_beds": 0
+  },
+  {
+    "name": "Northwestern Medicine Stone Institute of Psychiatry",
+    "address": "675 N St Clair St, Chicago, IL 60611",
+    "zip": "60611",
+    "phone": "312-926-8100",
+    "hours": "Mon-Fri: 8:00-17:00",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance"
+    ],
+    "ages_served": "Adults and Adolescents",
+    "services": [
+      "Psychiatric inpatient and outpatient care for teens & adults; dual‑diagnosis (substance + mental health)"
+    ],
+    "telehealth": true,
+    "website": "https://www.nm.org/locations/norman-and-ida-stone-institute-of-psychiatry-inpatient?utm_source=yext&utm_medium=other+location&utm_campaign=online+listings&y_source=1_ODIyOTkzMy03MTUtbG9jYXRpb24ud2Vic2l0ZQ%3D%3D",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient",
+    "keywords": "Inpatient Psychiatry, Outpatient Psychiatry, Substance Abuse, TMS, Dual Diagnosis",
+    "google_maps_link": "https://maps.app.goo.gl/7p1dsdXWQxaeNjhY9",
+    "num_of_beds": 55,
+    "acuity": "Acute, Chronic",
+    "types": [
+      "Acute",
+      "Chronic"
+    ]
+  },
+  {
+    "name": "Saint Anthony Hospital - Psychiatry",
+    "address": "2875 W. 19th St., Chicago, IL 60623",
+    "zip": "60623",
+    "phone": "773-484-4035",
+    "hours": "24/7 emergency, outpatients Mon-Fri 8:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "Adults",
+    "services": [
+      "Inpatient Psychiatry",
+      "Emergency Psychiatric Services",
+      "Group Therapy",
+      "CBT",
+      "Art Therapy"
+    ],
+    "telehealth": false,
+    "website": "https://sahchicago.org/hospital-services",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "Inpatient Psychiatry, Emergency Psychiatric, Art Therapy, CBT, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/YKSp7gZoAfBvi3Km8",
+    "num_of_beds": 151
+  },
+  {
+    "name": "Loretto Hospital - Behavioral Health",
+    "address": "645 S. Central Ave., Chicago, IL 60644",
+    "zip": "60644",
+    "phone": "773-854-5568",
+    "hours": "Mon-Fri: 8:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Substance Use Disorders",
+      "Psychiatric Disorders",
+      "Trauma Treatment",
+      "Outpatient Services"
+    ],
+    "telehealth": true,
+    "website": "https://www.lorettohospital.org/our-services/behavioral-health-services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "Substance Use, Trauma Treatment, Outpatient Services, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/Xp646pSTxJArewsGA",
+    "num_of_beds": 177
+  },
+  {
+    "name": "Kindred Hospital Chicago North - Behavioral Health",
+    "address": "2544 W. Montrose Ave., Chicago, IL 60611",
+    "zip": "60611",
+    "phone": "773-279-2785",
+    "hours": "24/7 inpatient services",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance"
+    ],
+    "ages_served": "Adults (18+)",
+    "services": [
+      "Adult inpatient psychiatric unit (age 18+) for crisis care"
+    ],
+    "telehealth": false,
+    "website": "https://www.kindredhospitals.com/locations/illinois/chicago-north/behavioral-health-unit",
+    "fax": "877-735-2780",
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "Acute Inpatient Psychiatric Care, Crisis Stabilization, Individual/Group/Family Therapy, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/QyAhKFqhdeWGnLxC6",
+    "num_of_beds": 30,
+    "acuity": "Acute",
+    "types": [
+      "Acute"
+    ]
+  },
+  {
+    "name": "The Kedzie Center",
+    "address": "4141 N. Kedzie Ave., Suite 2, Chicago, IL 60618",
+    "zip": "60618",
+    "phone": "773-754-0577",
+    "hours": "Mon-Fri: 9:00-17:00",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "Children, Adolescents, Adults",
+    "services": [
+      "Outpatient individual/group therapy; psychiatry; case‑management (children",
+      "adolescents",
+      "adults)"
+    ],
+    "telehealth": true,
+    "website": "https://www.thekedziecenter.org/services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Individual Therapy, Family Therapy, Group Therapy, Psychiatric Consultation",
+    "google_maps_link": "https://maps.app.goo.gl/5R2DSeB8QjKDQyv76",
+    "num_of_beds": 0
+  },
+  {
+    "name": "Thresholds",
+    "address": "4101 N. Ravenswood Ave., Chicago, IL 60613",
+    "zip": "60613",
+    "phone": "773-572-5500",
+    "hours": "Mon-Fri 9:00-17:00",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private Insurance",
+      "Sliding Scale"
+    ],
+    "ages_served": "Adults (18+), some youth programs",
+    "services": [
+      "Therapy & psychiatry; integrated behavioral/primary care"
+    ],
+    "telehealth": true,
+    "website": "https://www.thresholds.org/programs-services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Serious Mental Illness, Case Management, Supported Employment, Substance Abuse",
+    "google_maps_link": "https://maps.app.goo.gl/2nYXZRbzBw8zEdvaA",
+    "num_of_beds": 0
+  },
+  {
+    "name": "Compass Health Center - Chicago",
+    "address": "3440 N. Lake Shore Dr., Chicago, IL 60657",
+    "zip": "60657",
+    "phone": "773-687-2500",
+    "hours": "Mon-Fri: 8:00-18:00",
+    "languages": [
+      "English"
+    ],
+    "payment": [
+      "Private Insurance",
+      "Self-Pay"
+    ],
+    "ages_served": "Children (5-10), Adolescents, Young Adults, Adults",
+    "services": [
+      "Partial Hospitalization",
+      "Intensive Outpatient",
+      "OCD Treatment",
+      "Trauma/PTSD",
+      "Anxiety",
+      "Depression"
+    ],
+    "telehealth": true,
+    "website": "https://compasshealthcenter.net/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "OCD, Trauma, PTSD, Anxiety, Depression, Partial Hospitalization",
+    "google_maps_link": "https://maps.app.goo.gl/ERbEJJiSEewejEEU8",
+    "num_of_beds": 0
+  },
+  {
+    "name": "NAMI Chicago",
+    "address": "224 W. Hill St., Suite 410, Chicago, IL 60610",
+    "zip": "60610",
+    "phone": "312-477-3593",
+    "hours": "Mon-Fri 9:00-17:00 (Helpline: Mon-Fri 9:00-20:00, Weekends 9:00-17:00)",
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "payment": [
+      "Free Services"
+    ],
+    "ages_served": "All ages",
+    "services": [
+      "Peer‑led support groups; mental‑health education/training; advocacy; helpline service"
+    ],
+    "telehealth": true,
+    "website": "http://www.namichicago.org/",
+    "fax": "312-283-3535",
+    "crisis_line": "833-626-4244",
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Information & Referral, Support Groups, Education Programs, Advocacy",
+    "google_maps_link": "https://maps.app.goo.gl/dB5bMuKgppDG67aA8",
+    "num_of_beds": 0
+  },
+  {
+    "name": "LOYOLA GOTTLIEB MEMORIAL HOSPITAL",
+    "address": "701 WEST NORTH AVE, MELROSE PARK, IL 60160",
+    "zip": "60160",
+    "phone": "(708) 681-3200",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicaid",
+      "self-pay discount"
+    ],
+    "ages_served": [],
+    "services": [
+      "Anxiety",
+      "Depression",
+      "Behavioral health",
+      "Transcranial Magnetic Stimulation (TMS)"
+    ],
+    "telehealth": true,
+    "website": "https://www.loyolamedicine.org/services/behavioral-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, behavioral health, therapy, medication management, TMS, outpatient psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/Wbdk2RaP6QeFyGwg7",
+    "num_of_beds": 235
+  },
+  {
+    "name": "NORTHSHORE UNIVERSITY HEALTHSYSTEM - EVANSTON HOSPITAL",
+    "address": "2650 RIDGE AVE, EVANSTON, IL 60201",
+    "zip": "60201",
+    "phone": "(847) 570-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Full-spectrum psychiatry including medication management and therapy for behavioral health conditions"
+    ],
+    "telehealth": true,
+    "website": "https://www.endeavorhealth.org/services/behavioral-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, therapy, psychiatry, medication management, addiction, dual diagnosis, inpatient behavioral health, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/shDiaVaFdM964Ndb8",
+    "num_of_beds": 352,
+    "acuity": "Acute, Subacute, Chronic",
+    "types": [
+      "Acute",
+      "Subacute",
+      "Chronic"
+    ]
+  },
+  {
+    "name": "MT SINAI HOSPITAL MEDICAL CENTER",
+    "address": "15TH STREET AT CALIFORNIA, CHICAGO, IL 60608",
+    "zip": "60608",
+    "phone": "(773) 542-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Behavioral health",
+      "Mood disorders",
+      "Anxiety disorders",
+      "Psychosis",
+      "Trauma-related conditions",
+      "Substance use disorders"
+    ],
+    "telehealth": true,
+    "website": "https://www.sinaichicago.org/en/patients-visitors/services/behavioral-health/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, trauma, psychosis, crisis, substance use, behavioral health, therapy, inpatient psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/QZRpzQb2WkCkRG838",
+    "num_of_beds": 288
+  },
+  {
+    "name": "JESSE BROWN VA MEDICAL CENTER - VA CHICAGO HEALTHCARE SYSTEM",
+    "address": "820 S DAMEN STREET, CHICAGO, IL 60612",
+    "zip": "60612",
+    "phone": "(312) 569-8387",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "VA benefits for eligible veterans, medicare",
+      "Medicaid",
+      "or private insurance as secondary payers)."
+    ],
+    "ages_served": [],
+    "services": [
+      "Psychiatry with veteran-specific care for Post-Traumatic Stress Disorder and dual diagnosis (mental health + substance use)"
+    ],
+    "telehealth": true,
+    "website": "https://www.va.gov/chicago-health-care/locations/jesse-brown-department-of-veterans-affairs-medical-center/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "veteran, PTSD, depression, anxiety, dual diagnosis, substance use, crisis intervention, mental health, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/NxrA6W2fSurwxNKCA",
+    "num_of_beds": 0,
+    "acuity": "Acute, Chronic",
+    "types": [
+      "Acute",
+      "Chronic"
+    ]
+  },
+  {
+    "name": "ADVOCATE TRINITY HOSPITAL",
+    "address": "2320 E 93RD ST, CHICAGO, IL 60617",
+    "zip": "60617",
+    "phone": "(773) 967-5002",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Psychiatric evaluation",
+      "Addiction treatment",
+      "Stabilization services"
+    ],
+    "telehealth": true,
+    "website": "https://www.advocatehealth.com/health-services/behavioral-health-care",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "addiction, crisis, stabilization, depression, anxiety, psychiatric evaluation, emergency psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/VuEgXnkjDGy6tYnS6",
+    "num_of_beds": 205
+  },
+  {
+    "name": "WEST SUBURBAN MEDICAL CENTER",
+    "address": "3 ERIE COURT, OAK PARK, IL 60302",
+    "zip": "60302",
+    "phone": "(708) 383-6200",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Emergency psychiatric stabilization",
+      "Crisis intervention"
+    ],
+    "telehealth": true,
+    "website": "https://www.westsuburbanmc.com/our-services/behavioral-health/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "crisis, emergency psychiatry, behavioral health, stabilization, depression, anxiety",
+    "google_maps_link": "https://maps.app.goo.gl/bNRru7HeUK8TNuDX6",
+    "num_of_beds": 234
+  },
+  {
+    "name": "MACNEAL  HOSPITAL",
+    "address": "3249 SOUTH OAK PARK AVENUE, BERWYN, IL 60402",
+    "zip": "60402",
+    "phone": "(708) 783-9100",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Therapy",
+      "Medication management",
+      "Mood disorders",
+      "Anxiety disorders",
+      "Substance use disorders"
+    ],
+    "telehealth": true,
+    "website": "https://www.loyolamedicine.org/services/behavioral-health/psychiatry",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "depression, anxiety, therapy, substance use, behavioral health, medication management, inpatient psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/rMQcG818pvv7kmYE9",
+    "num_of_beds": 362
+  },
+  {
+    "name": "PALOS COMMUNITY HOSPITAL",
+    "address": "12251 SOUTH 80TH AVENUE, PALOS HEIGHTS, IL 60463",
+    "zip": "60463",
+    "phone": "(708) 923-4000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Psychiatric crisis care",
+      "Depression",
+      "Anxiety",
+      "Ongoing referral and follow-up services"
+    ],
+    "telehealth": true,
+    "website": "https://www.nm.org/locations/palos-hospital?utm_source=yext&utm_medium=gmb+location&utm_campaign=online+listings&y_source=1_MjM3NzYyOTYtNzE1LWxvY2F0aW9uLndlYnNpdGU%3D",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, crisis, therapy, referral, behavioral health, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/bt3qEeXXKGoKNsQU7",
+    "num_of_beds": 406
+  },
+  {
+    "name": "RUSH OAK PARK HOSPITAL",
+    "address": "520 S MAPLE AVE, OAK PARK, IL 60304",
+    "zip": "60304",
+    "phone": "(708) 383-9300",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Psychiatric illness treatment",
+      "Anxiety disorders",
+      "Depression",
+      "Post-Traumatic Stress Disorder"
+    ],
+    "telehealth": true,
+    "website": "https://www.rush.edu/locations/rush-oak-park-hospital",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, PTSD, trauma, therapy, behavioral health, inpatient psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/2yHiN7fGoNYURaCt9",
+    "num_of_beds": 166
+  },
+  {
+    "name": "ADVENTIST LA GRANGE MEMORIAL HOSPITAL",
+    "address": "5101 S WILLOW SPRINGS RD, LA GRANGE, IL 60525",
+    "zip": "60525",
+    "phone": "(708) 352-1200",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private Insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Psychiatric crisis care",
+      "Anxiety disorders",
+      "Depression",
+      "Referral to appropriate services"
+    ],
+    "telehealth": true,
+    "website": "https://www.uchicagomedicineadventhealth.org/our-services/behavioral-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "depression, anxiety, crisis, referral, behavioral health, outpatient psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/dhLy87tyRdAh1m1g6",
+    "num_of_beds": 186
+  },
+  {
+    "name": "ROSELAND COMMUNITY HOSPITAL",
+    "address": "45 W 111TH STREET, CHICAGO, IL 60628",
+    "zip": "60628",
+    "phone": "(773) 995-3000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicaid",
+      "Medicare",
+      "self-pay discount"
+    ],
+    "ages_served": [],
+    "services": [
+      "crisis stabilization",
+      "individual therapy",
+      "group therapy."
+    ],
+    "telehealth": true,
+    "website": "https://www.roselandhospital.org/bhu/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, suicidal-ideation, psychosis, substance-use, crisis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/QosRaKx6fcoR1F1n8",
+    "num_of_beds": 134,
+    "acuity": "Acute, Subacute",
+    "types": [
+      "Acute",
+      "Subacute"
+    ]
+  },
+  {
+    "name": "HINES VA MEDICAL CENTER",
+    "address": "5000 SOUTH 5TH AVENUE, HINES, IL 60141",
+    "zip": "60141",
+    "phone": "(708) 202-8387",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "VA benefits for eligible veterans"
+    ],
+    "ages_served": [],
+    "services": [
+      "veteran psychiatry",
+      "medication management",
+      "residential rehab."
+    ],
+    "telehealth": true,
+    "website": "https://www.va.gov/hines-health-care/health-services/mental-health-care/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "veteran, post-traumatic stress disorder, military-trauma, dual-diagnosis, suicide-prevention, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/NFQH8twjG5mA1dWS9",
+    "num_of_beds": 0
+  },
+  {
+    "name": "PRESENCE SAINT FRANCIS HOSPITAL",
+    "address": "355 RIDGE AVE, EVANSTON, IL 60202",
+    "zip": "60202",
+    "phone": "(847) 316-4000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Major private insurers",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "intensive outpatient",
+      "group therapy",
+      "medication management."
+    ],
+    "telehealth": true,
+    "website": "https://saintfrancisevanston.org/our-services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "outpatient psychiatry, anxiety, mood disorders, group programs, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/jCphxSEC8jmR7JGy8",
+    "num_of_beds": 197
+  },
+  {
+    "name": "LOUIS A WEISS MEMORIAL HOSPITAL",
+    "address": "4646 N MARINE DRIVE, CHICAGO, IL 60640",
+    "zip": "60640",
+    "phone": "(773) 878-8700",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "medical stabilization",
+      "residential substance treatment",
+      "outpatient therapy."
+    ],
+    "telehealth": true,
+    "website": "https://www.weisshospital.com/our-services/behavioral-health/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "substance-use, medical stabilization, anxiety, community mental health, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/Bvc53Drxp5EhbN6p7",
+    "num_of_beds": 236,
+    "acuity": "Subacute, Chronic",
+    "types": [
+      "Subacute",
+      "Chronic"
+    ]
+  },
+  {
+    "name": "THE UNIVERSITY OF CHICAGO MEDICAL CENTER (UCHICAGO)",
+    "address": "5841 SOUTH MARYLAND, CHICAGO, IL 60637",
+    "zip": "60637",
+    "phone": "(773) 702-9785",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient units",
+      "outpatient counseling",
+      "community wellness."
+    ],
+    "telehealth": true,
+    "website": "https://www.uchicagomedicine.org/conditions-services/psychiatry-and-psychology/inpatient-psychiatric-care#location",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "community psychiatry, emergency psychiatry, addiction, family services, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/Y6LYes7CTpL36e9DA",
+    "num_of_beds": 811
+  },
+  {
+    "name": "ST BERNARD HOSPITAL",
+    "address": "326 W 64TH ST, CHICAGO, IL 60621",
+    "zip": "60621",
+    "phone": "(773) 962-3900",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Crisis stabilization",
+      "medication management",
+      "therapy"
+    ],
+    "telehealth": true,
+    "website": "https://www.stbh.org/services/behavioral-health/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "crisis stabilization, depression, anxiety, telehealth follow-up, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/QoNfGCYY1yQkSvwp7",
+    "num_of_beds": 174
+  },
+  {
+    "name": "SWEDISH HOSPITAL",
+    "address": "5140 N CALIFORNIA AVE, CHICAGO, IL 60625",
+    "zip": "60625",
+    "phone": "(773) 878-8200",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "Detoxification",
+      "partial hospitalization",
+      "outpatient therapy"
+    ],
+    "telehealth": true,
+    "website": "https://www.endeavorhealth.org/locations/swedish-hospital",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "detox, addiction, partial hospitalization, outpatient mental health, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/x1DgmEVP5MSNsRWw6",
+    "num_of_beds": 292
+  },
+  {
+    "name": "THOREK MEMORIAL HOSPITAL",
+    "address": "850 W IRVING PARK RD, CHICAGO, IL 60613",
+    "zip": "60613",
+    "phone": "(773) 975-6867",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid; financial assistance available."
+    ],
+    "ages_served": [],
+    "services": [
+      "Inpatient psychiatry",
+      "medication management",
+      "individual therapy",
+      "group therapy",
+      "medical stabilization/detox"
+    ],
+    "telehealth": true,
+    "website": "https://www.thorek.org/specialties-and-services/adult-mental-health-program",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, psychosis, substance-use, crisis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/8rexTb993gkdoJyQA",
+    "num_of_beds": 172
+  },
+  {
+    "name": "AMITA HEALTH RESURRECTION MEDICAL CENTER",
+    "address": "7435 W TALCOTT AVENUE, CHICAGO, IL 60631",
+    "zip": "60631",
+    "phone": "(773) 774-8000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Major private insurers",
+      "Medicare",
+      "Medicaid (accepts wide insurer mix)."
+    ],
+    "ages_served": [],
+    "services": [
+      "Inpatient rehabilitation",
+      "partial hospitalization (day program)",
+      "outpatient therapy",
+      "medication-assisted treatment"
+    ],
+    "telehealth": true,
+    "website": "https://resurrectionmedicalcenter.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "detox, partial-hospitalization, adolescent care, relapse-prevention, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/BkZ8nh3LyeQ6dZ5C6",
+    "num_of_beds": 305
+  },
+  {
+    "name": "RUSH UNIVERSITY MEDICAL CENTER",
+    "address": "1620 W HARRISON ST, CHICAGO, IL 60612",
+    "zip": "60612",
+    "phone": "(312) 942-5000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Major private insurers",
+      "Medicare",
+      "Medicaid; wide insurer network."
+    ],
+    "ages_served": [],
+    "services": [
+      "Inpatient psychiatry",
+      "outpatient therapy",
+      "medication management",
+      "electroconvulsive therapy",
+      "partial hospitalization"
+    ],
+    "telehealth": true,
+    "website": "https://www.rush.edu/services/psychiatry-and-psychology-services",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, addiction, trauma, psychosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/bBBqo2N8Mgh3qhXE9",
+    "num_of_beds": 678
+  },
+  {
+    "name": "JOHN H STROGER JR HOSPITAL",
+    "address": "1969 W OGDEN AVE, CHICAGO, IL 60612",
+    "zip": "60612",
+    "phone": "(312) 864-6000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "CountyCare and many public-insurance options; also accepts private insurance and provides care for uninsured patients."
+    ],
+    "ages_served": [],
+    "services": [
+      "Crisis stabilization",
+      "detox and substance-use services",
+      "individual & group therapy",
+      "integrated dual-diagnosis treatment"
+    ],
+    "telehealth": true,
+    "website": "https://cookcountyhealth.org/locations/john-h-stroger-jr-hospital-of-cook-county/?utm_source=GMBSocialClimb&utm_medium=JohnH.Stroger,Jr.HospitalofCookCounty",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "crisis intervention, substance-use, integrated dual-diagnosis, trauma, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/TySSqALShgEvR99a7",
+    "num_of_beds": 450
+  },
+  {
+    "name": "HOLY CROSS HOSPITAL",
+    "address": "2701 W 68TH STREET, CHICAGO, IL 60629",
+    "zip": "60629",
+    "phone": "(773) 884-9000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "medical stabilization/detox",
+      "residential substance treatment",
+      "outpatient therapy"
+    ],
+    "telehealth": true,
+    "website": "https://www.sinaichicago.org/en/find-a-location/results/behavioral-health-under-the-rainbow-at-holy-cross-hospital/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "addiction, withdrawal, child & adolescent mental health, depression, anxiety, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/T54yUyPUJ5mW7DHn9",
+    "num_of_beds": 248
+  },
+  {
+    "name": "UNIVERSITY OF ILLINOIS HOSPITAL AND CLINICS (UI HEALTH)",
+    "address": "1740 WEST TAYLOR ST SUITE 1400, CHICAGO, IL 60612",
+    "zip": "60612",
+    "phone": "(312) 996-3900",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid",
+      "many public-insurance plans"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient therapy",
+      "medication management",
+      "intensive outpatient program"
+    ],
+    "telehealth": true,
+    "website": "https://hospital.uillinois.edu/primary-and-specialty-care/neurology-and-neurosurgery/neurological-conditions-we-treat/mental-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, trauma, adolescent psychiatry, psychosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/6TCswW4c55Fejk6f8",
+    "num_of_beds": 451
+  },
+  {
+    "name": "INSIGHT HOSPITAL AND MEDICAL CENTER CHICAGO",
+    "address": "2525 S MICHIGAN AVE, CHICAGO, IL 60616",
+    "zip": "60616",
+    "phone": "(312) 567-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "npatient mental health",
+      "outpatient therapy",
+      "medication management",
+      "community outreach"
+    ],
+    "telehealth": true,
+    "website": "https://insightchicago.com/behavioral-health/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "alcohol & drug dependency, depression, anxiety, psychosis, suicidal ideation, mood disorders, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/cZfvQT4z9dSV8cj47",
+    "num_of_beds": 412
+  },
+  {
+    "name": "FRANCISCAN HEALTH OLYMPIA & CHICAGO HEIGHTS",
+    "address": "20201 S CRAWFORD AVENUE, OLYMPIA FIELDS, IL 60461",
+    "zip": "60461",
+    "phone": "(708) 747-4000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient counseling",
+      "therapy programs",
+      "tele-behavioral interventions"
+    ],
+    "telehealth": true,
+    "website": "https://www.franciscanhealth.org/conditions-and-services/behavioral-and-mental-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "adult & adolescent behavioral health, psychiatric services, therapy, tele-behavioral health, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/q7xFiZAngTioEYTZ8",
+    "num_of_beds": 202
+  },
+  {
+    "name": "JACKSON PARK HOSPITAL",
+    "address": "7531 S STONY ISLAND AVE, CHICAGO, IL 60649",
+    "zip": "60649",
+    "phone": "(773) 947-7500",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid",
+      "state mental health funds",
+      "self-pay option"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "partial hospitalization day program",
+      "outpatient therapy",
+      "emergency psychiatric services"
+    ],
+    "telehealth": true,
+    "website": "https://www.jacksonparkhospital.org/services/behavioral-health/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, dual-diagnosis, substance use, psychiatric emergency, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/qtu7QpNMuJYZY8XY9",
+    "num_of_beds": 236
+  },
+  {
+    "name": "OSF LITTLE COMPANY OF MARY MEDICAL CENTER",
+    "address": "2800 W 95TH ST, EVERGREEN PARK, IL 60805",
+    "zip": "60805",
+    "phone": "(708) 422-6200",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid",
+      "cash/self-pay options"
+    ],
+    "ages_served": [],
+    "services": [
+      "outpatient therapy",
+      "day treatment/partial hospitalization",
+      "substance use and mental health integration"
+    ],
+    "telehealth": true,
+    "website": "https://www.osfhealthcare.org/locations/osf-little-company-of-mary-behavioral-and-mental-health-evergreen-park-121888",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "co-occurring disorders, mental health & substance use, relapse prevention, dual diagnosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/hnDjZWY9Ahi8pZsK7",
+    "num_of_beds": 274
+  },
+  {
+    "name": "PRESENCE SAINT MARY OF NAZARETH HOSPITAL",
+    "address": "2233 W DIVISION ST, CHICAGO, IL 60622",
+    "zip": "60622",
+    "phone": "(312) 770-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid; also accepts telehealth care"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient mental health",
+      "outpatient therapy",
+      "tele-counseling",
+      "group & family therapy"
+    ],
+    "telehealth": true,
+    "website": "https://saintmaryofnazarethhospital.com/our-services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "dual diagnosis, inpatient psychiatry, telemedicine, trauma, eating disorders, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/rkwQcC2n6MiiZdun7",
+    "num_of_beds": 361
+  },
+  {
+    "name": "SOUTH SHORE HOSPITAL",
+    "address": "8012 SOUTH CRANDON AVENUE, CHICAGO, IL 60617",
+    "zip": "60617",
+    "phone": "(773) 356-5000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid; values community access"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatric unit",
+      "outpatient therapy",
+      "geriatric psych services",
+      "tele-visits"
+    ],
+    "telehealth": true,
+    "website": "https://www.southshorehospital.com/geriatric-psychiatric/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "community mental health, geriatric psychiatry, telehealth behavioral, anxiety, depression, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/FxBQCB5VDuCmi8SM9",
+    "num_of_beds": 137
+  },
+  {
+    "name": "ADVOCATE ILLINOIS MASONIC MEDICAL CENTER",
+    "address": "836 WEST WELLINGTON AVENUE, CHICAGO, IL 60657",
+    "zip": "60657",
+    "phone": "(773) 975-1600",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid; co-occurring disorders services"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient behavioral health",
+      "outpatient therapy",
+      "dual-diagnosis treatment"
+    ],
+    "telehealth": true,
+    "website": "https://www.advocatehealth.com/locations/advocate-illinois-masonic-behavioral-health-care-chicago",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "substance use, co-occurring disorders, inpatient adult psychiatry, outpatient counseling, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/7XQdj8yGsuVefniWA",
+    "num_of_beds": 326
+  },
+  {
+    "name": "INGALLS MEMORIAL HOSPITAL",
+    "address": "1 INGALLS DRIVE, HARVEY, IL 60426",
+    "zip": "60426",
+    "phone": "(708) 333-2300",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient therapy",
+      "medication-assisted treatment"
+    ],
+    "telehealth": true,
+    "website": "https://www.uchicagomedicine.org/landing-pages/behavioral-and-mental-health-services-in-the-south-suburbs",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "behavioral health, medical stabilization for withdrawal, group therapy, dual diagnosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/Fi4bVAJRZ6vZjrZU7",
+    "num_of_beds": 485
+  },
+  {
+    "name": "THOREK HOSPITAL ANDERSONVILLE",
+    "address": "5025 N PAULINA STREET, CHICAGO, IL 60640",
+    "zip": "60640",
+    "phone": "(773) 271-9040",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient mental health rehabilitation",
+      "outpatient therapy",
+      "crisis services",
+      "dual disorder treatment"
+    ],
+    "telehealth": true,
+    "website": "https://www.thorek.org/specialties-and-services/adult-mental-health-program",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, dual diagnosis, crisis intervention, psychosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/ZRYykmXah4A3NxYP6",
+    "num_of_beds": 145
+  },
+  {
+    "name": "HUMBOLDT PARK HEALTH",
+    "address": "1044 N FRANCISCO AVE, CHICAGO, IL 60622",
+    "zip": "60622",
+    "phone": "(773) 292-8200",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "private insurance",
+      "sliding scale for uninsured"
+    ],
+    "ages_served": [],
+    "services": [
+      "outpatient therapy",
+      "behavioral health counseling",
+      "tele-behavioral health"
+    ],
+    "telehealth": true,
+    "website": "https://hph.care/hospital-services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "community mental health, behavioral health, telehealth, anxiety, depression, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/gT6QwGXmyz7Cth7n7",
+    "num_of_beds": 210
+  },
+  {
+    "name": "ADVOCATE CHRIST HOSPITAL & MEDICAL CENTER",
+    "address": "4440 W 95TH STREET, OAK LAWN, IL 60453",
+    "zip": "60453",
+    "phone": "(708) 684-8000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "substance use treatment",
+      "outpatient mental health clinic",
+      "addiction recovery"
+    ],
+    "telehealth": true,
+    "website": "https://www.advocatehealth.com/cmc/health-services/behavioral-health-care",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "substance abuse, opioid use disorder, mental health, outpatient clinic, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/szdCE7okYZ1FvP1J7",
+    "num_of_beds": 794
+  },
+  {
+    "name": "ADVOCATE LUTHERAN GENERAL HOSPITAL",
+    "address": "1775 DEMPSTER ST, PARK RIDGE, IL 60068",
+    "zip": "60068",
+    "phone": "(847) 723-2210",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance (Aetna",
+      "Cigna",
+      "BCBS)",
+      "Medicare",
+      "Medicaid",
+      "self-pay options"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient adult psychiatry",
+      "outpatient counseling",
+      "partial hospitalization",
+      "dual diagnosis care"
+    ],
+    "telehealth": true,
+    "website": "https://www.advocatehealth.com/luth/health-services/behavioral-health-care",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, bipolar disorder, substance abuse, dual diagnosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/JRc9bZynQSH1nkGr6",
+    "num_of_beds": 708
+  },
+  {
+    "name": "PRESENCE SAINT JOSEPH HOSPITAL - CHICAGO",
+    "address": "2900 NORTH LAKE SHORE DRIVE, CHICAGO, IL 60657",
+    "zip": "60657",
+    "phone": "(773) 665-3000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicare",
+      "Medicaid",
+      "Private insurance"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient therapy",
+      "tele-counseling",
+      "group & family therapy"
+    ],
+    "telehealth": true,
+    "website": "https://healthcare.ascension.org/specialty-care/behavioral-mental-health/why-ascension/ilchi-chicago-il-mental-health-addictions",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "dual diagnosis, eating disorders, trauma, anxiety, depression, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/hfgC3EhXFdZEMaUQ7",
+    "num_of_beds": 312
+  },
+  {
+    "name": "COMMUNITY FIRST MEDICAL CENTER",
+    "address": "5645 W ADDISON STREET, CHICAGO, IL 60634",
+    "zip": "60634",
+    "phone": "(773) 282-7000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "outpatient therapy",
+      "extended care services",
+      "outpatient behavioral support"
+    ],
+    "telehealth": true,
+    "website": "https://www.cfmedicalcenter.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "community hospital, outpatient services, pain management, extended care, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/sBkwiQVaGbG2wdi17",
+    "num_of_beds": 296
+  },
+  {
+    "name": "NORTHWEST COMMUNITY HOSPITAL",
+    "address": "800 W CENTRAL ROAD, ARLINGTON HEIGHTS, IL 60005",
+    "zip": "60005",
+    "phone": "(847) 618-1000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicare",
+      "Medicaid",
+      "Private insurance"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient behavioral health",
+      "outpatient therapy",
+      "substance use treatment"
+    ],
+    "telehealth": true,
+    "website": "https://www.endeavorhealth.org/services/behavioral-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "anxiety, depression, substance use, adolescent psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/a7grrzaUMTMzRvwt9",
+    "num_of_beds": 509
+  },
+  {
+    "name": "LOYOLA UNIVERSITY MEDICAL CENTER",
+    "address": "2160 S 1ST AVENUE, MAYWOOD, IL 60153",
+    "zip": "60153",
+    "phone": "(708) 216-9000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Major private insurance",
+      "Medicare",
+      "Medicaid",
+      "ACA marketplace plans"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient therapy",
+      "medication management",
+      "co-occurring treatment"
+    ],
+    "telehealth": true,
+    "website": "https://www.loyolamedicine.org/services/behavioral-health",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, TMS, pediatric psychiatry, adult psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/F2f46d7tBbwpufMV9",
+    "num_of_beds": 547
+  },
+  {
+    "name": "NORTHWESTERN MEMORIAL HOSPITAL",
+    "address": "251 E HURON ST, CHICAGO, IL 60611",
+    "zip": "60611",
+    "phone": "(312) 926-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Wide variety: private insurance",
+      "Medicare",
+      "Medicaid",
+      "government plans"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatric care",
+      "dual-diagnosis treatment",
+      "medications",
+      "group therapy"
+    ],
+    "telehealth": true,
+    "website": "https://www.nm.org/conditions-and-care-areas/behavioral-health/behavioral-health-services-downtown",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "mood disorders, anxiety, trauma, psychosis, geriatric psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/Atw48i6L2HVYamfo6",
+    "num_of_beds": 943
+  },
+  {
+    "name": "ST ALEXIUS MEDICAL CENTER",
+    "address": "1555 N BARRINGTON RD, HOFFMAN ESTATES, IL 60169",
+    "zip": "60169",
+    "phone": "(847) 843-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicaid",
+      "Medicare; self-pay options"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient services",
+      "outpatient clinics",
+      "partial hospitalization",
+      "intensive outpatient"
+    ],
+    "telehealth": true,
+    "website": "https://www.chistalexiushealth.org/services/behavioral",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "outpatient behavioral health, substance use, pediatric/adolescent psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/dkpvhfNFsNbp25JYA",
+    "num_of_beds": 318
+  },
+  {
+    "name": "PROVIDENT HOSPITAL OF CHICAGO",
+    "address": "500 E 51ST ST, CHICAGO, IL 60615",
+    "zip": "60615",
+    "phone": "(312) 572-2000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "private insurance; county discount programs"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatric hospital",
+      "trauma-informed care",
+      "outpatient therapy",
+      "medication management"
+    ],
+    "telehealth": true,
+    "website": "https://cookcountyhealth.org/locations/provident-hospital-of-cook-county/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "trauma informed care, dual-diagnosis, mental health, addiction, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/sYsDxDdHQbP2Vg2K7",
+    "num_of_beds": 48
+  },
+  {
+    "name": "RUSH SPECIALTY HOSPITAL",
+    "address": "516 S LOOMIS ST, CHICAGO, IL 60607",
+    "zip": "60607",
+    "phone": "(872) 298-9199",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient rehabilitation",
+      "intensive therapy",
+      "multidisciplinary care"
+    ],
+    "telehealth": true,
+    "website": "https://www.rush.edu/services/psychiatry-and-psychology-services",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Impatient",
+    "keywords": "rehabilitation, critical illness recovery, traumatic brain injury",
+    "google_maps_link": "https://maps.app.goo.gl/rxv3iprtjFR9xwoo6",
+    "num_of_beds": 100
+  },
+  {
+    "name": "ANN & ROBERT H LURIE CHILDRENS HOSPITAL OF CHICAGO",
+    "address": "225 E CHICAGO AVE, BOX 140, CHICAGO, IL 60611",
+    "zip": "60611",
+    "phone": "(312) 227-4000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private insurance"
+    ],
+    "ages_served": [
+      "Children"
+    ],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient therapy",
+      "family therapy",
+      "partial hospitalization"
+    ],
+    "telehealth": true,
+    "website": "https://www.luriechildrens.org/en/specialties-conditions/pediatric-psychiatrist-psychologist/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "pediatric psychiatry, adolescent mental health, mood/anxiety, eating disorders, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/gS7oYwXfL6QGTSDM7",
+    "num_of_beds": 368
+  },
+  {
+    "name": "LARABIDA CHILDRENS HOSPITAL I",
+    "address": "E 65TH ST AT LAKE MICHIGAN, CHICAGO, IL 60649",
+    "zip": "60649",
+    "phone": "(773) 363-6700",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Aetna",
+      "Cigna",
+      "BCBS",
+      "Medicaid health plans"
+    ],
+    "ages_served": [
+      "Children"
+    ],
+    "services": [
+      "outpatient therapy",
+      "specialized children programs",
+      "inpatient care"
+    ],
+    "telehealth": true,
+    "website": "https://larabida.org/cherry-services/support-services/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "children's behavioral health, trauma-informed care, outpatient services",
+    "google_maps_link": "https://maps.app.goo.gl/tRrNRoz9xZr7VauCA",
+    "num_of_beds": 49
+  },
+  {
+    "name": "SHRINERS HOSPITAL FOR CHILDREN",
+    "address": "2211 NORTH OAK PARK AVE, CHICAGO, IL 60707",
+    "zip": "60707",
+    "phone": "(773) 622-5400",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicaid",
+      "Medicare",
+      "charity care"
+    ],
+    "ages_served": [
+      "Children"
+    ],
+    "services": [
+      "outpatient therapy",
+      "rehabilitation",
+      "counseling",
+      "tele-behavioral health"
+    ],
+    "telehealth": true,
+    "website": "https://www.shrinerschildrens.org/en/locations/chicago/patients-and-families/patient-programs",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "children behavioral health, physical + emotional disability, tele-visits",
+    "google_maps_link": "https://maps.app.goo.gl/evud7KwmgunPDwSj9",
+    "num_of_beds": 60
+  },
+  {
+    "name": "AERIES HEALTHCARE OF ILLINOIS, RIVEREDGE HOSPITAL",
+    "address": "8311 WEST ROOSEVELT ROAD, FOREST PARK, IL 60130",
+    "zip": "60130",
+    "phone": "(708) 771-7000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry",
+      "outpatient therapy",
+      "medication management",
+      "co-occurring treatment"
+    ],
+    "telehealth": true,
+    "website": "https://riveredgehospital.com/programs-services/adults/inpatient/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "children, adolescents, adults, co-occurring disorders, developmental disability",
+    "google_maps_link": "https://maps.app.goo.gl/g3GUjzAzRqqUzqTA8",
+    "num_of_beds": 210
+  },
+  {
+    "name": "CHICAGO READ MENTAL HEALTH CENTER",
+    "address": "4200 N OAK PARK AVE, CHICAGO, IL 60634",
+    "zip": "60634",
+    "phone": "(773) 794-4000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private insurance"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatric care",
+      "dual-diagnosis treatment",
+      "medications",
+      "group therapy"
+    ],
+    "telehealth": true,
+    "website": "http://www.dhs.state.il.us/page.aspx?module=12&item=27893&officeid=239",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Impatient",
+    "keywords": "inpatient psychiatry, adult mental health, substance use, veterans",
+    "google_maps_link": "https://maps.app.goo.gl/CKQnVcAuSNnJp1Tc7",
+    "num_of_beds": 0
+  },
+  {
+    "name": "HARTGROVE HOSPITAL",
+    "address": "5730 W ROOSEVELT ROAD, CHICAGO, IL 60644",
+    "zip": "60644",
+    "phone": "(773) 413-1700",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient services",
+      "outpatient clinics",
+      "partial hospitalization",
+      "intensive outpatient"
+    ],
+    "telehealth": true,
+    "website": "https://hartgrovehospital.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "trauma, children/adolescents, adults, dual-diagnosis, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/gjMcjNXa4fGynX9X9",
+    "num_of_beds": 160
+  },
+  {
+    "name": "MADDEN MENTAL HEALTH CENTER",
+    "address": "1200 S FIRST AVE, HINES, IL 60141",
+    "zip": "60141",
+    "phone": "(708) 338-7400",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private insurance"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatric hospital",
+      "trauma-informed care",
+      "outpatient therapy",
+      "medication management"
+    ],
+    "telehealth": true,
+    "website": "https://www.dhs.state.il.us/page.aspx?module=12&officetype=10&county=Cook",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "trauma informed care, dual-diagnosis, mental health, addiction",
+    "google_maps_link": "https://maps.app.goo.gl/GBmcYKPQo3HC9NXR7",
+    "num_of_beds": 28
+  },
+  {
+    "name": "ALEXIAN BROTHERS BEHAVIORAL HLTH HOSP",
+    "address": "1650 MOON LAKE BLVD, HOFFMAN ESTATES, IL 60169",
+    "zip": "60169",
+    "phone": "(847) 882-1600",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Major private insurance",
+      "Medicare",
+      "Medicaid",
+      "sliding scale/self-pay options"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient psychiatry & addiction treatment",
+      "outpatient therapy",
+      "intensive outpatient programs",
+      "partial hospitalization",
+      "family counseling"
+    ],
+    "telehealth": true,
+    "website": "https://healthcare.ascension.org/locations/illinois/ilchi/hoffman-estates-ascension-alexian-brothers-behavioral-health-hospital?utm_campaign=gmb&utm_medium=organic-search&utm_content=location-listing&utm_source=local",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, anxiety, bipolar disorder, eating disorders, substance use, trauma, co-occurring disorders",
+    "google_maps_link": "https://maps.app.goo.gl/akuXLtY7yHrySzbz5",
+    "num_of_beds": 141
+  },
+  {
+    "name": "BHC STREAMWOOD HOSPITAL INC",
+    "address": "1400 E IRVING PARK ROAD, STREAMWOOD, IL 60107",
+    "zip": "60107",
+    "phone": "(630) 837-9000",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient stabilization",
+      "partial hospitalization",
+      "outpatient therapy",
+      "therapeutic day school"
+    ],
+    "telehealth": true,
+    "website": "https://streamwoodhospital.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "children, adolescents, young adults, depression, anxiety, behavioral disorders",
+    "google_maps_link": "https://maps.app.goo.gl/nevhnUaQ4etDX1SZ9",
+    "num_of_beds": 178
+  },
+  {
+    "name": "GARFIELD PARK HOSPITAL",
+    "address": "520 N RIDGEWAY AVE, CHICAGO, IL 60624",
+    "zip": "60624",
+    "phone": "(773) 265-3700",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicaid",
+      "sliding scale available"
+    ],
+    "ages_served": [
+      "Children",
+      "Ages 3-17"
+    ],
+    "services": [
+      "inpatient psychiatric program (ages 3-17)",
+      "partial hospitalization",
+      "outpatient therapy"
+    ],
+    "telehealth": true,
+    "website": "https://garfieldparkhospital.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "children, adolescents, trauma-informed, anxiety, psychosis",
+    "google_maps_link": "https://maps.app.goo.gl/MK7MTNR1nSPAPsvF8",
+    "num_of_beds": 0
+  },
+  {
+    "name": "CHICAGO BEHAVIORAL HOSPITAL",
+    "address": "555 WILSON LANE, DES PLAINES, IL 60016",
+    "zip": "60016",
+    "phone": "(847) 768-5430",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance",
+      "Medicare",
+      "Medicaid"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient mental health & addiction",
+      "intensive outpatient program"
+    ],
+    "telehealth": true,
+    "website": "https://chicagobehavioralhospital.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "No",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "mental health, substance use, adults, older adults",
+    "google_maps_link": "https://maps.app.goo.gl/pXE7VgxM3yPjMHxCA",
+    "num_of_beds": 147
+  },
+  {
+    "name": "MONTROSE BEHAVIORAL HEALTH HOSPITAL",
+    "address": "4840 N MARINE DR, CHICAGO, IL 60640",
+    "zip": "60640",
+    "phone": "(773) 878-9700",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Private insurance"
+    ],
+    "ages_served": [],
+    "services": [
+      "inpatient programs for children/adults/seniors",
+      "outpatient treatment",
+      "detox & medication-assisted treatment"
+    ],
+    "telehealth": true,
+    "website": "https://www.montrosebehavioral.com/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Inpatient & Outpatient",
+    "keywords": "depression, bipolar disorder, psychosis, anxiety, co-occurring substance use, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/JgtT72JEHKMwNLWGA",
+    "num_of_beds": 161
+  },
+  {
+    "name": "BRIDGE CLINIC ",
+    "address": "2020 W HARRISON ST, CHICAGO, IL 60612",
+    "zip": "60612",
+    "phone": "(312) 864-4628",
+    "hours": [],
+    "languages": [],
+    "payment": [
+      "Medicaid",
+      "Medicare",
+      "Private",
+      "Self-Pay"
+    ],
+    "ages_served": [],
+    "services": [
+      "Crisis stabilization",
+      "outpatient therapy",
+      "medication management",
+      "linkage to inpatient psych",
+      "coordination with CTSC and NAMI Helpline"
+    ],
+    "telehealth": true,
+    "website": "https://cookcountyhealth.org/services/mental-health-substance-abuse/",
+    "fax": null,
+    "crisis_line": null,
+    "emergency_serves": "Yes",
+    "inpatient_outpatient": "Outpatient",
+    "keywords": "Behavioral Health Access,Bridge Clinic, Crisis Stabilization,, Psychiatry, emergency services, ER",
+    "google_maps_link": "https://maps.app.goo.gl/UTHWrHyteciLAoB1A",
+    "num_of_beds": 0
+  }
+]

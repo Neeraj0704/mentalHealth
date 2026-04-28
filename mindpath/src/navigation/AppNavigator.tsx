@@ -29,6 +29,9 @@ import VoiceAssessmentScreen from '../screens/VoiceAssessmentScreen';
 import MiraChatScreen from '../screens/MiraChatScreen';
 import AssessmentResultScreen from '../screens/AssessmentResultScreen';
 import BookingScreen from '../screens/BookingScreen';
+import FacilityDetailScreen from '../screens/FacilityDetailScreen';
+import FacilitiesListScreen from '../screens/FacilitiesListScreen';
+import ClinicFilterModal from '../screens/ClinicFilterModal';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -50,6 +53,8 @@ function HomeNavigator() {
       <HomeStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
       <HomeStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
       <HomeStack.Screen name="Booking" component={BookingScreen} />
+      <HomeStack.Screen name="FacilityDetail" component={FacilityDetailScreen} />
+      <HomeStack.Screen name="FacilitiesList" component={FacilitiesListScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -74,6 +79,7 @@ function SavedNavigator() {
       <SavedStack.Screen name="Saved" component={SavedScreen} />
       <SavedStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
       <SavedStack.Screen name="Booking" component={BookingScreen} />
+      <SavedStack.Screen name="FacilityDetail" component={FacilityDetailScreen} />
     </SavedStack.Navigator>
   );
 }
@@ -216,10 +222,12 @@ export function AppNavigator() {
         <RootStack.Screen
           name="FilterModal"
           component={FilterScreen}
-          options={{
-            presentation: 'modal',
-            animation: 'slide_from_bottom',
-          }}
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+        />
+        <RootStack.Screen
+          name="ClinicFilterModal"
+          component={ClinicFilterModal}
+          options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
         />
       </RootStack.Navigator>
     </NavigationContainer>

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Provider, SearchFilters } from '../types';
+import { Provider, SearchFilters, Facility } from '../types';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -156,6 +156,31 @@ export async function generateConversationSummary(
   if (!res.ok) throw new Error('Summary failed');
   const data = await res.json();
   return data.summary as string;
+}
+
+// ── Community Facilities ─────────────────────────────────────────────────────
+
+export async function getNearbyFacilities(lat: number, lng: number, radiusMiles = 25): Promise<Facility[]> {
+  const res = await fetch(`${BASE_URL}/facilities/nearby?lat=${lat}&lng=${lng}&radius=${radiusMiles}`);
+  if (!res.ok) throw new Error('Failed to fetch nearby facilities');
+  const data = await res.json();
+  return data.facilities as Facility[];
+}
+
+export async function getFacilities(params: {
+  zip_code?: string;
+  language?: string;
+  telehealth_only?: boolean;
+  sliding_scale?: boolean;
+  free_only?: boolean;
+  q?: string;
+} = {}): Promise<Facility[]> {
+  const p = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => v !== undefined && v !== false && v !== '' && p.set(k, String(v)));
+  const res = await fetch(`${BASE_URL}/facilities?${p}`);
+  if (!res.ok) throw new Error('Failed to fetch facilities');
+  const data = await res.json();
+  return data.facilities as Facility[];
 }
 
 // ── Trending searches ────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import { StyleSheet } from 'react-native';
 
 import { SavedProvider } from './src/context/SavedContext';
 import { FilterProvider } from './src/context/FilterContext';
+import { ClinicFilterProvider } from './src/context/ClinicFilterContext';
 import { LocationProvider } from './src/context/LocationContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 
@@ -16,7 +17,9 @@ export default function App() {
         <LocationProvider>
           <SavedProvider>
             <FilterProvider>
-              <AppNavigator />
+              <ClinicFilterProvider>
+                <AppNavigator />
+              </ClinicFilterProvider>
             </FilterProvider>
           </SavedProvider>
         </LocationProvider>

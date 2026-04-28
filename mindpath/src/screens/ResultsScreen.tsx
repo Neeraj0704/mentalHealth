@@ -12,11 +12,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HomeStackParamList, Provider, SearchFilters } from '../types';
+import { HomeStackParamList, Provider, SearchFilters, Facility } from '../types';
 import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
-import { getProviders, getNearby } from '../services/api';
+import { getProviders, getNearby, getFacilities, getNearbyFacilities } from '../services/api';
 import { useLocation } from '../context/LocationContext';
+import { useClinicFilters } from '../context/ClinicFilterContext';
 import ProviderCard from '../components/ProviderCard';
+import { FacilityCard } from '../components/FacilityCard';
 import { LoadingCard } from '../components/LoadingCard';
 import { EmptyState } from '../components/EmptyState';
 import { useFilters } from '../context/FilterContext';
@@ -64,12 +66,17 @@ export default function ResultsScreen({ navigation, route }: Props) {
   const { query, specialty } = route.params;
   const { filters, activeFilterCount, resetFilters } = useFilters();
   const { userLocation, locationGranted, locationLoading, locationDenied, openLocationSettings } = useLocation();
+  const [activeTab, setActiveTab] = useState<'providers' | 'clinics'>('providers');
   const [loading, setLoading] = useState(true);
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [clinics, setClinics] = useState<Facility[]>([]);
+  const [clinicsLoading, setClinicsLoading] = useState(false);
   const [sortKey, setSortKey] = useState('rating');
   const [showSortSheet, setShowSortSheet] = useState(false);
   const [selectedChip, setSelectedChip] = useState<string | null>(null);
   const sortSheetAnim = useRef(new Animated.Value(0)).current;
+
+  const { clinicFilters, activeClinicFilterCount } = useClinicFilters();
 
   useEffect(() => {
     let cancelled = false;
@@ -120,6 +127,48 @@ export default function ResultsScreen({ navigation, route }: Props) {
     load();
     return () => { cancelled = true; };
   }, [filters, sortKey, query, specialty, selectedChip, userLocation, locationGranted, locationLoading]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadClinics = async () => {
+      setClinicsLoading(true);
+      try {
+        const q = query || selectedChip || specialty || clinicFilters.service || '';
+        const IL_BOUNDS = { latMin: 36.9, latMax: 42.6, lngMin: -91.6, lngMax: -87.0 };
+        const CHICAGO = { lat: 41.8827, lng: -87.6294 };
+
+        let data;
+        if (clinicFilters.distance > 0 && userLocation) {
+          const inIllinois = userLocation.lat >= IL_BOUNDS.latMin && userLocation.lat <= IL_BOUNDS.latMax &&
+            userLocation.lng >= IL_BOUNDS.lngMin && userLocation.lng <= IL_BOUNDS.lngMax;
+          const coords = inIllinois ? userLocation : CHICAGO;
+          data = await getNearbyFacilities(coords.lat, coords.lng, clinicFilters.distance);
+          if (q) data = data.filter(f => f.name.toLowerCase().includes(q.toLowerCase()) || f.keywords?.toLowerCase().includes(q.toLowerCase()));
+          if (clinicFilters.telehealth) data = data.filter(f => f.telehealth);
+          if (clinicFilters.language) data = data.filter(f => f.languages.some(l => l.toLowerCase().includes(clinicFilters.language!.toLowerCase())));
+          if (clinicFilters.cost === 'free') data = data.filter(f => f.payment.some(p => p.toLowerCase().includes('free')));
+          if (clinicFilters.cost === 'sliding') data = data.filter(f => f.payment.some(p => p.toLowerCase().includes('sliding')));
+          if (clinicFilters.cost === 'medicaid') data = data.filter(f => f.payment.some(p => p.toLowerCase().includes('medicaid')));
+        } else {
+          data = await getFacilities({
+            q: q || undefined,
+            free_only: clinicFilters.cost === 'free',
+            sliding_scale: clinicFilters.cost === 'sliding',
+            telehealth_only: clinicFilters.telehealth,
+            language: clinicFilters.language || undefined,
+          });
+          if (clinicFilters.cost === 'medicaid') data = data.filter(f => f.payment.some(p => p.toLowerCase().includes('medicaid')));
+        }
+        if (!cancelled) setClinics(data);
+      } catch {
+        if (!cancelled) setClinics([]);
+      } finally {
+        if (!cancelled) setClinicsLoading(false);
+      }
+    };
+    loadClinics();
+    return () => { cancelled = true; };
+  }, [query, selectedChip, specialty, clinicFilters, userLocation]);
 
   const toggleSortSheet = () => {
     if (!showSortSheet) {
@@ -178,51 +227,74 @@ export default function ResultsScreen({ navigation, route }: Props) {
           </View>
         </View>
 
-        {/* Filter / Sort bar */}
-        <View style={styles.filterBar}>
+        {/* Filter / Sort bar — switches based on active tab */}
+        {activeTab === 'providers' ? (
+          <View style={styles.filterBar}>
+            <TouchableOpacity
+              style={[styles.filterBtn, activeFilterCount > 0 && styles.filterBtnActive]}
+              onPress={() => navigation.getParent()?.navigate('FilterModal', { currentFilters: filters })}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="options-outline" size={16} color={activeFilterCount > 0 ? Colors.textInverse : Colors.textSecondary} />
+              <Text style={[styles.filterBtnText, activeFilterCount > 0 && styles.filterBtnTextActive]}>
+                Filters{activeFilterCount > 0 ? ` · ${activeFilterCount}` : ''}
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.filterDivider} />
+            <TouchableOpacity style={styles.sortBtn} onPress={toggleSortSheet} activeOpacity={0.8}>
+              <Ionicons name="swap-vertical-outline" size={16} color={Colors.textSecondary} />
+              <Text style={styles.sortBtnText}>{currentSortLabel}</Text>
+              <Ionicons name={showSortSheet ? 'chevron-up' : 'chevron-down'} size={14} color={Colors.textTertiary} />
+            </TouchableOpacity>
+            <View style={styles.filterDivider} />
+            <ScrollableFilterChips selected={selectedChip} onSelect={setSelectedChip} />
+          </View>
+        ) : (
+          <View style={styles.filterBar}>
+            <TouchableOpacity
+              style={[styles.filterBtn, activeClinicFilterCount > 0 && styles.filterBtnActive]}
+              onPress={() => navigation.getParent()?.navigate('ClinicFilterModal')}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="options-outline" size={16} color={activeClinicFilterCount > 0 ? Colors.textInverse : Colors.textSecondary} />
+              <Text style={[styles.filterBtnText, activeClinicFilterCount > 0 && styles.filterBtnTextActive]}>
+                Filters{activeClinicFilterCount > 0 ? ` · ${activeClinicFilterCount}` : ''}
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.filterDivider} />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ gap: 6, paddingRight: 4 }}>
+              {['Counseling', 'Psychiatry', 'Trauma', 'Family Therapy', 'ADHD'].map(svc => {
+                const active = clinicFilters.service === svc;
+                return (
+                  <TouchableOpacity key={svc} style={[styles.quickFilterChip, active && styles.quickFilterChipActive]} onPress={() => {}} activeOpacity={0.8}>
+                    <Text style={[styles.quickFilterChipText, active && styles.quickFilterChipTextActive]}>{svc}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Providers / Clinics tab toggle */}
+        <View style={styles.tabRow}>
           <TouchableOpacity
-            style={[
-              styles.filterBtn,
-              activeFilterCount > 0 && styles.filterBtnActive,
-            ]}
-            onPress={() => navigation.getParent()?.navigate('FilterModal', { currentFilters: filters })}
+            style={[styles.tabBtn, activeTab === 'providers' && styles.tabBtnActive]}
+            onPress={() => setActiveTab('providers')}
             activeOpacity={0.8}
           >
-            <Ionicons
-              name="options-outline"
-              size={16}
-              color={activeFilterCount > 0 ? Colors.textInverse : Colors.textSecondary}
-            />
-            <Text
-              style={[
-                styles.filterBtnText,
-                activeFilterCount > 0 && styles.filterBtnTextActive,
-              ]}
-            >
-              Filters
-              {activeFilterCount > 0 ? ` · ${activeFilterCount}` : ''}
+            <Text style={[styles.tabBtnText, activeTab === 'providers' && styles.tabBtnTextActive]}>
+              Providers {!loading ? `(${providers.length})` : ''}
             </Text>
           </TouchableOpacity>
-
-          <View style={styles.filterDivider} />
-
           <TouchableOpacity
-            style={styles.sortBtn}
-            onPress={toggleSortSheet}
+            style={[styles.tabBtn, activeTab === 'clinics' && styles.tabBtnActive]}
+            onPress={() => setActiveTab('clinics')}
             activeOpacity={0.8}
           >
-            <Ionicons name="swap-vertical-outline" size={16} color={Colors.textSecondary} />
-            <Text style={styles.sortBtnText}>{currentSortLabel}</Text>
-            <Ionicons
-              name={showSortSheet ? 'chevron-up' : 'chevron-down'}
-              size={14}
-              color={Colors.textTertiary}
-            />
+            <Text style={[styles.tabBtnText, activeTab === 'clinics' && styles.tabBtnTextActive]}>
+              Clinics {!clinicsLoading ? `(${clinics.length})` : ''}
+            </Text>
           </TouchableOpacity>
-
-          <View style={styles.filterDivider} />
-
-          <ScrollableFilterChips selected={selectedChip} onSelect={setSelectedChip} />
         </View>
       </SafeAreaView>
 
@@ -289,39 +361,66 @@ export default function ResultsScreen({ navigation, route }: Props) {
         </TouchableOpacity>
       )}
 
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          {[1, 2, 3].map((k) => (
-            <LoadingCard key={k} />
-          ))}
-        </View>
-      ) : providers.length === 0 && filters.max_distance_miles > 0 && locationDenied ? (
-        <EmptyState
-          icon="location-outline"
-          title="Location access needed"
-          description="Enable location access to find providers near you. Tap the banner above to open Settings."
-          actionLabel="Open Settings"
-          onAction={openLocationSettings}
-        />
-      ) : providers.length === 0 ? (
-        <EmptyState
-          icon="search-outline"
-          title="No providers found"
-          description={`We couldn't find mental health providers matching your current filters${query ? ` in ${query}` : ''}. Try adjusting your search.`}
-          actionLabel="Clear Filters"
-          onAction={resetFilters}
-        />
+      {activeTab === 'providers' ? (
+        loading ? (
+          <View style={styles.loadingContainer}>
+            {[1, 2, 3].map((k) => <LoadingCard key={k} />)}
+          </View>
+        ) : providers.length === 0 && filters.max_distance_miles > 0 && locationDenied ? (
+          <EmptyState
+            icon="location-outline"
+            title="Location access needed"
+            description="Enable location access to find providers near you. Tap the banner above to open Settings."
+            actionLabel="Open Settings"
+            onAction={openLocationSettings}
+          />
+        ) : providers.length === 0 ? (
+          <EmptyState
+            icon="search-outline"
+            title="No providers found"
+            description={`We couldn't find providers matching your search${query ? ` for "${query}"` : ''}. Try adjusting your filters.`}
+            actionLabel="Clear Filters"
+            onAction={resetFilters}
+          />
+        ) : (
+          <FlatList
+            data={providers}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <ProviderCard provider={item} onPress={() => handleProviderPress(item)} />
+            )}
+            ListHeaderComponent={renderHeader}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
+        )
       ) : (
-        <FlatList
-          data={providers}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ProviderCard provider={item} onPress={() => handleProviderPress(item)} />
-          )}
-          ListHeaderComponent={renderHeader}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
+        clinicsLoading ? (
+          <View style={styles.loadingContainer}>
+            {[1, 2, 3].map((k) => <LoadingCard key={k} />)}
+          </View>
+        ) : clinics.length === 0 ? (
+          <EmptyState
+            icon="medical-outline"
+            title="No clinics found"
+            description={`No community clinics match your search${query ? ` for "${query}"` : ''}.`}
+            actionLabel="View All Clinics"
+            onAction={() => setClinics([])}
+          />
+        ) : (
+          <FlatList
+            data={clinics}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => (
+              <FacilityCard
+                facility={item}
+                onPress={() => navigation.navigate('FacilityDetail', { facilityId: item.id })}
+              />
+            )}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
+        )
       )}
     </View>
   );
@@ -371,6 +470,35 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,
     ...Shadows.xs,
+  },
+  tabRow: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
+    gap: 8,
+    borderTopWidth: 1,
+    borderTopColor: Colors.divider,
+  },
+  tabBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1.5,
+    borderColor: Colors.border,
+    alignItems: 'center',
+  },
+  tabBtnActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  tabBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  tabBtnTextActive: {
+    color: Colors.textInverse,
   },
   locationBanner: {
     flexDirection: 'row',

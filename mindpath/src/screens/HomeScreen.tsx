@@ -22,7 +22,9 @@ import { ProviderMiniCard } from '../components/ProviderMiniCard';
 import {
   getTopRated, getNearby,
   getTrendingSearches, saveTrendingSearch,
+  getNearbyFacilities, getFacilities,
 } from '../services/api';
+import { Facility } from '../types';
 import { getPreferences } from '../services/preferences';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
@@ -72,6 +74,10 @@ export default function HomeScreen({ navigation }: Props) {
     topRated: { data: [], loading: true },
     forYou:   { data: [], loading: true },
   });
+  const [facilities, setFacilities] = useState<Facility[]>([]);
+  const [allFacilities, setAllFacilities] = useState<Facility[]>([]);
+  const [facilitiesLoading, setFacilitiesLoading] = useState(true);
+  const [clinicRadius, setClinicRadius] = useState(50);
 
   const inputScale = useRef(new Animated.Value(1)).current;
 
@@ -111,9 +117,10 @@ export default function HomeScreen({ navigation }: Props) {
         const searchCoords = inIllinois ? coords : CHICAGO;
         setUserCoords(searchCoords);
 
-        const [nearby, forYouRaw] = await Promise.all([
+        const [nearby, forYouRaw, nearbyClinics] = await Promise.all([
           getNearby(searchCoords.lat, searchCoords.lng, 10, r),
           prefs ? getNearby(searchCoords.lat, searchCoords.lng, 20, prefs.maxDistanceMiles) : Promise.resolve([]),
+          getNearbyFacilities(searchCoords.lat, searchCoords.lng, 25),
         ]);
         setSection('nearby', nearby, false);
 
@@ -128,13 +135,18 @@ export default function HomeScreen({ navigation }: Props) {
           forYou = forYou.filter(p => p.gender === prefs.providerGenderPreference);
         }
         setSection('forYou', forYou, false);
+        setAllFacilities(nearbyClinics);
+        setFacilities(nearbyClinics.slice(0, 10));
+        setFacilitiesLoading(false);
       } else {
         setSection('nearby', [], false);
         setSection('forYou', [], false);
+        setFacilitiesLoading(false);
       }
     } catch {
       setSection('nearby', [], false);
       setSection('forYou', [], false);
+      setFacilitiesLoading(false);
     }
   };
 
@@ -167,6 +179,26 @@ export default function HomeScreen({ navigation }: Props) {
   const handleRadiusChange = (r: number) => {
     setNearbyRadius(r);
     loadNearby(r);
+  };
+
+  const handleClinicRadiusChange = async (r: number) => {
+    setClinicRadius(r);
+    setFacilitiesLoading(true);
+    try {
+      let data;
+      if (r === 50) {
+        data = await getFacilities();
+      } else {
+        const coords = userCoords ?? { lat: 41.8827, lng: -87.6294 };
+        data = await getNearbyFacilities(coords.lat, coords.lng, r);
+      }
+      setAllFacilities(data);
+      setFacilities(data.slice(0, 10));
+    } catch {
+      setFacilities([]);
+    } finally {
+      setFacilitiesLoading(false);
+    }
   };
 
   const handleFocus = () => Animated.spring(inputScale, { toValue: 1.02, useNativeDriver: true, friction: 8 }).start();
@@ -281,11 +313,53 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
+        {/* Community Clinics */}
+        {(facilitiesLoading || facilities.length > 0) && (
+          <View style={styles.section}>
+            <SectionHeader
+              title="Clinics Near You"
+              onSeeAll={() => navigation.navigate('FacilitiesList', {
+                facilities: allFacilities,
+                lat: userCoords?.lat ?? 41.8827,
+                lng: userCoords?.lng ?? -87.6294,
+              })}
+            />
+            <View style={styles.radiusRow}>
+              {[2, 5, 10, 25, 50].map(r => (
+                <TouchableOpacity
+                  key={r}
+                  style={[styles.radiusChip, clinicRadius === r && styles.radiusChipActive]}
+                  onPress={() => handleClinicRadiusChange(r)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.radiusChipText, clinicRadius === r && styles.radiusChipTextActive]}>
+                    {r === 50 ? 'Any' : `${r} mi`}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            {facilitiesLoading ? (
+              <ActivityIndicator color={Colors.primary} style={{ marginLeft: Spacing.md }} />
+            ) : (
+              <FlatList
+                horizontal
+                data={facilities}
+                keyExtractor={f => String(f.id)}
+                contentContainerStyle={{ paddingHorizontal: Spacing.md }}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <FacilityCard facility={item} onPress={() => navigation.navigate('FacilityDetail', { facilityId: item.id })} />
+                )}
+              />
+            )}
+          </View>
+        )}
+
         {/* Near You */}
         {(sections.nearby.loading || sections.nearby.data.length > 0) && (
           <View style={styles.section}>
             <SectionHeader
-              title="Near You"
+              title="Providers Near You"
               onSeeAll={() => goToResults({ query: 'Chicago' })}
             />
             <View style={styles.radiusRow}>
@@ -309,7 +383,7 @@ export default function HomeScreen({ navigation }: Props) {
         {/* Top Rated */}
         <View style={styles.section}>
           <SectionHeader
-            title="Top Rated"
+            title="Top Rated Providers"
             onSeeAll={() => goToResults({ query: '', specialty: undefined })}
           />
           {renderMiniList(sections.topRated.data, sections.topRated.loading)}
@@ -319,7 +393,7 @@ export default function HomeScreen({ navigation }: Props) {
         {(sections.forYou.loading || sections.forYou.data.length > 0) && (
           <View style={styles.section}>
             <SectionHeader
-              title="Based on Your Preferences"
+              title="Providers Based on Your Preferences"
               onSeeAll={() => goToResults({ query: '' })}
             />
             {renderMiniList(sections.forYou.data, sections.forYou.loading)}
@@ -385,6 +459,55 @@ export default function HomeScreen({ navigation }: Props) {
     </View>
   );
 }
+
+function FacilityCard({ facility, onPress }: { facility: Facility; onPress: () => void }) {
+  const isFree = facility.payment.some(p => p.toLowerCase().includes('free'));
+  const isSliding = facility.payment.some(p => p.toLowerCase().includes('sliding'));
+  const tag = isFree ? 'Free' : isSliding ? 'Sliding Scale' : 'Low-Cost';
+  const tagColor = isFree ? '#16a34a' : '#b45309';
+  const tagBg = isFree ? '#dcfce7' : '#fef3c7';
+
+  return (
+    <TouchableOpacity style={facilityStyles.card} onPress={onPress} activeOpacity={0.8}>
+      <View style={[facilityStyles.tag, { backgroundColor: tagBg }]}>
+        <Text style={[facilityStyles.tagText, { color: tagColor }]}>{tag}</Text>
+      </View>
+      <Text style={facilityStyles.name} numberOfLines={2}>{facility.name}</Text>
+      <Text style={facilityStyles.address} numberOfLines={1}>{facility.address}</Text>
+      {facility.telehealth && (
+        <View style={facilityStyles.telehealthBadge}>
+          <Ionicons name="videocam-outline" size={11} color={Colors.primary} />
+          <Text style={facilityStyles.telehealthText}>Telehealth</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+}
+
+const facilityStyles = StyleSheet.create({
+  card: {
+    width: 180,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    padding: 12,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.xs,
+  },
+  tag: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.full,
+    marginBottom: 8,
+  },
+  tagText: { fontSize: 11, fontWeight: '700' },
+  name: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, marginBottom: 4, lineHeight: 18 },
+  address: { fontSize: 11, color: Colors.textTertiary, marginBottom: 6 },
+  telehealthBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  telehealthText: { fontSize: 11, color: Colors.primary, fontWeight: '500' },
+});
 
 const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: Colors.background },
