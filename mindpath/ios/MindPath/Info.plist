@@ -30,6 +30,12 @@
           <string>com.mindpath.app</string>
         </array>
       </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+mindpath</string>
+        </array>
+      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
@@ -47,7 +53,9 @@
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your location</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your location</string>
+    <string>MindPath uses your location to show mental health providers near you.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>MindPath uses the microphone for real-time voice conversations.</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
@@ -74,7 +82,5 @@
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>MindPath uses the microphone for real-time voice conversations.</string>
   </dict>
 </plist>

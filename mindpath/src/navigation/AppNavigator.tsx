@@ -202,8 +202,22 @@ function MainTabs() {
           },
         })}
       >
-        <Tab.Screen name="ScreeningTab" component={ScreeningNavigator} options={{ tabBarLabel: 'Screening' }} />
-        <Tab.Screen name="HomeTab" component={HomeNavigator} options={{ tabBarLabel: 'Discover' }} />
+        <Tab.Screen
+          name="ScreeningTab"
+          component={ScreeningNavigator}
+          options={{ tabBarLabel: 'Screening' }}
+          listeners={({ navigation }) => ({
+            tabPress: () => navigation.navigate('ScreeningTab', { screen: 'Assessment' }),
+          })}
+        />
+        <Tab.Screen
+          name="HomeTab"
+          component={HomeNavigator}
+          options={{ tabBarLabel: 'Discover' }}
+          listeners={({ navigation }) => ({
+            tabPress: () => navigation.navigate('HomeTab', { screen: 'Home' }),
+          })}
+        />
         <Tab.Screen
           name="AITab"
           component={HomeNavigator}

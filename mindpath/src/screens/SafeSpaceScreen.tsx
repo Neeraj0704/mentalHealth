@@ -59,12 +59,7 @@ export default function SafeSpaceScreen({ navigation }: Props) {
           </Text>
         </Animated.View>
 
-        <SafeAreaView edges={['bottom']} style={styles.bottom}>
-          <TouchableOpacity onPress={() => navigation.navigate('Breathing', { pattern: 'box' })} style={styles.breatheLink}>
-            <Ionicons name="radio-button-on-outline" size={14} color="rgba(255,255,255,0.35)" />
-            <Text style={styles.breatheLinkText}>Start guided breathing</Text>
-          </TouchableOpacity>
-        </SafeAreaView>
+        <SafeAreaView edges={['bottom']} style={styles.bottom} />
       </LinearGradient>
     </View>
   );
@@ -89,6 +84,12 @@ const styles = StyleSheet.create({
   mainText: { fontSize: 28, fontWeight: '300', color: 'rgba(255,255,255,0.85)', letterSpacing: 0.5, marginBottom: 12, textAlign: 'center' },
   subText: { fontSize: 16, color: 'rgba(255,255,255,0.4)', textAlign: 'center', lineHeight: 26, letterSpacing: 0.3 },
   bottom: { paddingBottom: 20, alignItems: 'center' },
-  breatheLink: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  breatheLinkText: { fontSize: 13, color: 'rgba(255,255,255,0.35)', textDecorationLine: 'underline' },
+  breatheLink: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: 'rgba(74,139,159,0.25)',
+    borderWidth: 1, borderColor: 'rgba(74,139,159,0.5)',
+    paddingHorizontal: 24, paddingVertical: 14,
+    borderRadius: 30,
+  },
+  breatheLinkText: { fontSize: 15, fontWeight: '600', color: 'rgba(255,255,255,0.85)' },
 });
