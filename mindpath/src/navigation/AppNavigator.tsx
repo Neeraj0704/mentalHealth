@@ -79,6 +79,7 @@ function ScreeningNavigator() {
       <ScreeningStack.Screen name="Results" component={ResultsScreen} />
       <ScreeningStack.Screen name="AssessmentResult" component={AssessmentResultScreen} />
       <ScreeningStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
+      <ScreeningStack.Screen name="FacilityDetail" component={FacilityDetailScreen} />
       <ScreeningStack.Screen name="Booking" component={BookingScreen} />
       <ScreeningStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
       <ScreeningStack.Screen name="Home" component={HomeScreen} />

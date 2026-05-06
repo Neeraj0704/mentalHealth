@@ -406,7 +406,7 @@ export default function AssessmentScreen({ navigation }: Props) {
   };
 
   const handleSkip = () => {
-    navigation.replace('Home');
+    navigation.getParent()?.navigate('HomeTab');
   };
 
   const computeResult = (instrument: string, ans: number[]): ResultData => {
