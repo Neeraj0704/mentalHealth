@@ -146,7 +146,7 @@ export default function LearnDetailScreen({ navigation, route }: Props) {
           {/* Find providers CTA */}
           <TouchableOpacity
             style={[styles.findBtn, { backgroundColor: condition.color }]}
-            onPress={() => navigation.navigate('LearnResults', { specialty: condition.title, conditionId: condition.id })}
+            onPress={() => navigation.navigate('LearnResults', { query: condition.title, specialty: condition.title })}
             activeOpacity={0.85}
           >
             <Ionicons name="search-outline" size={18} color="#fff" />

@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider, Facility } from '../types';
-import { useAuth } from './AuthContext';
 import { BASE_URL } from '../config';
+
+const TOKEN_KEY = 'mindpath_auth_token';
 
 interface SavedContextType {
   savedIds: Set<string>;
@@ -16,25 +18,26 @@ interface SavedContextType {
 
 const SavedContext = createContext<SavedContextType | undefined>(undefined);
 
+async function getToken(): Promise<string | null> {
+  try { return await AsyncStorage.getItem(TOKEN_KEY); } catch { return null; }
+}
+
+function authHeader(token: string) {
+  return { Authorization: `Bearer ${token}` };
+}
+
 export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { token, isLoggedIn } = useAuth();
   const [savedMap, setSavedMap] = useState<Map<string, Provider>>(new Map());
   const [savedFacilityMap, setSavedFacilityMap] = useState<Map<number, Facility>>(new Map());
 
-  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
-
-  // Load saved items from backend when user logs in
   useEffect(() => {
-    if (!isLoggedIn || !token) {
-      setSavedMap(new Map());
-      setSavedFacilityMap(new Map());
-      return;
-    }
     const load = async () => {
+      const token = await getToken();
+      if (!token) return;
       try {
         const [provRes, facRes] = await Promise.all([
-          fetch(`${BASE_URL}/auth/saved/providers`, { headers: authHeaders }),
-          fetch(`${BASE_URL}/auth/saved/facilities`, { headers: authHeaders }),
+          fetch(`${BASE_URL}/auth/saved/providers`, { headers: authHeader(token) }),
+          fetch(`${BASE_URL}/auth/saved/facilities`, { headers: authHeader(token) }),
         ]);
         if (provRes.ok) {
           const d = await provRes.json();
@@ -51,7 +54,7 @@ export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } catch {}
     };
     load();
-  }, [isLoggedIn, token]);
+  }, []);
 
   const toggleSaved = useCallback((provider: Provider) => {
     setSavedMap((prev) => {
@@ -59,16 +62,17 @@ export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const isSaving = !next.has(provider.id);
       if (isSaving) next.set(provider.id, provider);
       else next.delete(provider.id);
-      // Sync to backend
-      if (token) {
-        fetch(`${BASE_URL}/auth/saved/providers/${provider.id}`, {
-          method: isSaving ? 'POST' : 'DELETE',
-          headers: authHeaders,
-        }).catch(() => {});
-      }
+      getToken().then(token => {
+        if (token) {
+          fetch(`${BASE_URL}/auth/saved/providers/${provider.id}`, {
+            method: isSaving ? 'POST' : 'DELETE',
+            headers: authHeader(token),
+          }).catch(() => {});
+        }
+      });
       return next;
     });
-  }, [token]);
+  }, []);
 
   const isSaved = useCallback((id: string) => savedMap.has(id), [savedMap]);
 
@@ -78,16 +82,17 @@ export const SavedProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const isSaving = !next.has(facility.id);
       if (isSaving) next.set(facility.id, facility);
       else next.delete(facility.id);
-      // Sync to backend
-      if (token) {
-        fetch(`${BASE_URL}/auth/saved/facilities/${facility.id}`, {
-          method: isSaving ? 'POST' : 'DELETE',
-          headers: authHeaders,
-        }).catch(() => {});
-      }
+      getToken().then(token => {
+        if (token) {
+          fetch(`${BASE_URL}/auth/saved/facilities/${facility.id}`, {
+            method: isSaving ? 'POST' : 'DELETE',
+            headers: authHeader(token),
+          }).catch(() => {});
+        }
+      });
       return next;
     });
-  }, [token]);
+  }, []);
 
   const isFacilitySaved = useCallback((id: number) => savedFacilityMap.has(id), [savedFacilityMap]);
 

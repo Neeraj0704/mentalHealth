@@ -138,7 +138,7 @@ export type RootStackParamList = {
 
 export type HomeStackParamList = {
   Home: undefined;
-  Assessment: undefined;
+  Assessment: { hideSkip?: boolean; preselectedCondition?: string } | undefined;
   VoiceAssessment: undefined;
   MiraChat: undefined;
   AssessmentResult: {
@@ -164,7 +164,7 @@ export type HomeStackParamList = {
 export type LearnStackParamList = {
   Learn: undefined;
   LearnDetail: { conditionId: string };
-  LearnResults: { specialty: string; conditionId: string };
+  LearnResults: { query: string; specialty?: string };
 };
 
 export type SavedStackParamList = {

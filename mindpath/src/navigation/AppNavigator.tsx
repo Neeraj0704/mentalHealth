@@ -166,17 +166,9 @@ function MiraIntroPopup({ onDismiss }: { onDismiss: () => void }) {
   );
 }
 
-function MainTabs({ navigation }: any) {
+function MainTabs() {
   const { savedIds, savedFacilityIds } = useSaved();
   const [showIntro, setShowIntro] = useState(true);
-
-  // Show Assessment screen on first open
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate('HomeTab', { screen: 'Assessment' });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <>

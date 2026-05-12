@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CommonActions } from '@react-navigation/native';
 import { HomeStackParamList, Provider, Facility } from '../types';
 import { Colors, Spacing, Radius, Shadows } from '../theme';
 import ProviderCard from '../components/ProviderCard';
@@ -348,33 +349,28 @@ export default function HomeScreen({ navigation }: Props) {
       </TouchableOpacity>
 
       {/* Quick Screening */}
-      <Text style={styles.sidebarSection}>Quick Screening</Text>
-      <Text style={styles.sidebarSectionSub}>Answer a few questions to find the right providers</Text>
-      {[
-        { label: 'Anxiety', id: 'anxiety', color: '#2E6A7E' },
-        { label: 'Depression', id: 'depression', color: '#6BAF92' },
-        { label: 'PTSD / Trauma', id: 'trauma', color: '#8B6BAF' },
-      ].map(c => (
-        <TouchableOpacity
-          key={c.id}
-          style={[styles.screeningChip, { borderColor: c.color + '44', backgroundColor: c.color + '11' }]}
-          onPress={() => {
-            closeSidebar();
-            navigation.navigate('Assessment', { preselectedCondition: c.id } as any);
-          }}
-          activeOpacity={0.8}
-        >
-          <Text style={[styles.screeningChipText, { color: c.color }]}>{c.label} Screening</Text>
-          <Ionicons name="chevron-forward" size={14} color={c.color} />
-        </TouchableOpacity>
-      ))}
       <TouchableOpacity
-        style={styles.screeningChip}
-        onPress={() => { closeSidebar(); navigation.navigate('Assessment' as any); }}
-        activeOpacity={0.8}
+        style={styles.sidebarSupportCard}
+        onPress={() => {
+          closeSidebar();
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [
+                { name: 'Home' },
+                { name: 'Assessment', params: { hideSkip: true } },
+              ],
+            })
+          );
+        }}
+        activeOpacity={0.85}
       >
-        <Text style={styles.screeningChipText}>Full Assessment</Text>
-        <Ionicons name="chevron-forward" size={14} color={Colors.textSecondary} />
+        <Ionicons name="clipboard-outline" size={20} color="#fff" />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.sidebarSupportTitle}>Quick Screening</Text>
+          <Text style={styles.sidebarSupportSub}>Answer a few questions to find the right providers</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
       </TouchableOpacity>
     </ScrollView>
   );

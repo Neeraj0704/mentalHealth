@@ -250,7 +250,9 @@ function getNoInstrumentResult(condition: ConditionDef): ResultData {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function AssessmentScreen({ navigation }: Props) {
+export default function AssessmentScreen({ navigation, route }: Props) {
+  const hideSkip = (route.params as any)?.hideSkip ?? false;
+  const preselectedId = (route.params as any)?.preselectedCondition ?? null;
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedCondition, setSelectedCondition] = useState<ConditionDef | null>(null);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -262,6 +264,24 @@ export default function AssessmentScreen({ navigation }: Props) {
   const [mdqSubStep, setMdqSubStep] = useState<'q1' | 'q2' | 'q3'>('q1');
   const [result, setResult] = useState<ResultData | null>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  // Auto-select condition and jump to questions if preselected from sidebar
+  useEffect(() => {
+    if (preselectedId) {
+      const cond = CONDITIONS.find(c => c.id === preselectedId);
+      if (cond) {
+        setSelectedCondition(cond);
+        setAnswers([]);
+        setQuestionIndex(0);
+        setPcptsdGate(null);
+        setMdqQ1(new Array(13).fill(false));
+        setMdqQ2(null);
+        setMdqQ3(null);
+        setMdqSubStep('q1');
+        setStep(cond.instrument ? 2 : 3);
+      }
+    }
+  }, [preselectedId]);
 
   useEffect(() => {
     if (result) {
@@ -402,7 +422,11 @@ export default function AssessmentScreen({ navigation }: Props) {
   };
 
   const handleSkip = () => {
-    navigation.getParent()?.navigate('HomeTab');
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.getParent()?.navigate('HomeTab');
+    }
   };
 
   const computeResult = (instrument: string, ans: number[]): ResultData => {
@@ -739,9 +763,12 @@ export default function AssessmentScreen({ navigation }: Props) {
               <View key={s} style={[styles.stepDot, step === s && styles.stepDotActive]} />
             ))}
           </View>
-          <TouchableOpacity style={styles.headerBtn} onPress={handleSkip} activeOpacity={0.7}>
-            <Text style={styles.skipText}>Skip</Text>
-          </TouchableOpacity>
+          {!hideSkip && (
+            <TouchableOpacity style={styles.headerBtn} onPress={handleSkip} activeOpacity={0.7}>
+              <Text style={styles.skipText}>Skip</Text>
+            </TouchableOpacity>
+          )}
+          {hideSkip && <View style={styles.headerBtn} />}
         </View>
       </SafeAreaView>
 
@@ -780,9 +807,11 @@ export default function AssessmentScreen({ navigation }: Props) {
               <Text style={styles.primaryBtnText}>Find Providers</Text>
               <Ionicons name="search" size={18} color={Colors.textInverse} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.secondaryBtn} onPress={handleSkip} activeOpacity={0.8}>
-              <Text style={styles.secondaryBtnText}>Explore on my own</Text>
-            </TouchableOpacity>
+            {!hideSkip && (
+              <TouchableOpacity style={styles.secondaryBtn} onPress={handleSkip} activeOpacity={0.8}>
+                <Text style={styles.secondaryBtnText}>Explore on my own</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </SafeAreaView>

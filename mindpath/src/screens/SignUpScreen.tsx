@@ -110,7 +110,7 @@ export default function SignUpScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] })} style={styles.skipBtn}>
+        <TouchableOpacity onPress={() => navigation.reset({ index: 0, routes: [{ name: 'MainTabs', state: { routes: [{ name: 'HomeTab', state: { routes: [{ name: 'Home' }, { name: 'Assessment' }], index: 1 } }], index: 0 } } as any] })} style={styles.skipBtn}>
           <Text style={styles.skipText}>Continue without account</Text>
         </TouchableOpacity>
 

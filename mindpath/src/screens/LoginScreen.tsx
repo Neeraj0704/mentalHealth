@@ -29,7 +29,7 @@ export default function LoginScreen({ navigation }: Props) {
     setLoading(true);
     try {
       await login(email.trim(), password);
-      navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+      navigation.reset({ index: 0, routes: [{ name: 'MainTabs', state: { routes: [{ name: 'HomeTab', state: { routes: [{ name: 'Home' }, { name: 'Assessment' }], index: 1 } }], index: 0 } } as any] });
     } catch (e: any) {
       Alert.alert('Login failed', e.message || 'Please check your credentials.');
     } finally {

@@ -66,7 +66,7 @@ export default function AssessmentResultScreen({ navigation, route }: Props) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView edges={['top']} style={styles.safeTop}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.7}>
+        <TouchableOpacity onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.getParent()?.navigate('HomeTab')} style={styles.backBtn} activeOpacity={0.7}>
           <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
         <TouchableOpacity
