@@ -210,17 +210,15 @@ export default function HomeScreen({ navigation }: Props) {
               if (activeTab === 'providers') {
                 const c = getProviderCoords(item);
                 return (
-                  <TouchableOpacity
-                    key={item.id}
-                    style={[styles.mapCardWrap, selected && styles.mapCardWrapSelected]}
-                    onPress={() => {
-                      if (c) handlePinPress(item.id, c);
-                      if (selected) navigation.navigate('ProviderDetail', { providerId: item.id });
-                    }}
-                    activeOpacity={0.9}
-                  >
-                    <ProviderMiniCard provider={item} onPress={() => {}} />
-                  </TouchableOpacity>
+                  <View key={item.id} style={[styles.mapCardWrap, selected && styles.mapCardWrapSelected]}>
+                    <ProviderMiniCard
+                      provider={item}
+                      onPress={() => {
+                        if (c) handlePinPress(item.id, c);
+                        navigation.navigate('ProviderDetail', { providerId: item.id });
+                      }}
+                    />
+                  </View>
                 );
               }
               const c = getClinicCoords(item);
@@ -230,7 +228,7 @@ export default function HomeScreen({ navigation }: Props) {
                   style={[styles.mapClinicCard, selected && styles.mapCardWrapSelected]}
                   onPress={() => {
                     if (c) handlePinPress(item.id, c);
-                    if (selected) navigation.navigate('FacilityDetail', { facilityId: item.id });
+                    navigation.navigate('FacilityDetail', { facilityId: item.id });
                   }}
                   activeOpacity={0.85}
                 >

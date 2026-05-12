@@ -1,4 +1,13 @@
 import 'react-native-gesture-handler';
+
+// Patch global fetch to include ngrok bypass header on every request
+const _fetch = global.fetch;
+global.fetch = (input: RequestInfo | URL, init?: RequestInit) =>
+  _fetch(input, {
+    ...init,
+    headers: { 'ngrok-skip-browser-warning': 'true', ...(init?.headers as Record<string, string> ?? {}) },
+  });
+
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

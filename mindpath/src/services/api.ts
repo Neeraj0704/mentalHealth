@@ -3,10 +3,21 @@ import { Provider, SearchFilters, Facility } from '../types';
 
 import { BASE_URL } from '../config';
 
+const API_HEADERS: Record<string, string> = {
+  'ngrok-skip-browser-warning': 'true',
+};
+
+async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  return fetch(url, {
+    ...options,
+    headers: { ...API_HEADERS, ...(options.headers as Record<string, string> ?? {}) },
+  });
+}
+
 async function fetchProviders(params: Record<string, string | number | boolean>): Promise<Provider[]> {
   const p = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => v !== undefined && v !== '' && p.set(k, String(v)));
-  const res = await fetch(`${BASE_URL}/providers?${p}`);
+  const res = await apiFetch(`${BASE_URL}/providers?${p}`);
   if (!res.ok) throw new Error('Failed to fetch providers');
   const data = await res.json();
   return data.providers as Provider[];
@@ -36,7 +47,7 @@ export async function getProviders(filters?: Partial<SearchFilters>, q?: string,
 }
 
 export async function getProviderById(id: string): Promise<Provider | undefined> {
-  const res = await fetch(`${BASE_URL}/providers/${id}`);
+  const res = await apiFetch(`${BASE_URL}/providers/${id}`);
   if (res.status === 404) return undefined;
   if (!res.ok) throw new Error('Failed to fetch provider');
   return res.json() as Promise<Provider>;
@@ -63,7 +74,7 @@ export async function getTelehealth(limit = 10): Promise<Provider[]> {
 }
 
 export async function getNearby(lat: number, lng: number, limit = 10, radiusMiles = 50): Promise<Provider[]> {
-  const res = await fetch(`${BASE_URL}/providers/nearby?lat=${lat}&lng=${lng}&limit=${limit}&radius=${radiusMiles}`);
+  const res = await apiFetch(`${BASE_URL}/providers/nearby?lat=${lat}&lng=${lng}&limit=${limit}&radius=${radiusMiles}`);
   if (!res.ok) throw new Error('Failed to fetch nearby providers');
   const data = await res.json();
   return data.providers as Provider[];
@@ -84,7 +95,7 @@ export interface BookingPayload {
 }
 
 export async function bookAppointment(payload: BookingPayload): Promise<{ success: boolean; booking_id?: string }> {
-  const res = await fetch(`${BASE_URL}/bookings`, {
+  const res = await apiFetch(`${BASE_URL}/bookings`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -125,7 +136,7 @@ export async function sendVoiceTurn(
   sessionId: string,
   userMessage: string,
 ): Promise<VoiceTurnResponse> {
-  const res = await fetch(`${BASE_URL}/chat/completions`, {
+  const res = await apiFetch(`${BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -148,7 +159,7 @@ export async function generateConversationSummary(
   qaItems: Array<{ question: string; answer: string }>,
   condition: string,
 ): Promise<string> {
-  const res = await fetch(`${BASE_URL}/voice/summary`, {
+  const res = await apiFetch(`${BASE_URL}/voice/summary`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ conversation, qa_items: qaItems, condition }),
@@ -161,7 +172,7 @@ export async function generateConversationSummary(
 // ── Community Facilities ─────────────────────────────────────────────────────
 
 export async function getNearbyFacilities(lat: number, lng: number, radiusMiles = 25): Promise<Facility[]> {
-  const res = await fetch(`${BASE_URL}/facilities/nearby?lat=${lat}&lng=${lng}&radius=${radiusMiles}`);
+  const res = await apiFetch(`${BASE_URL}/facilities/nearby?lat=${lat}&lng=${lng}&radius=${radiusMiles}`);
   if (!res.ok) throw new Error('Failed to fetch nearby facilities');
   const data = await res.json();
   return data.facilities as Facility[];
@@ -177,7 +188,7 @@ export async function getFacilities(params: {
 } = {}): Promise<Facility[]> {
   const p = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => v !== undefined && v !== false && v !== '' && p.set(k, String(v)));
-  const res = await fetch(`${BASE_URL}/facilities?${p}`);
+  const res = await apiFetch(`${BASE_URL}/facilities?${p}`);
   if (!res.ok) throw new Error('Failed to fetch facilities');
   const data = await res.json();
   return data.facilities as Facility[];
