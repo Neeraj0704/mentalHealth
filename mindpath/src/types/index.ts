@@ -128,6 +128,8 @@ export interface AssessmentSummary {
 export type RootStackParamList = {
   Consent: undefined;
   Onboarding: undefined;
+  Login: undefined;
+  SignUp: undefined;
   PreferencesSetup: undefined;
   MainTabs: undefined;
   FilterModal: { currentFilters: SearchFilters };
@@ -159,6 +161,12 @@ export type HomeStackParamList = {
   SOSResources: undefined;
 };
 
+export type LearnStackParamList = {
+  Learn: undefined;
+  LearnDetail: { conditionId: string };
+  LearnResults: { specialty: string; conditionId: string };
+};
+
 export type SavedStackParamList = {
   Saved: undefined;
   ProviderDetail: { providerId: string };
@@ -171,7 +179,7 @@ export type ProfileStackParamList = {
 };
 
 export type MainTabParamList = {
-  ScreeningTab: NavigatorScreenParams<HomeStackParamList>;
+  LearnTab: NavigatorScreenParams<LearnStackParamList>;
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
   AITab: undefined;
   SavedTab: NavigatorScreenParams<SavedStackParamList>;

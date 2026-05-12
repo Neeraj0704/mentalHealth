@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Alert } from 'react-native';
 import {
   View,
   Text,
@@ -14,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, Typography, Shadows } from '../theme';
 import { Badge } from '../components/ui/Badge';
 import { INSURANCE_OPTIONS, LANGUAGE_OPTIONS } from '../data/mockProviders';
+import { useAuth } from '../context/AuthContext';
 
 const INSURANCE_DISPLAY = INSURANCE_OPTIONS.slice(0, 6);
 const LANGUAGE_DISPLAY = LANGUAGE_OPTIONS.slice(0, 5);
@@ -57,11 +59,19 @@ function SettingRow({
   );
 }
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: any) {
+  const { user, logout, isLoggedIn } = useAuth();
   const [telehealth, setTelehealth] = useState(true);
   const [notifications, setNotifications] = useState(true);
   const [selectedInsurance, setSelectedInsurance] = useState<string | null>('Aetna');
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>('English');
+
+  const handleLogout = () => {
+    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign Out', style: 'destructive', onPress: async () => { await logout(); navigation.reset({ index: 0, routes: [{ name: 'Consent' }] }); } },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
@@ -81,16 +91,24 @@ export default function ProfileScreen() {
           <View style={styles.userSection}>
             <View style={styles.avatarContainer}>
               <View style={styles.avatar}>
-                <Text style={styles.avatarInitials}>YN</Text>
+                <Text style={styles.avatarInitials}>
+                  {user ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?'}
+                </Text>
               </View>
-              <TouchableOpacity style={styles.avatarEditBtn} activeOpacity={0.8}>
-                <Ionicons name="camera-outline" size={14} color={Colors.textPrimary} />
-              </TouchableOpacity>
             </View>
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>Your Name</Text>
-              <Text style={styles.userSub}>Personal account</Text>
+              <Text style={styles.userName}>{user ? user.name : 'Guest'}</Text>
+              <Text style={styles.userSub}>{user ? user.email : 'Not signed in'}</Text>
             </View>
+            {isLoggedIn ? (
+              <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn} activeOpacity={0.8}>
+                <Ionicons name="log-out-outline" size={18} color="rgba(255,255,255,0.8)" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.logoutBtn} activeOpacity={0.8}>
+                <Text style={{ color: '#fff', fontSize: 13, fontWeight: '600' }}>Sign In</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -361,6 +379,12 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: Colors.textInverse,
     letterSpacing: 1,
+  },
+  logoutBtn: {
+    width: 38, height: 38, borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center', justifyContent: 'center',
+    marginLeft: 'auto',
   },
   avatarEditBtn: {
     position: 'absolute',

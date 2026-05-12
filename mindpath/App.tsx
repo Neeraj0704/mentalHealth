@@ -7,6 +7,7 @@ import { StyleSheet } from 'react-native';
 import { SavedProvider } from './src/context/SavedContext';
 import { FilterProvider } from './src/context/FilterContext';
 import { ClinicFilterProvider } from './src/context/ClinicFilterContext';
+import { AuthProvider } from './src/context/AuthContext';
 import { LocationProvider } from './src/context/LocationContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 
@@ -14,15 +15,17 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <LocationProvider>
-          <SavedProvider>
-            <FilterProvider>
-              <ClinicFilterProvider>
-                <AppNavigator />
-              </ClinicFilterProvider>
-            </FilterProvider>
-          </SavedProvider>
-        </LocationProvider>
+        <AuthProvider>
+          <LocationProvider>
+            <SavedProvider>
+              <FilterProvider>
+                <ClinicFilterProvider>
+                  <AppNavigator />
+                </ClinicFilterProvider>
+              </FilterProvider>
+            </SavedProvider>
+          </LocationProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

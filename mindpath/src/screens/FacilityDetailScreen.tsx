@@ -10,7 +10,7 @@ import { HomeStackParamList, Facility } from '../types';
 import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
 import { useSaved } from '../context/SavedContext';
 
-const BASE_URL = 'http://localhost:8000';
+import { BASE_URL } from '../config';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'FacilityDetail'>;
 

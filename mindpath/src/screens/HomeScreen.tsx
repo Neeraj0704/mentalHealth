@@ -4,6 +4,8 @@ import {
   StyleSheet, Animated, StatusBar, FlatList,
   ActivityIndicator, Dimensions,
 } from 'react-native';
+import MapView, { Marker, Region } from 'react-native-maps';
+import { ProviderMiniCard } from '../components/ProviderMiniCard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +20,8 @@ import {
   getTrendingSearches, saveTrendingSearch,
   getNearbyFacilities, getFacilities,
 } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { BASE_URL } from '../config';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
@@ -34,6 +38,35 @@ const INSURANCES = ['Aetna', 'Blue Cross Blue Shield', 'Cigna', 'UnitedHealth', 
 const CLINIC_SERVICES = ['Counseling', 'Psychiatry', 'Trauma', 'Family Therapy'];
 const CLINIC_PAYMENTS = ['Free', 'Low-Cost', 'Medicaid'];
 const RADIUS_OPTIONS = [2, 5, 10, 25, 50];
+
+const IL_ZIP_COORDS: Record<string, [number, number]> = {
+  "60601": [41.8858, -87.6181], "60602": [41.8827, -87.6290], "60603": [41.8796, -87.6294],
+  "60604": [41.8765, -87.6294], "60605": [41.8672, -87.6229], "60606": [41.8827, -87.6377],
+  "60607": [41.8726, -87.6554], "60608": [41.8479, -87.6640], "60609": [41.8145, -87.6499],
+  "60610": [41.9003, -87.6341], "60611": [41.8969, -87.6231], "60612": [41.8797, -87.6818],
+  "60613": [41.9533, -87.6587], "60614": [41.9236, -87.6487], "60615": [41.8008, -87.5947],
+  "60616": [41.8413, -87.6229], "60617": [41.7230, -87.5520], "60618": [41.9451, -87.7006],
+  "60619": [41.7477, -87.6008], "60620": [41.7425, -87.6501], "60621": [41.7755, -87.6453],
+  "60622": [41.9006, -87.6779], "60623": [41.8479, -87.7181], "60624": [41.8797, -87.7181],
+  "60625": [41.9726, -87.7034], "60626": [42.0050, -87.6652], "60628": [41.6936, -87.6230],
+  "60629": [41.7766, -87.7103], "60630": [41.9726, -87.7577], "60631": [41.9958, -87.8089],
+  "60632": [41.8145, -87.7181], "60634": [41.9452, -87.8006], "60636": [41.7766, -87.6768],
+  "60637": [41.7808, -87.5947], "60638": [41.7862, -87.7759], "60639": [41.9201, -87.7759],
+  "60640": [41.9726, -87.6534], "60641": [41.9452, -87.7577], "60642": [41.9058, -87.6588],
+  "60643": [41.7007, -87.6556], "60644": [41.8797, -87.7577], "60645": [42.0101, -87.6877],
+  "60646": [41.9958, -87.7577], "60647": [41.9201, -87.7034], "60649": [41.7614, -87.5639],
+  "60651": [41.9003, -87.7434], "60652": [41.7477, -87.7181], "60653": [41.8208, -87.5947],
+  "60654": [41.8907, -87.6354], "60655": [41.7007, -87.7103], "60656": [41.9773, -87.8428],
+  "60657": [41.9402, -87.6488], "60659": [41.9906, -87.7006], "60660": [41.9906, -87.6534],
+  "60661": [41.8827, -87.6457], "60706": [41.9625, -87.8428], "60707": [41.9201, -87.8428],
+  "60714": [42.0050, -87.8428], "60076": [42.0374, -87.7034], "60077": [42.0374, -87.7577],
+  "60201": [42.0374, -87.6877], "60202": [42.0374, -87.7006], "60301": [41.8858, -87.7888],
+  "60302": [41.9003, -87.7888], "60304": [41.8672, -87.7888], "60402": [41.8479, -87.8297],
+  "60453": [41.7192, -87.7888], "60455": [41.7862, -87.8428], "60457": [41.7307, -87.8428],
+  "60459": [41.7625, -87.8994], "60462": [41.6094, -87.8297], "60465": [41.7477, -87.8994],
+  "60525": [41.8145, -87.8994], "60526": [41.8308, -87.9170], "60534": [41.8308, -87.8688],
+  "60546": [41.8308, -87.8428],
+};
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -58,8 +91,13 @@ export default function HomeScreen({ navigation }: Props) {
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [providerRadius, setProviderRadius] = useState(25);
   const [clinicRadius, setClinicRadius] = useState(25);
+  const { user } = useAuth();
   const [showSort, setShowSort] = useState(false);
   const [activeSort, setActiveSort] = useState('Top Rated');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [selectedId, setSelectedId] = useState<string | number | null>(null);
+  const mapCardListRef = useRef<FlatList>(null);
+  const mapRef = useRef<MapView>(null);
 
   const sidebarAnim = useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
   const overlayAnim = useRef(new Animated.Value(0)).current;
@@ -88,8 +126,137 @@ export default function HomeScreen({ navigation }: Props) {
     loadAllClinics();
   }, []);
 
+  const getProviderCoords = (p: Provider): [number, number] | null => {
+    const zip = p.zip_code?.trim();
+    return zip && IL_ZIP_COORDS[zip] ? IL_ZIP_COORDS[zip] : null;
+  };
+
+  const getClinicCoords = (f: Facility): [number, number] | null => {
+    const zip = f.zip?.trim();
+    return zip && IL_ZIP_COORDS[zip] ? IL_ZIP_COORDS[zip] : null;
+  };
+
+  const handlePinPress = (id: string | number, coords: [number, number]) => {
+    setSelectedId(id);
+    // Pan map to pin
+    mapRef.current?.animateToRegion({ latitude: coords[0], longitude: coords[1], latitudeDelta: 0.05, longitudeDelta: 0.05 }, 400);
+    // Scroll card list to selected item
+    const items = activeTab === 'providers' ? providers : clinics;
+    const idx = items.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      mapCardListRef.current?.scrollToIndex({ index: idx, animated: true, viewPosition: 0.5 });
+    }
+  };
+
+  const renderMapView = () => {
+    const CHICAGO_REGION: Region = { latitude: 41.8827, longitude: -87.6294, latitudeDelta: 0.15, longitudeDelta: 0.15 };
+    const items = activeTab === 'providers' ? providers : clinics;
+
+    return (
+      <View style={{ flex: 1 }}>
+        {/* Map — top portion */}
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          initialRegion={CHICAGO_REGION}
+          showsUserLocation
+          showsMyLocationButton
+          onPress={() => setSelectedId(null)}
+        >
+          {activeTab === 'providers'
+            ? providers.map(p => {
+                const c = getProviderCoords(p);
+                if (!c) return null;
+                const selected = selectedId === p.id;
+                return (
+                  <Marker
+                    key={p.id}
+                    coordinate={{ latitude: c[0], longitude: c[1] }}
+                    pinColor={selected ? Colors.accent : Colors.primary}
+                    onPress={() => handlePinPress(p.id, c)}
+                  />
+                );
+              })
+            : clinics.map(f => {
+                const c = getClinicCoords(f);
+                if (!c) return null;
+                const selected = selectedId === f.id;
+                const isFree = f.payment.some(p => p.toLowerCase().includes('free'));
+                return (
+                  <Marker
+                    key={f.id}
+                    coordinate={{ latitude: c[0], longitude: c[1] }}
+                    pinColor={selected ? Colors.accent : isFree ? '#16a34a' : '#b45309'}
+                    onPress={() => handlePinPress(f.id, c)}
+                  />
+                );
+              })
+          }
+        </MapView>
+
+        {/* Horizontal card list — bottom */}
+        <View style={styles.mapCardContainer}>
+          <FlatList
+            ref={mapCardListRef}
+            horizontal
+            data={items as any[]}
+            keyExtractor={item => String(item.id)}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.mapCardList}
+            onScrollToIndexFailed={() => {}}
+            renderItem={({ item }) => {
+              const selected = selectedId === item.id;
+              if (activeTab === 'providers') {
+                const c = getProviderCoords(item);
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={[styles.mapCardWrap, selected && styles.mapCardWrapSelected]}
+                    onPress={() => {
+                      if (c) handlePinPress(item.id, c);
+                      if (selected) navigation.navigate('ProviderDetail', { providerId: item.id });
+                    }}
+                    activeOpacity={0.9}
+                  >
+                    <ProviderMiniCard provider={item} onPress={() => {}} />
+                  </TouchableOpacity>
+                );
+              }
+              const c = getClinicCoords(item);
+              const isFree = item.payment?.some((p: string) => p.toLowerCase().includes('free'));
+              return (
+                <TouchableOpacity
+                  style={[styles.mapClinicCard, selected && styles.mapCardWrapSelected]}
+                  onPress={() => {
+                    if (c) handlePinPress(item.id, c);
+                    if (selected) navigation.navigate('FacilityDetail', { facilityId: item.id });
+                  }}
+                  activeOpacity={0.85}
+                >
+                  <View style={[styles.mapClinicCostTag, { backgroundColor: isFree ? '#dcfce7' : '#fef3c7' }]}>
+                    <Text style={[styles.mapClinicCostText, { color: isFree ? '#16a34a' : '#b45309' }]}>
+                      {isFree ? 'Free' : 'Low-Cost'}
+                    </Text>
+                  </View>
+                  <Text style={styles.mapClinicName} numberOfLines={2}>{item.name}</Text>
+                  <Text style={styles.mapClinicAddress} numberOfLines={1}>{item.address}</Text>
+                  {item.telehealth && (
+                    <View style={styles.mapClinicBadge}>
+                      <Ionicons name="videocam-outline" size={10} color={Colors.primary} />
+                      <Text style={styles.mapClinicBadgeText}>Telehealth</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+      </View>
+    );
+  };
+
   const fetchProvidersBySort = async (sort: string): Promise<Provider[]> => {
-    const res = await fetch(`http://localhost:8000/providers?sort=${sort}&limit=100`);
+    const res = await fetch(`${BASE_URL}/providers?sort=${sort}&limit=100`);
     const data = await res.json();
     return data.providers as Provider[];
   };
@@ -166,6 +333,7 @@ export default function HomeScreen({ navigation }: Props) {
 
   const renderSidebar = () => (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sidebarContent}>
+      {/* Feeling overwhelmed */}
       <TouchableOpacity
         style={styles.sidebarSupportCard}
         onPress={() => { closeSidebar(); navigation.navigate('Wellness'); }}
@@ -177,6 +345,36 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.sidebarSupportSub}>Breathing, grounding and crisis support</Text>
         </View>
         <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
+      </TouchableOpacity>
+
+      {/* Quick Screening */}
+      <Text style={styles.sidebarSection}>Quick Screening</Text>
+      <Text style={styles.sidebarSectionSub}>Answer a few questions to find the right providers</Text>
+      {[
+        { label: 'Anxiety', id: 'anxiety', color: '#2E6A7E' },
+        { label: 'Depression', id: 'depression', color: '#6BAF92' },
+        { label: 'PTSD / Trauma', id: 'trauma', color: '#8B6BAF' },
+      ].map(c => (
+        <TouchableOpacity
+          key={c.id}
+          style={[styles.screeningChip, { borderColor: c.color + '44', backgroundColor: c.color + '11' }]}
+          onPress={() => {
+            closeSidebar();
+            navigation.navigate('Assessment', { preselectedCondition: c.id } as any);
+          }}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.screeningChipText, { color: c.color }]}>{c.label} Screening</Text>
+          <Ionicons name="chevron-forward" size={14} color={c.color} />
+        </TouchableOpacity>
+      ))}
+      <TouchableOpacity
+        style={styles.screeningChip}
+        onPress={() => { closeSidebar(); navigation.navigate('Assessment' as any); }}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.screeningChipText}>Full Assessment</Text>
+        <Ionicons name="chevron-forward" size={14} color={Colors.textSecondary} />
       </TouchableOpacity>
     </ScrollView>
   );
@@ -310,7 +508,7 @@ export default function HomeScreen({ navigation }: Props) {
               <Ionicons name="menu-outline" size={24} color="#fff" />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
-              <Text style={styles.greeting}>{getGreeting()}</Text>
+              <Text style={styles.greeting}>{getGreeting()}{user ? `, ${user.name.split(' ')[0]}` : ''}</Text>
               <Text style={styles.headerTitle}>Find your provider</Text>
             </View>
             <TouchableOpacity style={styles.notifBtn}>
@@ -358,7 +556,7 @@ export default function HomeScreen({ navigation }: Props) {
         </SafeAreaView>
       </LinearGradient>
 
-      {/* Tab toggle */}
+      {/* Tab toggle + view mode */}
       <View style={styles.tabRow}>
         <TouchableOpacity
           style={[styles.tabBtn, activeTab === 'providers' && styles.tabBtnActive]}
@@ -374,13 +572,29 @@ export default function HomeScreen({ navigation }: Props) {
         >
           <Text style={[styles.tabBtnText, activeTab === 'clinics' && styles.tabBtnTextActive]}>Clinics</Text>
         </TouchableOpacity>
+
+        {/* List / Map toggle */}
+        <View style={styles.viewToggle}>
+          <TouchableOpacity
+            style={[styles.viewToggleBtn, viewMode === 'list' && styles.viewToggleBtnActive]}
+            onPress={() => setViewMode('list')} activeOpacity={0.8}
+          >
+            <Ionicons name="list-outline" size={18} color={viewMode === 'list' ? Colors.primary : Colors.textTertiary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.viewToggleBtn, viewMode === 'map' && styles.viewToggleBtnActive]}
+            onPress={() => setViewMode('map')} activeOpacity={0.8}
+          >
+            <Ionicons name="map-outline" size={18} color={viewMode === 'map' ? Colors.primary : Colors.textTertiary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Filter bar — switches based on active tab */}
-      {renderFilterBar()}
+      {/* Filter bar — only in list mode */}
+      {viewMode === 'list' && renderFilterBar()}
 
-      {/* Main list */}
-      {loading ? (
+      {/* Main content */}
+      {viewMode === 'map' ? renderMapView() : loading ? (
         <ActivityIndicator color={Colors.primary} style={{ marginTop: 40 }} />
       ) : activeTab === 'providers' ? (
         <FlatList
@@ -461,6 +675,26 @@ const styles = StyleSheet.create({
   tabBtnActive: { borderBottomColor: Colors.primary },
   tabBtnText: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary },
   tabBtnTextActive: { color: Colors.primary, fontWeight: '700' },
+  viewToggle: { flexDirection: 'row', alignItems: 'center', marginLeft: 'auto', paddingRight: 4, gap: 2 },
+  viewToggleBtn: { padding: 6, borderRadius: 8 },
+  viewToggleBtnActive: { backgroundColor: Colors.primaryBg },
+  mapCardContainer: {
+    height: 220, backgroundColor: Colors.background,
+    borderTopWidth: 1, borderTopColor: Colors.divider,
+  },
+  mapCardList: { paddingHorizontal: Spacing.md, paddingVertical: 12, gap: 12 },
+  mapCardWrap: { borderRadius: Radius.lg, borderWidth: 2, borderColor: 'transparent' },
+  mapCardWrapSelected: { borderColor: Colors.primary },
+  mapClinicCard: {
+    width: 160, backgroundColor: Colors.surface, borderRadius: Radius.lg,
+    padding: 12, ...Shadows.sm, borderWidth: 2, borderColor: 'transparent',
+  },
+  mapClinicCostTag: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.full, marginBottom: 6 },
+  mapClinicCostText: { fontSize: 11, fontWeight: '700' },
+  mapClinicName: { fontSize: 12, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4, lineHeight: 16 },
+  mapClinicAddress: { fontSize: 10, color: Colors.textTertiary, marginBottom: 4 },
+  mapClinicBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  mapClinicBadgeText: { fontSize: 10, color: Colors.primary, fontWeight: '500' },
 
   activeFilterRow: { paddingHorizontal: Spacing.md, paddingVertical: 8, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.divider },
   activeFilterChip: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: Colors.primaryBg, borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: Colors.primary + '44' },
@@ -516,6 +750,14 @@ const styles = StyleSheet.create({
   sidebarSupportTitle: { fontSize: 14, fontWeight: '800', color: '#fff' },
   sidebarSupportSub: { fontSize: 11, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   sidebarSection: { fontSize: 11, fontWeight: '700', color: Colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 8 },
+  sidebarSectionSub: { fontSize: 12, color: Colors.textTertiary, marginTop: -6 },
+  screeningChip: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 14, paddingVertical: 12,
+    borderRadius: Radius.md, backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1.5, borderColor: Colors.border,
+  },
+  screeningChipText: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary },
 
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.full, backgroundColor: Colors.surfaceAlt, borderWidth: 1.5, borderColor: Colors.border },

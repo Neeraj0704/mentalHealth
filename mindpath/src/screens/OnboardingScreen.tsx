@@ -120,16 +120,24 @@ export default function OnboardingScreen({ navigation }: Props) {
           <Animated.View style={[styles.ctaSection, { opacity: fadeAnim }]}>
             <TouchableOpacity
               style={styles.primaryButton}
-              onPress={() => navigation.replace('PreferencesSetup')}
+              onPress={() => navigation.replace('SignUp')}
               activeOpacity={0.88}
             >
-              <Text style={styles.primaryButtonText}>Get Started</Text>
+              <Text style={styles.primaryButtonText}>Create Account</Text>
               <Ionicons name="arrow-forward" size={18} color={Colors.primary} />
             </TouchableOpacity>
 
-            <Text style={styles.disclaimer}>
-              Free to use · No account required
-            </Text>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => navigation.replace('Login')}
+              activeOpacity={0.88}
+            >
+              <Text style={styles.secondaryButtonText}>Sign In</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.replace('PreferencesSetup')} activeOpacity={0.7}>
+              <Text style={styles.disclaimer}>Continue without account</Text>
+            </TouchableOpacity>
           </Animated.View>
         </SafeAreaView>
       </LinearGradient>
@@ -236,9 +244,23 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     letterSpacing: 0.2,
   },
+  secondaryButton: {
+    paddingVertical: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.4)',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  secondaryButtonText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#fff',
+  },
   disclaimer: {
     fontSize: 13,
     color: 'rgba(255,255,255,0.6)',
     fontWeight: '400',
+    textDecorationLine: 'underline',
   },
 });

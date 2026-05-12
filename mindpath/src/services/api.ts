@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider, SearchFilters, Facility } from '../types';
 
-const BASE_URL = 'http://localhost:8000';
+import { BASE_URL } from '../config';
 
 async function fetchProviders(params: Record<string, string | number | boolean>): Promise<Provider[]> {
   const p = new URLSearchParams();

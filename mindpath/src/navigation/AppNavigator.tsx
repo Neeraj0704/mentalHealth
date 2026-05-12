@@ -10,6 +10,7 @@ import { useSaved } from '../context/SavedContext';
 import {
   RootStackParamList,
   HomeStackParamList,
+  LearnStackParamList,
   SavedStackParamList,
   ProfileStackParamList,
   MainTabParamList,
@@ -33,6 +34,8 @@ import FacilityDetailScreen from '../screens/FacilityDetailScreen';
 import FacilitiesListScreen from '../screens/FacilitiesListScreen';
 import ClinicFilterModal from '../screens/ClinicFilterModal';
 import ConsentScreen from '../screens/ConsentScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignUpScreen from '../screens/SignUpScreen';
 import WellnessScreen from '../screens/WellnessScreen';
 import BreathingScreen from '../screens/BreathingScreen';
 import PanicModeScreen from '../screens/PanicModeScreen';
@@ -40,10 +43,12 @@ import GroundingScreen from '../screens/GroundingScreen';
 import SOSScreen from '../screens/SOSScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import LearnScreen from '../screens/LearnScreen';
+import LearnDetailScreen from '../screens/LearnDetailScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
-const ScreeningStack = createNativeStackNavigator<HomeStackParamList>();
+const LearnStack = createNativeStackNavigator<LearnStackParamList>();
 const SavedStack = createNativeStackNavigator<SavedStackParamList>();
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -70,18 +75,13 @@ function HomeNavigator() {
   );
 }
 
-function ScreeningNavigator() {
+function LearnNavigator() {
   return (
-    <ScreeningStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Assessment">
-      <ScreeningStack.Screen name="Assessment" component={AssessmentScreen} />
-      <ScreeningStack.Screen name="Results" component={ResultsScreen} />
-      <ScreeningStack.Screen name="AssessmentResult" component={AssessmentResultScreen} />
-      <ScreeningStack.Screen name="ProviderDetail" component={ProviderDetailScreen} />
-      <ScreeningStack.Screen name="FacilityDetail" component={FacilityDetailScreen} />
-      <ScreeningStack.Screen name="Booking" component={BookingScreen} />
-      <ScreeningStack.Screen name="VoiceAssessment" component={VoiceAssessmentScreen} />
-      <ScreeningStack.Screen name="Home" component={HomeScreen} />
-    </ScreeningStack.Navigator>
+    <LearnStack.Navigator screenOptions={{ headerShown: false }}>
+      <LearnStack.Screen name="Learn" component={LearnScreen} />
+      <LearnStack.Screen name="LearnDetail" component={LearnDetailScreen} />
+      <LearnStack.Screen name="LearnResults" component={ResultsScreen as any} />
+    </LearnStack.Navigator>
   );
 }
 
@@ -166,13 +166,22 @@ function MiraIntroPopup({ onDismiss }: { onDismiss: () => void }) {
   );
 }
 
-function MainTabs() {
+function MainTabs({ navigation }: any) {
   const { savedIds, savedFacilityIds } = useSaved();
   const [showIntro, setShowIntro] = useState(true);
+
+  // Show Assessment screen on first open
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.navigate('HomeTab', { screen: 'Assessment' });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
       <Tab.Navigator
+        initialRouteName="HomeTab"
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarStyle: styles.tabBar,
@@ -183,8 +192,8 @@ function MainTabs() {
           tabBarIcon: ({ focused, color }) => {
             if (route.name === 'AITab') return null;
             let iconName: keyof typeof Ionicons.glyphMap = 'home';
-            if (route.name === 'ScreeningTab') {
-              iconName = focused ? 'clipboard' : 'clipboard-outline';
+            if (route.name === 'LearnTab') {
+              iconName = focused ? 'book' : 'book-outline';
             } else if (route.name === 'HomeTab') {
               iconName = focused ? 'search' : 'search-outline';
             } else if (route.name === 'SavedTab') {
@@ -202,11 +211,11 @@ function MainTabs() {
         })}
       >
         <Tab.Screen
-          name="ScreeningTab"
-          component={ScreeningNavigator}
-          options={{ tabBarLabel: 'Screening' }}
+          name="LearnTab"
+          component={LearnNavigator}
+          options={{ tabBarLabel: 'Learn' }}
           listeners={({ navigation }) => ({
-            tabPress: () => navigation.navigate('ScreeningTab', { screen: 'Assessment' }),
+            tabPress: () => navigation.navigate('LearnTab', { screen: 'Learn' }),
           })}
         />
         <Tab.Screen
@@ -244,6 +253,8 @@ export function AppNavigator() {
       >
         <RootStack.Screen name="Consent" component={ConsentScreen} />
         <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
+        <RootStack.Screen name="Login" component={LoginScreen} />
+        <RootStack.Screen name="SignUp" component={SignUpScreen} />
         <RootStack.Screen name="PreferencesSetup" component={OnboardingPreferencesScreen} />
         <RootStack.Screen name="MainTabs" component={MainTabs} />
         <RootStack.Screen
