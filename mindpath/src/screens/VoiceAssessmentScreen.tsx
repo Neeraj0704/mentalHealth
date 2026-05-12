@@ -216,7 +216,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
 
     if (!transcript) {
       setPhase('idle');
-      setHint('Voice unavailable — type your response below');
+      setHint('Voice unavailable. Type your response below.');
       setShowTextInput(true);
       return;
     }

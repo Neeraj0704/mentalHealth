@@ -75,15 +75,15 @@ export default function ProviderDetailScreen({ navigation, route }: Props) {
   const FAQ_ITEMS = [
     {
       q: `What should I expect in my first session with ${provider.name.split(' ')[0]}?`,
-      a: `Your first session is typically an intake appointment where ${provider.name.split(' ')[0]} will learn about your background, current concerns, and goals for therapy. It's a two-way conversation — you're also evaluating whether this is the right fit for you.`,
+      a: `Your first session is typically an intake appointment where ${provider.name.split(' ')[0]} will learn about your background, current concerns, and goals for therapy. It is a two-way conversation and you are also evaluating whether this is the right fit for you.`,
     },
     {
       q: 'How long does treatment typically last?',
       a: "Treatment length varies by person and presenting concerns. Some clients find what they need in 8\u201312 sessions; others benefit from longer-term work. We'll set goals together and check in on progress regularly.",
     },
     {
-      q: 'Do you offer a sliding scale fee?',
-      a: `${provider.session_rate ? `Standard session rates are ${provider.session_rate}.` : ''} Please reach out to discuss your financial situation — accommodations may be available on a case-by-case basis.`,
+      q: 'Do you offer reduced-rate or income-based fees?',
+      a: `${provider.session_rate ? `Standard session rates are ${provider.session_rate}.` : ''} Please reach out to discuss your financial situation. Accommodations may be available on a case-by-case basis.`,
     },
     {
       q: 'What is your cancellation policy?',

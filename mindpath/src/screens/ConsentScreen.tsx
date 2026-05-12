@@ -28,7 +28,7 @@ const CONSENT_ITEMS = [
   {
     icon: 'chatbubble-outline' as const,
     title: 'AI-assisted screening',
-    body: 'Mira uses AI to guide you through validated clinical instruments (GAD-7, PHQ-9, etc.). These are screening tools only — not a clinical diagnosis.',
+    body: 'Mira uses AI to guide you through validated clinical instruments (GAD-7, PHQ-9, etc.). These are screening tools only, not a clinical diagnosis.',
   },
   {
     icon: 'call-outline' as const,

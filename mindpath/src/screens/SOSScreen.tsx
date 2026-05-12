@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<HomeStackParamList, 'SOSResources'>;
 const RESOURCES = [
   {
     label: '988 Suicide & Crisis Lifeline',
-    sub: 'Call or text 988 — free, confidential, 24/7',
+    sub: 'Call or text 988. Free, confidential, 24/7',
     icon: 'call-outline' as const,
     color: '#C0392B',
     bg: '#FEF0F0',
@@ -19,7 +19,7 @@ const RESOURCES = [
   },
   {
     label: 'Crisis Text Line',
-    sub: 'Text HOME to 741741 — free, confidential, 24/7',
+    sub: 'Text HOME to 741741. Free, confidential, 24/7',
     icon: 'chatbubble-outline' as const,
     color: '#8B6BAF',
     bg: '#F7EEF9',
@@ -27,7 +27,7 @@ const RESOURCES = [
   },
   {
     label: 'NAMI Helpline',
-    sub: 'Call 1-800-950-6264 — mental health information & support',
+    sub: 'Call 1-800-950-6264. Mental health information and support',
     icon: 'heart-outline' as const,
     color: '#2E6A7E',
     bg: '#EEF6F9',

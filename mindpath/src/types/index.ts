@@ -156,7 +156,6 @@ export type HomeStackParamList = {
   Breathing: { pattern?: 'box' | '4-6' | 'panic' };
   PanicMode: undefined;
   Grounding: undefined;
-  SafeSpace: undefined;
   SOSResources: undefined;
 };
 

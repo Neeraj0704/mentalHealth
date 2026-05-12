@@ -23,7 +23,7 @@ interface Message {
 const GREETING: Message = {
   id: 'greeting',
   role: 'assistant',
-  content: "Hi, I'm Mira. Tell me a bit about what's been on your mind lately — I'm here to listen.",
+  content: "Hi, I'm Mira. Tell me a bit about what's been on your mind lately. I'm here to listen.",
 };
 
 export default function MiraChatScreen({ navigation }: Props) {

@@ -109,7 +109,7 @@ export default function ClinicFilterModal({ navigation }: Props) {
             <View style={styles.chipWrap}>
               {([
                 { key: 'free', label: 'Free' },
-                { key: 'sliding', label: 'Sliding Scale' },
+                { key: 'sliding', label: 'Low-Cost' },
                 { key: 'medicaid', label: 'Medicaid' },
               ] as const).map(opt => (
                 <FilterChip

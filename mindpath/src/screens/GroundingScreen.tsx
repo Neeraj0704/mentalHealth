@@ -97,7 +97,7 @@ export default function GroundingScreen({ navigation }: Props) {
             activeOpacity={0.85}
           >
             <Text style={styles.doneStepText}>
-              {step >= STEPS.length - 1 ? 'I\'m done' : `Done — next: ${STEPS[step + 1].count} things to ${STEPS[step + 1].sense.toLowerCase()}`}
+              {step >= STEPS.length - 1 ? 'I\'m done' : `Done. Next: ${STEPS[step + 1].count} things to ${STEPS[step + 1].sense.toLowerCase()}`}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>

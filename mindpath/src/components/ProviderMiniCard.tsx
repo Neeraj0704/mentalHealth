@@ -26,7 +26,7 @@ export const ProviderMiniCard: React.FC<Props> = ({ provider, onPress }) => (
       <View style={styles.ratingRow}>
         <Ionicons name="star" size={11} color={Colors.rating} />
         <Text style={styles.rating}>
-          {provider.rating ? provider.rating.toFixed(1) : '—'}
+          {provider.rating ? provider.rating.toFixed(1) : 'N/A'}
         </Text>
         {(provider.rating_count ?? 0) > 0 && (
           <Text style={styles.reviewCount}>({provider.rating_count})</Text>

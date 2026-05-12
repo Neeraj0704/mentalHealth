@@ -22,24 +22,20 @@ const { width } = Dimensions.get('window');
 
 // ─── Condition Definitions ────────────────────────────────────────────────────
 
-type ConditionId = 'anxiety' | 'depression' | 'trauma' | 'adhd' | 'bipolar' | 'grief' | 'relationships' | 'notsure';
+type ConditionId = 'anxiety' | 'depression' | 'trauma' | 'notsure';
 
 interface ConditionDef {
   id: ConditionId;
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
-  instrument: 'GAD7' | 'PHQ9' | 'PCPTSD5' | 'ASRS' | 'MDQ' | null;
+  instrument: 'GAD7' | 'PHQ9' | 'PCPTSD5' | null;
   searchTerm: string;
 }
 
 const CONDITIONS: ConditionDef[] = [
   { id: 'anxiety', label: 'Anxiety', icon: 'pulse-outline', instrument: 'GAD7', searchTerm: 'Anxiety' },
   { id: 'depression', label: 'Depression', icon: 'cloud-outline', instrument: 'PHQ9', searchTerm: 'Depression' },
-  { id: 'trauma', label: 'Trauma / PTSD', icon: 'shield-outline', instrument: 'PCPTSD5', searchTerm: 'Trauma' },
-  { id: 'adhd', label: 'ADHD', icon: 'flash-outline', instrument: 'ASRS', searchTerm: 'ADHD' },
-  { id: 'bipolar', label: 'Bipolar', icon: 'sync-outline', instrument: 'MDQ', searchTerm: 'Bipolar' },
-  { id: 'grief', label: 'Grief / Loss', icon: 'heart-outline', instrument: null, searchTerm: 'Grief' },
-  { id: 'relationships', label: 'Relationships', icon: 'people-outline', instrument: null, searchTerm: 'Relationships' },
+  { id: 'trauma', label: 'PTSD / Trauma', icon: 'shield-outline', instrument: 'PCPTSD5', searchTerm: 'Trauma' },
   { id: 'notsure', label: 'Not Sure', icon: 'help-circle-outline', instrument: null, searchTerm: '' },
 ];
 
@@ -83,9 +79,9 @@ const PHQ9_QUESTIONS = [
   'Trouble falling asleep, staying asleep, or sleeping too much',
   'Feeling tired or having little energy',
   'Poor appetite or overeating',
-  "Feeling bad about yourself — or that you're a failure or have let yourself or your family down",
+  "Feeling bad about yourself, or that you're a failure or have let yourself or your family down",
   'Trouble concentrating on things, such as reading the newspaper or watching television',
-  'Moving or speaking so slowly that other people could have noticed. Or, the opposite — being so fidgety or restless that you have been moving around a lot more than usual',
+  'Moving or speaking so slowly that other people could have noticed, or being so fidgety or restless that you have been moving around a lot more than usual',
   'Thoughts that you would be better off dead or of hurting yourself in some way',
 ];
 
@@ -126,7 +122,7 @@ const MDQ_Q1_ITEMS = [
   'You were so easily distracted by things around you that you had trouble concentrating or staying on track?',
   'You had much more energy than usual?',
   'You were much more active or did many more things than usual?',
-  'You were much more social or outgoing than usual — for example, you telephoned friends in the middle of the night?',
+  'You were much more social or outgoing than usual, for example you telephoned friends in the middle of the night?',
   'You were much more interested in sex than usual?',
   'You did things that were unusual for you or that other people might have thought were excessive, foolish, or risky?',
   'Spending money got you or your family into trouble?',
@@ -454,9 +450,28 @@ export default function AssessmentScreen({ navigation }: Props) {
     <ScrollView contentContainerStyle={styles.stepContent} showsVerticalScrollIndicator={false}>
       <Text style={styles.stepLabel}>Step 1 of 3</Text>
       <Text style={styles.heading}>What's been affecting{'\n'}you most lately?</Text>
-      <Text style={styles.subheading}>Select what resonates most. You can always explore other areas later.</Text>
+      <Text style={styles.subheading}>Select what resonates most, or talk to Mira if you are not sure.</Text>
+
+      {/* Talk to Mira featured card */}
+      <TouchableOpacity
+        style={styles.miraCard}
+        onPress={() => navigation.getParent()?.navigate('HomeTab', { screen: 'MiraChat' })}
+        activeOpacity={0.85}
+      >
+        <View style={styles.miraCardIcon}>
+          <Ionicons name="aperture-outline" size={26} color="#fff" />
+        </View>
+        <View style={styles.miraCardText}>
+          <Text style={styles.miraCardTitle}>Not sure? Talk to Mira</Text>
+          <Text style={styles.miraCardSub}>Our AI assistant will help figure out what you are feeling</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
+      </TouchableOpacity>
+
+      <Text style={styles.orLabel}>Or select a condition</Text>
+
       <View style={styles.conditionGrid}>
-        {CONDITIONS.map((c) => (
+        {CONDITIONS.filter(c => c.id !== 'notsure').map((c) => (
           <TouchableOpacity
             key={c.id}
             style={[styles.conditionCard, selectedCondition?.id === c.id && styles.conditionCardActive]}
@@ -585,7 +600,7 @@ export default function AssessmentScreen({ navigation }: Props) {
 
   const renderMDQQ3 = () => (
     <ScrollView contentContainerStyle={styles.stepContent} showsVerticalScrollIndicator={false}>
-      <Text style={styles.stemText}>How much of a problem did any of these cause you — such as being unable to work, having family or money troubles, getting into arguments or fights?</Text>
+      <Text style={styles.stemText}>How much of a problem did any of these cause you, such as being unable to work, having family or money troubles, getting into arguments or fights?</Text>
       <View style={styles.answersStack}>
         {MDQ_Q3_OPTIONS.map((opt) => (
           <TouchableOpacity
@@ -817,6 +832,26 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     marginBottom: Spacing.lg,
     lineHeight: 20,
+  },
+  miraCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    backgroundColor: Colors.primary, borderRadius: Radius.lg,
+    padding: 16, marginBottom: 20,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3, shadowRadius: 8, elevation: 4,
+  },
+  miraCardIcon: {
+    width: 48, height: 48, borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  miraCardText: { flex: 1 },
+  miraCardTitle: { fontSize: 16, fontWeight: '800', color: '#fff', marginBottom: 3 },
+  miraCardSub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 17 },
+  orLabel: {
+    fontSize: 12, fontWeight: '600', color: Colors.textTertiary,
+    textTransform: 'uppercase', letterSpacing: 0.8,
+    marginBottom: 12,
   },
   conditionGrid: {
     flexDirection: 'row',

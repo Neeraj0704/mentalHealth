@@ -1,261 +1,315 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  Animated,
-  StatusBar,
-  FlatList,
-  ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity, ScrollView,
+  StyleSheet, Animated, StatusBar, FlatList,
+  ActivityIndicator, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HomeStackParamList, Provider } from '../types';
-import { Colors, Spacing, Radius, Typography, Shadows } from '../theme';
-import { ProviderMiniCard } from '../components/ProviderMiniCard';
+import { HomeStackParamList, Provider, Facility } from '../types';
+import { Colors, Spacing, Radius, Shadows } from '../theme';
+import ProviderCard from '../components/ProviderCard';
+import { FacilityCard } from '../components/FacilityCard';
 import {
-  getTopRated, getNearby,
+  getTopRated, getNearby, getProviders,
   getTrendingSearches, saveTrendingSearch,
   getNearbyFacilities, getFacilities,
 } from '../services/api';
-import { Facility } from '../types';
-import { getPreferences } from '../services/preferences';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
-const BROWSE_SPECIALTIES = [
-  { label: 'Anxiety',       icon: 'heart-outline'   as const, color: '#EEF6F9', iconColor: Colors.primary },
-  { label: 'Depression',    icon: 'sunny-outline'   as const, color: '#EEF7F2', iconColor: Colors.secondary },
-  { label: 'Trauma & PTSD', icon: 'shield-outline'  as const, color: '#F7EEF9', iconColor: '#8B6BAF' },
-  { label: 'Relationships', icon: 'people-outline'  as const, color: '#FDF0E8', iconColor: Colors.accent },
-  { label: 'ADHD',          icon: 'flash-outline'   as const, color: '#EEFAF5', iconColor: '#48A999' },
-  { label: 'Grief & Loss',  icon: 'leaf-outline'    as const, color: '#F9F0EE', iconColor: '#AF6B6B' },
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SIDEBAR_WIDTH = SCREEN_WIDTH * 0.82;
+
+const SPECIALTIES = [
+  { label: 'Anxiety', icon: 'pulse-outline' as const, color: Colors.primary },
+  { label: 'Depression', icon: 'cloud-outline' as const, color: '#6BAF92' },
+  { label: 'PTSD / Trauma', icon: 'shield-outline' as const, color: '#8B6BAF' },
 ];
 
-const INSURANCE_OPTIONS = [
-  { label: 'Aetna', color: '#EEF6F9' },
-  { label: 'Blue Cross Blue Shield', color: '#EEF7F2' },
-  { label: 'Cigna', color: '#F7EEF9' },
-  { label: 'UnitedHealth', color: '#FDF0E8' },
-  { label: 'Medicare', color: '#EEFAF5' },
-  { label: 'Medicaid', color: '#F9F0EE' },
-];
-
-interface Section {
-  key: string;
-  title: string;
-  data: Provider[];
-  loading: boolean;
-}
-
+const INSURANCES = ['Aetna', 'Blue Cross Blue Shield', 'Cigna', 'UnitedHealth', 'Medicare', 'Medicaid'];
+const CLINIC_SERVICES = ['Counseling', 'Psychiatry', 'Trauma', 'Family Therapy'];
+const CLINIC_PAYMENTS = ['Free', 'Low-Cost', 'Medicaid'];
 const RADIUS_OPTIONS = [2, 5, 10, 25, 50];
 
 function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return 'Good morning';
-  if (hour >= 12 && hour < 17) return 'Good afternoon';
-  if (hour >= 17 && hour < 22) return 'Good evening';
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return 'Good morning';
+  if (h >= 12 && h < 17) return 'Good afternoon';
+  if (h >= 17 && h < 22) return 'Good evening';
   return 'Still up?';
 }
 
+const IL_BOUNDS = { latMin: 36.9, latMax: 42.6, lngMin: -91.6, lngMax: -87.0 };
+const CHICAGO = { lat: 41.8827, lng: -87.6294 };
+
 export default function HomeScreen({ navigation }: Props) {
+  const [activeTab, setActiveTab] = useState<'providers' | 'clinics'>('providers');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [trending, setTrending] = useState<string[]>([]);
-  const [nearbyRadius, setNearbyRadius] = useState(25);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [clinics, setClinics] = useState<Facility[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState<{ label: string } | null>(null);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [sections, setSections] = useState<Record<string, { data: Provider[]; loading: boolean }>>({
-    nearby:   { data: [], loading: true },
-    topRated: { data: [], loading: true },
-    forYou:   { data: [], loading: true },
-  });
-  const [facilities, setFacilities] = useState<Facility[]>([]);
-  const [allFacilities, setAllFacilities] = useState<Facility[]>([]);
-  const [facilitiesLoading, setFacilitiesLoading] = useState(true);
-  const [clinicRadius, setClinicRadius] = useState(50);
+  const [providerRadius, setProviderRadius] = useState(25);
+  const [clinicRadius, setClinicRadius] = useState(25);
+  const [showSort, setShowSort] = useState(false);
+  const [activeSort, setActiveSort] = useState('Top Rated');
 
+  const sidebarAnim = useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
+  const overlayAnim = useRef(new Animated.Value(0)).current;
   const inputScale = useRef(new Animated.Value(1)).current;
 
-  const setSection = (key: string, data: Provider[], loading: boolean) => {
-    setSections(prev => ({ ...prev, [key]: { data, loading } }));
-  };
-
+  // Get location on mount
   useEffect(() => {
-    getTrendingSearches().then(setTrending);
-    getPreferences().then(p => {
-      setNearbyRadius(p.maxDistanceMiles);
-      loadSections(p.maxDistanceMiles, p);
-    });
-  }, []);
-
-  const loadSections = async (radius?: number, prefs?: Awaited<ReturnType<typeof getPreferences>>) => {
-    const [topRated] = await Promise.allSettled([getTopRated(10)]);
-    setSection('topRated', topRated.status === 'fulfilled' ? topRated.value : [], false);
-    await loadNearbyAndForYou(radius, prefs);
-  };
-
-  const loadNearbyAndForYou = async (radius?: number, prefs?: Awaited<ReturnType<typeof getPreferences>>) => {
-    const r = radius ?? nearbyRadius;
-    setSection('nearby', [], true);
-    setSection('forYou', [], true);
-    try {
+    (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
         const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
         const coords = { lat: loc.coords.latitude, lng: loc.coords.longitude };
-
-        // Illinois bounds fallback (providers are Chicago-area only)
-        const IL_BOUNDS = { latMin: 36.9, latMax: 42.6, lngMin: -91.6, lngMax: -87.0 };
-        const CHICAGO = { lat: 41.8827, lng: -87.6294 };
-        const inIllinois = coords.lat >= IL_BOUNDS.latMin && coords.lat <= IL_BOUNDS.latMax &&
+        const inIL = coords.lat >= IL_BOUNDS.latMin && coords.lat <= IL_BOUNDS.latMax &&
           coords.lng >= IL_BOUNDS.lngMin && coords.lng <= IL_BOUNDS.lngMax;
-        const searchCoords = inIllinois ? coords : CHICAGO;
-        setUserCoords(searchCoords);
-
-        const [nearby, forYouRaw, nearbyClinics] = await Promise.all([
-          getNearby(searchCoords.lat, searchCoords.lng, 10, r),
-          prefs ? getNearby(searchCoords.lat, searchCoords.lng, 20, prefs.maxDistanceMiles) : Promise.resolve([]),
-          getNearbyFacilities(searchCoords.lat, searchCoords.lng, 25),
-        ]);
-        setSection('nearby', nearby, false);
-
-        // Apply preference filters client-side
-        let forYou = forYouRaw;
-        if (prefs?.insurance) {
-          forYou = forYou.filter(p => p.insurance_accepted.some(ins =>
-            ins.toLowerCase().includes(prefs.insurance.toLowerCase())
-          ));
-        }
-        if (prefs?.providerGenderPreference && prefs.providerGenderPreference !== 'No preference') {
-          forYou = forYou.filter(p => p.gender === prefs.providerGenderPreference);
-        }
-        setSection('forYou', forYou, false);
-        setAllFacilities(nearbyClinics);
-        setFacilities(nearbyClinics.slice(0, 10));
-        setFacilitiesLoading(false);
+        setUserCoords(inIL ? coords : CHICAGO);
       } else {
-        setSection('nearby', [], false);
-        setSection('forYou', [], false);
-        setFacilitiesLoading(false);
+        setUserCoords(CHICAGO);
       }
-    } catch {
-      setSection('nearby', [], false);
-      setSection('forYou', [], false);
-      setFacilitiesLoading(false);
-    }
+    })();
+    getTrendingSearches().then(setTrending);
+  }, []);
+
+  // Load default data on mount
+  useEffect(() => {
+    loadTopRated();
+    loadAllClinics();
+  }, []);
+
+  const fetchProvidersBySort = async (sort: string): Promise<Provider[]> => {
+    const res = await fetch(`http://localhost:8000/providers?sort=${sort}&limit=100`);
+    const data = await res.json();
+    return data.providers as Provider[];
   };
 
-  const loadNearby = async (radius?: number) => {
-    const r = radius ?? nearbyRadius;
-    setSection('nearby', [], true);
-    if (userCoords) {
-      try {
-        const nearby = await getNearby(userCoords.lat, userCoords.lng, 10, r);
-        setSection('nearby', nearby, false);
-      } catch {
-        setSection('nearby', [], false);
-      }
-      return;
-    }
+  const loadTopRated = async () => {
+    setLoading(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === 'granted') {
-        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
-        const nearby = await getNearby(loc.coords.latitude, loc.coords.longitude, 10, r);
-        setSection('nearby', nearby, false);
-      } else {
-        setSection('nearby', [], false);
-      }
-    } catch {
-      setSection('nearby', [], false);
-    }
+      const data = await getTopRated(50);
+      setProviders(data);
+      setActiveFilter({ label: 'Top Rated' });
+    } catch {}
+    setLoading(false);
   };
 
-  const handleRadiusChange = (r: number) => {
-    setNearbyRadius(r);
-    loadNearby(r);
-  };
-
-  const handleClinicRadiusChange = async (r: number) => {
-    setClinicRadius(r);
-    setFacilitiesLoading(true);
+  const loadAllClinics = async () => {
     try {
-      let data;
-      if (r === 50) {
-        data = await getFacilities();
-      } else {
-        const coords = userCoords ?? { lat: 41.8827, lng: -87.6294 };
-        data = await getNearbyFacilities(coords.lat, coords.lng, r);
-      }
-      setAllFacilities(data);
-      setFacilities(data.slice(0, 10));
-    } catch {
-      setFacilities([]);
-    } finally {
-      setFacilitiesLoading(false);
-    }
+      const data = await getFacilities();
+      setClinics(data);
+    } catch {}
   };
 
-  const handleFocus = () => Animated.spring(inputScale, { toValue: 1.02, useNativeDriver: true, friction: 8 }).start();
-  const handleBlur  = () => Animated.spring(inputScale, { toValue: 1,    useNativeDriver: true, friction: 8 }).start();
+  const openSidebar = () => {
+    setSidebarOpen(true);
+    Animated.parallel([
+      Animated.timing(sidebarAnim, { toValue: 0, duration: 280, useNativeDriver: true }),
+      Animated.timing(overlayAnim, { toValue: 1, duration: 280, useNativeDriver: true }),
+    ]).start();
+  };
 
-  const handleSearch = async (searchQuery?: string) => {
-    const q = (searchQuery ?? query).trim();
-    if (!q) return;
-    await saveTrendingSearch(q);
+  const closeSidebar = () => {
+    Animated.parallel([
+      Animated.timing(sidebarAnim, { toValue: -SIDEBAR_WIDTH, duration: 240, useNativeDriver: true }),
+      Animated.timing(overlayAnim, { toValue: 0, duration: 240, useNativeDriver: true }),
+    ]).start(() => setSidebarOpen(false));
+  };
+
+  const applyProviderFilter = async (label: string, fetchFn: () => Promise<Provider[]>) => {
+    closeSidebar();
+    setActiveFilter({ label });
+    setLoading(true);
+    try {
+      const data = await fetchFn();
+      setProviders(data);
+    } catch {}
+    setLoading(false);
+  };
+
+  const applyClinicFilter = async (label: string, fetchFn: () => Promise<Facility[]>) => {
+    closeSidebar();
+    setActiveFilter({ label });
+    try {
+      const data = await fetchFn();
+      setClinics(data);
+    } catch {}
+  };
+
+  const handleSearch = async (q?: string) => {
+    const term = (q ?? query).trim();
+    if (!term) return;
+    await saveTrendingSearch(term);
     setTrending(await getTrendingSearches());
-    navigation.navigate('Results', { query: q });
+    navigation.navigate('Results', { query: term });
   };
 
-  const goToProvider = (id: string) => navigation.navigate('ProviderDetail', { providerId: id });
-  const goToResults  = (params: Parameters<typeof navigation.navigate>[1]) =>
-    navigation.navigate('Results', params as any);
+  const clearFilter = () => {
+    if (activeTab === 'providers') loadTopRated();
+    else loadAllClinics();
+    setActiveFilter(null);
+  };
 
-  const renderMiniList = (data: Provider[], loading: boolean) => {
-    if (loading) return <ActivityIndicator color={Colors.primary} style={{ marginLeft: Spacing.md }} />;
-    if (!data.length) return null;
+  const coords = userCoords ?? CHICAGO;
+
+  // ── Sidebar ──────────────────────────────────────────────────────────────────
+
+  const renderSidebar = () => (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sidebarContent}>
+      <TouchableOpacity
+        style={styles.sidebarSupportCard}
+        onPress={() => { closeSidebar(); navigation.navigate('Wellness'); }}
+        activeOpacity={0.85}
+      >
+        <Ionicons name="heart-outline" size={20} color="#fff" />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.sidebarSupportTitle}>Feeling overwhelmed?</Text>
+          <Text style={styles.sidebarSupportSub}>Breathing, grounding and crisis support</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.7)" />
+      </TouchableOpacity>
+    </ScrollView>
+  );
+
+  const renderFilterBar = () => {
+    const sortMap: Record<string, string> = { 'Top Rated': 'rating', 'Most Reviewed': 'reviews', 'Most Experienced': 'experience' };
+    const SORT_OPTIONS = ['Top Rated', 'Most Reviewed', 'Most Experienced'];
+
+    if (activeTab === 'providers') {
+      return (
+        <View style={styles.filterBar}>
+          {/* Filters pill */}
+          <TouchableOpacity
+            style={styles.filterBtn}
+            onPress={() => navigation.getParent()?.navigate('FilterModal', { currentFilters: {} as any })}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="options-outline" size={16} color={Colors.textSecondary} />
+            <Text style={styles.filterBtnText}>Filters</Text>
+          </TouchableOpacity>
+
+          <View style={styles.filterDivider} />
+
+          {/* Sort dropdown */}
+          <TouchableOpacity style={styles.sortBtn} onPress={() => setShowSort(v => !v)} activeOpacity={0.8}>
+            <Ionicons name="swap-vertical-outline" size={16} color={Colors.textSecondary} />
+            <Text style={styles.sortBtnText}>{activeSort}</Text>
+            <Ionicons name={showSort ? 'chevron-up' : 'chevron-down'} size={14} color={Colors.textTertiary} />
+          </TouchableOpacity>
+
+          <View style={styles.filterDivider} />
+
+          {/* Scrollable chips: radius + specialty + insurance */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ gap: 6, paddingRight: 8 }}>
+            {RADIUS_OPTIONS.map(r => (
+              <TouchableOpacity key={`r-${r}`}
+                style={[styles.quickChip, providerRadius === r && styles.quickChipActive]}
+                onPress={() => { setProviderRadius(r); r === 50 ? applyProviderFilter('All Providers', () => getTopRated(100)) : applyProviderFilter(`${r} mi`, () => getNearby(coords.lat, coords.lng, 100, r)); }}
+                activeOpacity={0.8}>
+                <Text style={[styles.quickChipText, providerRadius === r && styles.quickChipTextActive]}>{r === 50 ? 'Any' : `${r} mi`}</Text>
+              </TouchableOpacity>
+            ))}
+            <View style={styles.chipDivider} />
+            {SPECIALTIES.map(s => (
+              <TouchableOpacity key={s.label}
+                style={[styles.quickChip, activeFilter?.label === s.label && styles.quickChipActive]}
+                onPress={() => applyProviderFilter(s.label, () => getProviders(undefined, s.label, s.label))}
+                activeOpacity={0.8}>
+                <Text style={[styles.quickChipText, activeFilter?.label === s.label && styles.quickChipTextActive]}>{s.label}</Text>
+              </TouchableOpacity>
+            ))}
+            <View style={styles.chipDivider} />
+            {INSURANCES.map(ins => (
+              <TouchableOpacity key={ins}
+                style={[styles.quickChip, activeFilter?.label === ins && styles.quickChipActive]}
+                onPress={() => applyProviderFilter(ins, () => getProviders({ insurance: [ins], telehealth_only: false, in_person_only: false, accepting_new_patients: false, min_rating: 0, min_years_experience: 0, specialty: [], provider_type: [], language: [], gender: [], max_distance_miles: 0 }))}
+                activeOpacity={0.8}>
+                <Text style={[styles.quickChipText, activeFilter?.label === ins && styles.quickChipTextActive]}>{ins}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Sort sheet */}
+          {showSort && (
+            <View style={styles.sortSheet}>
+              {SORT_OPTIONS.map(s => (
+                <TouchableOpacity key={s} style={[styles.sortOption, activeSort === s && styles.sortOptionActive]}
+                  onPress={() => { setActiveSort(s); setShowSort(false); applyProviderFilter(s, () => fetchProvidersBySort(sortMap[s])); }}
+                  activeOpacity={0.8}>
+                  <Text style={[styles.sortOptionText, activeSort === s && styles.sortOptionTextActive]}>{s}</Text>
+                  {activeSort === s && <Ionicons name="checkmark" size={16} color={Colors.primary} />}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+      );
+    }
+
+    // Clinics filter bar
     return (
-      <FlatList
-        horizontal
-        data={data}
-        keyExtractor={p => p.id}
-        contentContainerStyle={{ paddingHorizontal: Spacing.md }}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <ProviderMiniCard provider={item} onPress={() => goToProvider(item.id)} />
-        )}
-      />
+      <View style={styles.filterBar}>
+        <TouchableOpacity style={styles.filterBtn} onPress={() => navigation.getParent()?.navigate('ClinicFilterModal')} activeOpacity={0.8}>
+          <Ionicons name="options-outline" size={16} color={Colors.textSecondary} />
+          <Text style={styles.filterBtnText}>Filters</Text>
+        </TouchableOpacity>
+        <View style={styles.filterDivider} />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ gap: 6, paddingRight: 8 }}>
+          {RADIUS_OPTIONS.map(r => (
+            <TouchableOpacity key={`r-${r}`}
+              style={[styles.quickChip, clinicRadius === r && styles.quickChipActive]}
+              onPress={() => { setClinicRadius(r); r === 50 ? applyClinicFilter('All Clinics', () => getFacilities()) : applyClinicFilter(`${r} mi`, () => getNearbyFacilities(coords.lat, coords.lng, r)); }}
+              activeOpacity={0.8}>
+              <Text style={[styles.quickChipText, clinicRadius === r && styles.quickChipTextActive]}>{r === 50 ? 'Any' : `${r} mi`}</Text>
+            </TouchableOpacity>
+          ))}
+          <View style={styles.chipDivider} />
+          {CLINIC_SERVICES.map(svc => (
+            <TouchableOpacity key={svc}
+              style={[styles.quickChip, activeFilter?.label === svc && styles.quickChipActive]}
+              onPress={() => applyClinicFilter(svc, () => getFacilities({ q: svc }))}
+              activeOpacity={0.8}>
+              <Text style={[styles.quickChipText, activeFilter?.label === svc && styles.quickChipTextActive]}>{svc}</Text>
+            </TouchableOpacity>
+          ))}
+          <View style={styles.chipDivider} />
+          {CLINIC_PAYMENTS.map(p => (
+            <TouchableOpacity key={p}
+              style={[styles.quickChip, activeFilter?.label === p && styles.quickChipActive]}
+              onPress={() => applyClinicFilter(p, () => getFacilities({ free_only: p === 'Free', sliding_scale: p === 'Low-Cost' }))}
+              activeOpacity={0.8}>
+              <Text style={[styles.quickChipText, activeFilter?.label === p && styles.quickChipTextActive]}>{p}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
     );
   };
 
-  const SectionHeader = ({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) => (
-    <View style={styles.sectionHeader}>
-      <Text style={styles.sectionLabel}>{title}</Text>
-      {onSeeAll && (
-        <TouchableOpacity onPress={onSeeAll}>
-          <Text style={styles.seeAll}>See all</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+  // ── Main render ───────────────────────────────────────────────────────────────
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={['#2E6A7E', '#4A8B9F']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
+
+      {/* Header */}
+      <LinearGradient colors={['#2E6A7E', '#4A8B9F']} style={styles.header}>
         <SafeAreaView edges={['top']} style={styles.headerInner}>
           <View style={styles.headerTop}>
-            <View>
+            <TouchableOpacity onPress={openSidebar} style={styles.menuBtn}>
+              <Ionicons name="menu-outline" size={24} color="#fff" />
+            </TouchableOpacity>
+            <View style={{ flex: 1 }}>
               <Text style={styles.greeting}>{getGreeting()}</Text>
               <Text style={styles.headerTitle}>Find your provider</Text>
             </View>
@@ -264,20 +318,20 @@ export default function HomeScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
 
+          {/* Search bar */}
           <Animated.View style={[styles.searchWrapper, { transform: [{ scale: inputScale }] }]}>
             <View style={styles.searchBar}>
-              <Ionicons name="location-outline" size={18} color={Colors.primary} />
+              <Ionicons name="search-outline" size={18} color={Colors.primary} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="City, ZIP code, or provider name"
                 placeholderTextColor={Colors.textTertiary}
                 value={query}
                 onChangeText={setQuery}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
+                onFocus={() => Animated.spring(inputScale, { toValue: 1.02, useNativeDriver: true, friction: 8 }).start()}
+                onBlur={() => Animated.spring(inputScale, { toValue: 1, useNativeDriver: true, friction: 8 }).start()}
                 returnKeyType="search"
                 onSubmitEditing={() => handleSearch()}
-                autoCapitalize="words"
               />
               {query.length > 0 && (
                 <TouchableOpacity onPress={() => setQuery('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
@@ -286,354 +340,190 @@ export default function HomeScreen({ navigation }: Props) {
               )}
             </View>
             <TouchableOpacity style={styles.searchButton} onPress={() => handleSearch()} activeOpacity={0.85}>
-              <Ionicons name="search" size={20} color={Colors.textInverse} />
+              <Ionicons name="search" size={20} color="#fff" />
             </TouchableOpacity>
           </Animated.View>
+
+          {/* Recent searches */}
+          {trending.length > 0 && (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.trendingScroll} contentContainerStyle={{ gap: 8 }}>
+              {trending.map(t => (
+                <TouchableOpacity key={t} style={styles.trendingChip} onPress={() => handleSearch(t)}>
+                  <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.7)" />
+                  <Text style={styles.trendingText}>{t}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </SafeAreaView>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Trending Searches */}
-        {trending.length > 0 && (
-          <View style={styles.section}>
-            <SectionHeader title="Recent Searches" />
-            <View style={styles.chipRow}>
-              {trending.map(t => (
-                <TouchableOpacity key={t} style={styles.trendingChip} onPress={() => handleSearch(t)}>
-                  <Ionicons name="time-outline" size={12} color={Colors.textTertiary} />
-                  <Text style={styles.trendingChipText}>{t}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {/* Community Clinics */}
-        {(facilitiesLoading || facilities.length > 0) && (
-          <View style={styles.section}>
-            <SectionHeader
-              title="Clinics Near You"
-              onSeeAll={() => navigation.navigate('FacilitiesList', {
-                facilities: allFacilities,
-                lat: userCoords?.lat ?? 41.8827,
-                lng: userCoords?.lng ?? -87.6294,
-              })}
-            />
-            <View style={styles.radiusRow}>
-              {[2, 5, 10, 25, 50].map(r => (
-                <TouchableOpacity
-                  key={r}
-                  style={[styles.radiusChip, clinicRadius === r && styles.radiusChipActive]}
-                  onPress={() => handleClinicRadiusChange(r)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.radiusChipText, clinicRadius === r && styles.radiusChipTextActive]}>
-                    {r === 50 ? 'Any' : `${r} mi`}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            {facilitiesLoading ? (
-              <ActivityIndicator color={Colors.primary} style={{ marginLeft: Spacing.md }} />
-            ) : (
-              <FlatList
-                horizontal
-                data={facilities}
-                keyExtractor={f => String(f.id)}
-                contentContainerStyle={{ paddingHorizontal: Spacing.md }}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <FacilityCard facility={item} onPress={() => navigation.navigate('FacilityDetail', { facilityId: item.id })} />
-                )}
-              />
-            )}
-          </View>
-        )}
-
-        {/* Support Tools card */}
+      {/* Tab toggle */}
+      <View style={styles.tabRow}>
         <TouchableOpacity
-          style={styles.supportCard}
-          onPress={() => navigation.navigate('Wellness')}
-          activeOpacity={0.85}
+          style={[styles.tabBtn, activeTab === 'providers' && styles.tabBtnActive]}
+          onPress={() => { setActiveTab('providers'); setActiveFilter(null); loadTopRated(); }}
+          activeOpacity={0.8}
         >
-          <View style={styles.supportLeft}>
-            <Text style={styles.supportTitle}>Feeling overwhelmed?</Text>
-            <Text style={styles.supportSub}>Breathing, grounding & crisis support</Text>
-          </View>
-          <View style={styles.supportIcon}>
-            <Ionicons name="heart-outline" size={22} color="#fff" />
-          </View>
+          <Text style={[styles.tabBtnText, activeTab === 'providers' && styles.tabBtnTextActive]}>Providers</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabBtn, activeTab === 'clinics' && styles.tabBtnActive]}
+          onPress={() => { setActiveTab('clinics'); setActiveFilter(null); loadAllClinics(); }}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.tabBtnText, activeTab === 'clinics' && styles.tabBtnTextActive]}>Clinics</Text>
+        </TouchableOpacity>
+      </View>
 
-        {/* Near You */}
-        {(sections.nearby.loading || sections.nearby.data.length > 0) && (
-          <View style={styles.section}>
-            <SectionHeader
-              title="Providers Near You"
-              onSeeAll={() => goToResults({ query: 'Chicago' })}
-            />
-            <View style={styles.radiusRow}>
-              {RADIUS_OPTIONS.map(r => (
-                <TouchableOpacity
-                  key={r}
-                  style={[styles.radiusChip, nearbyRadius === r && styles.radiusChipActive]}
-                  onPress={() => handleRadiusChange(r)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.radiusChipText, nearbyRadius === r && styles.radiusChipTextActive]}>
-                    {r === 50 ? 'Any' : `${r} mi`}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+      {/* Filter bar — switches based on active tab */}
+      {renderFilterBar()}
+
+      {/* Main list */}
+      {loading ? (
+        <ActivityIndicator color={Colors.primary} style={{ marginTop: 40 }} />
+      ) : activeTab === 'providers' ? (
+        <FlatList
+          data={providers}
+          keyExtractor={p => p.id}
+          renderItem={({ item }) => (
+            <ProviderCard provider={item} onPress={() => navigation.navigate('ProviderDetail', { providerId: item.id })} />
+          )}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="search-outline" size={48} color={Colors.textTertiary} />
+              <Text style={styles.emptyText}>No providers found</Text>
             </View>
-            {renderMiniList(sections.nearby.data, sections.nearby.loading)}
-          </View>
-        )}
-
-        {/* Top Rated */}
-        <View style={styles.section}>
-          <SectionHeader
-            title="Top Rated Providers"
-            onSeeAll={() => goToResults({ query: '', specialty: undefined })}
-          />
-          {renderMiniList(sections.topRated.data, sections.topRated.loading)}
-        </View>
-
-        {/* For You */}
-        {(sections.forYou.loading || sections.forYou.data.length > 0) && (
-          <View style={styles.section}>
-            <SectionHeader
-              title="Providers Based on Your Preferences"
-              onSeeAll={() => goToResults({ query: '' })}
-            />
-            {renderMiniList(sections.forYou.data, sections.forYou.loading)}
-          </View>
-        )}
-
-        {/* Browse by Specialty */}
-        <View style={styles.section}>
-          <SectionHeader title="Browse by Specialty" />
-          <View style={styles.specialtyGrid}>
-            {BROWSE_SPECIALTIES.map(spec => (
-              <TouchableOpacity
-                key={spec.label}
-                style={[styles.specialtyCard, { backgroundColor: spec.color }]}
-                onPress={() => goToResults({ query: '', specialty: spec.label })}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.specialtyIcon, { backgroundColor: spec.iconColor + '22' }]}>
-                  <Ionicons name={spec.icon} size={22} color={spec.iconColor} />
-                </View>
-                <Text style={[styles.specialtyLabel, { color: spec.iconColor }]}>{spec.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Browse by Insurance */}
-        <View style={styles.section}>
-          <SectionHeader title="Browse by Insurance" />
-          <View style={styles.chipRow}>
-            {INSURANCE_OPTIONS.map(ins => (
-              <TouchableOpacity
-                key={ins.label}
-                style={[styles.insuranceChip, { backgroundColor: ins.color }]}
-                onPress={() => goToResults({ query: '', filters: { insurance: [ins.label] } as any })}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="shield-checkmark-outline" size={12} color={Colors.primary} />
-                <Text style={styles.insuranceChipText}>{ins.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* How it works */}
-        <View style={[styles.section, styles.howCard]}>
-          <Text style={styles.howTitle}>How MindPath works</Text>
-          {[
-            { num: '1', text: 'Search by city, ZIP, or specialty' },
-            { num: '2', text: 'Filter by insurance, language, and more' },
-            { num: '3', text: 'Read profiles and reviews' },
-            { num: '4', text: 'Book directly or save for later' },
-          ].map(step => (
-            <View key={step.num} style={styles.howStep}>
-              <View style={styles.howNum}>
-                <Text style={styles.howNumText}>{step.num}</Text>
-              </View>
-              <Text style={styles.howText}>{step.text}</Text>
+          }
+        />
+      ) : (
+        <FlatList
+          data={clinics}
+          keyExtractor={f => String(f.id)}
+          renderItem={({ item }) => (
+            <FacilityCard facility={item} onPress={() => navigation.navigate('FacilityDetail', { facilityId: item.id })} />
+          )}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="medical-outline" size={48} color={Colors.textTertiary} />
+              <Text style={styles.emptyText}>No clinics found</Text>
             </View>
-          ))}
-        </View>
-      </ScrollView>
+          }
+        />
+      )}
+
+      {/* Sidebar overlay */}
+      {sidebarOpen && (
+        <Animated.View style={[styles.overlay, { opacity: overlayAnim }]}>
+          <TouchableOpacity style={{ flex: 1 }} onPress={closeSidebar} activeOpacity={1} />
+        </Animated.View>
+      )}
+
+      {/* Sidebar panel */}
+      <Animated.View style={[styles.sidebar, { transform: [{ translateX: sidebarAnim }] }]}>
+        <SafeAreaView edges={['top']} style={styles.sidebarHeader}>
+          <View style={styles.sidebarHeaderRow}>
+            <Text style={styles.sidebarTitle}>Discover</Text>
+            <TouchableOpacity onPress={closeSidebar} style={styles.sidebarCloseBtn}>
+              <Ionicons name="close" size={22} color={Colors.textPrimary} />
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+        {renderSidebar()}
+      </Animated.View>
     </View>
   );
 }
 
-function FacilityCard({ facility, onPress }: { facility: Facility; onPress: () => void }) {
-  const isFree = facility.payment.some(p => p.toLowerCase().includes('free'));
-  const isSliding = facility.payment.some(p => p.toLowerCase().includes('sliding'));
-  const tag = isFree ? 'Free' : isSliding ? 'Sliding Scale' : 'Low-Cost';
-  const tagColor = isFree ? '#16a34a' : '#b45309';
-  const tagBg = isFree ? '#dcfce7' : '#fef3c7';
-
-  return (
-    <TouchableOpacity style={facilityStyles.card} onPress={onPress} activeOpacity={0.8}>
-      <View style={[facilityStyles.tag, { backgroundColor: tagBg }]}>
-        <Text style={[facilityStyles.tagText, { color: tagColor }]}>{tag}</Text>
-      </View>
-      <Text style={facilityStyles.name} numberOfLines={2}>{facility.name}</Text>
-      <Text style={facilityStyles.address} numberOfLines={1}>{facility.address}</Text>
-      {facility.telehealth && (
-        <View style={facilityStyles.telehealthBadge}>
-          <Ionicons name="videocam-outline" size={11} color={Colors.primary} />
-          <Text style={facilityStyles.telehealthText}>Telehealth</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-}
-
-const facilityStyles = StyleSheet.create({
-  card: {
-    width: 180,
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.md,
-    padding: 12,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    ...Shadows.xs,
-  },
-  tag: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.full,
-    marginBottom: 8,
-  },
-  tagText: { fontSize: 11, fontWeight: '700' },
-  name: { fontSize: 13, fontWeight: '600', color: Colors.textPrimary, marginBottom: 4, lineHeight: 18 },
-  address: { fontSize: 11, color: Colors.textTertiary, marginBottom: 6 },
-  telehealthBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  telehealthText: { fontSize: 11, color: Colors.primary, fontWeight: '500' },
-});
-
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: Colors.background },
-  header:       { paddingBottom: Spacing.xl },
-  headerInner:  { paddingHorizontal: Spacing.md },
-  headerTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.lg,
-    paddingTop: Spacing.sm,
-  },
-  greeting:    { fontSize: 14, color: 'rgba(255,255,255,0.75)', fontWeight: '400', marginBottom: 2 },
-  headerTitle: { fontSize: 24, fontWeight: '800', color: Colors.textInverse, letterSpacing: -0.3 },
-  notifBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  searchWrapper: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  searchBar: {
-    flex: 1, flexDirection: 'row', alignItems: 'center',
-    backgroundColor: Colors.surface, borderRadius: Radius.md,
-    paddingHorizontal: 14, paddingVertical: 12, gap: 8, ...Shadows.sm,
-  },
-  searchInput:  { flex: 1, fontSize: 15, color: Colors.textPrimary },
-  searchButton: {
-    width: 48, height: 48, borderRadius: Radius.md,
-    backgroundColor: Colors.accent, alignItems: 'center', justifyContent: 'center', ...Shadows.sm,
-  },
-  scrollView:   { flex: 1 },
-  scrollContent:{ paddingTop: Spacing.lg, paddingBottom: 100 },
-  section:      { marginBottom: Spacing.xl },
-  sectionHeader:{
+  container: { flex: 1, backgroundColor: Colors.background },
+  header: { paddingBottom: Spacing.md },
+  headerInner: { paddingHorizontal: Spacing.md },
+  headerTop: { flexDirection: 'row', alignItems: 'center', paddingTop: Spacing.sm, marginBottom: Spacing.md, gap: 12 },
+  menuBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  greeting: { fontSize: 13, color: 'rgba(255,255,255,0.75)', fontWeight: '400' },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: '#fff', letterSpacing: -0.3 },
+  notifBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  searchWrapper: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
+  searchBar: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: Radius.md, paddingHorizontal: 14, paddingVertical: 12, gap: 8, ...Shadows.sm },
+  searchInput: { flex: 1, fontSize: 15, color: Colors.textPrimary },
+  searchButton: { width: 48, height: 48, borderRadius: Radius.md, backgroundColor: Colors.accent, alignItems: 'center', justifyContent: 'center', ...Shadows.sm },
+  trendingScroll: { marginBottom: 4 },
+  trendingChip: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 6 },
+  trendingText: { fontSize: 12, color: 'rgba(255,255,255,0.9)', fontWeight: '500' },
+
+  tabRow: { flexDirection: 'row', backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.divider },
+  tabBtn: { flex: 1, paddingVertical: 14, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  tabBtnActive: { borderBottomColor: Colors.primary },
+  tabBtnText: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary },
+  tabBtnTextActive: { color: Colors.primary, fontWeight: '700' },
+
+  activeFilterRow: { paddingHorizontal: Spacing.md, paddingVertical: 8, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.divider },
+  activeFilterChip: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: Colors.primaryBg, borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: Colors.primary + '44' },
+  activeFilterText: { fontSize: 13, fontWeight: '600', color: Colors.primary },
+
+  filterBar: {
     flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md, marginBottom: Spacing.md,
-  },
-  sectionLabel: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
-  seeAll:       { fontSize: 13, fontWeight: '600', color: Colors.primary },
-  chipRow:      { flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: Spacing.md },
-  trendingChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    backgroundColor: Colors.surface, borderRadius: Radius.full,
-    paddingHorizontal: 12, paddingVertical: 8,
-    borderWidth: 1, borderColor: Colors.border, ...Shadows.xs,
-  },
-  trendingChipText: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
-  insuranceChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 8,
-    borderWidth: 1, borderColor: Colors.border,
-  },
-  insuranceChipText: { fontSize: 12, fontWeight: '600', color: Colors.textPrimary },
-  specialtyGrid: {
-    flexDirection: 'row', flexWrap: 'wrap',
-    gap: 10, paddingHorizontal: Spacing.md,
-  },
-  specialtyCard: {
-    width: '30%', flexGrow: 1, borderRadius: Radius.md,
-    padding: 14, alignItems: 'center', gap: 8, minWidth: 95,
-  },
-  specialtyIcon: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  specialtyLabel:{ fontSize: 12, fontWeight: '600', textAlign: 'center' },
-  radiusRow: {
-    flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: Spacing.md,
-    marginBottom: 10,
-  },
-  radiusChip: {
-    paddingHorizontal: 12, paddingVertical: 6,
-    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.md, paddingVertical: 10,
     backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
+    borderBottomWidth: 1, borderBottomColor: Colors.divider,
+    gap: 8, position: 'relative',
   },
-  radiusChipActive: {
-    backgroundColor: Colors.primaryBg,
-    borderColor: Colors.primary,
+  filterBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 12, paddingVertical: 7,
+    borderRadius: Radius.full, backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1.5, borderColor: Colors.border,
   },
-  radiusChipText: {
-    fontSize: 12, fontWeight: '500', color: Colors.textSecondary,
+  filterBtnText: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
+  filterDivider: { width: 1, height: 18, backgroundColor: Colors.border },
+  sortBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 7 },
+  sortBtnText: { fontSize: 13, fontWeight: '500', color: Colors.textSecondary },
+  quickChip: {
+    paddingHorizontal: 12, paddingVertical: 6,
+    borderRadius: Radius.full, backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1.5, borderColor: Colors.border,
   },
-  radiusChipTextActive: {
-    color: Colors.primary, fontWeight: '700',
+  quickChipActive: { backgroundColor: Colors.primaryBg, borderColor: Colors.primary },
+  quickChipText: { fontSize: 12, fontWeight: '500', color: Colors.textSecondary },
+  quickChipTextActive: { color: Colors.primary, fontWeight: '600' },
+  chipDivider: { width: 1, height: 18, backgroundColor: Colors.border, alignSelf: 'center' },
+  sortSheet: {
+    position: 'absolute', top: 50, left: Spacing.md,
+    backgroundColor: Colors.surface, borderRadius: Radius.md,
+    padding: 4, width: 200, zIndex: 100, ...Shadows.lg,
   },
-  howCard: {
-    backgroundColor: Colors.surface, borderRadius: Radius.lg,
-    padding: Spacing.md, marginHorizontal: Spacing.md, ...Shadows.sm,
-  },
-  howTitle: { ...Typography.heading4, marginBottom: Spacing.md },
-  howStep:  { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 12 },
-  howNum: {
-    width: 28, height: 28, borderRadius: 14,
-    backgroundColor: Colors.primaryBg, alignItems: 'center', justifyContent: 'center',
-  },
-  howNumText: { fontSize: 13, fontWeight: '700', color: Colors.primary },
-  howText:    { fontSize: 14, color: Colors.textSecondary, flex: 1 },
-  supportCard: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#1a3a47', borderRadius: Radius.lg,
-    padding: Spacing.md, marginHorizontal: Spacing.md,
-    marginBottom: Spacing.md, ...Shadows.md,
-  },
-  supportLeft: { flex: 1 },
-  supportTitle: { fontSize: 16, fontWeight: '800', color: '#fff', marginBottom: 3 },
-  supportSub: { fontSize: 12, color: 'rgba(255,255,255,0.65)' },
-  supportIcon: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center', justifyContent: 'center',
-  },
+  sortOption: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderRadius: Radius.sm },
+  sortOptionActive: { backgroundColor: Colors.primaryBg },
+  sortOptionText: { fontSize: 14, color: Colors.textSecondary },
+  sortOptionTextActive: { color: Colors.primary, fontWeight: '600' },
+  listContent: { paddingTop: Spacing.md, paddingBottom: 100 },
+  emptyState: { alignItems: 'center', paddingTop: 80, gap: 12 },
+  emptyText: { fontSize: 16, color: Colors.textTertiary },
+
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10 },
+  sidebar: { position: 'absolute', top: 0, left: 0, bottom: 0, width: SIDEBAR_WIDTH, backgroundColor: Colors.surface, zIndex: 11, ...Shadows.lg },
+  sidebarHeader: { borderBottomWidth: 1, borderBottomColor: Colors.divider },
+  sidebarHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.md, paddingVertical: 14 },
+  sidebarTitle: { fontSize: 20, fontWeight: '800', color: Colors.textPrimary, letterSpacing: -0.3 },
+  sidebarCloseBtn: { width: 36, height: 36, borderRadius: 10, backgroundColor: Colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
+  sidebarContent: { padding: Spacing.md, gap: 12, paddingBottom: 60 },
+  sidebarSupportCard: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#1a3a47', borderRadius: Radius.lg, padding: 14, marginBottom: 4 },
+  sidebarSupportTitle: { fontSize: 14, fontWeight: '800', color: '#fff' },
+  sidebarSupportSub: { fontSize: 11, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
+  sidebarSection: { fontSize: 11, fontWeight: '700', color: Colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 8 },
+
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.full, backgroundColor: Colors.surfaceAlt, borderWidth: 1.5, borderColor: Colors.border },
+  chipActive: { backgroundColor: Colors.primaryBg, borderColor: Colors.primary },
+  chipText: { fontSize: 12, fontWeight: '500', color: Colors.textSecondary },
+  chipTextActive: { color: Colors.primary, fontWeight: '700' },
+
+  specialtyGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  specialtyCard: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: Radius.md, backgroundColor: Colors.surfaceAlt, borderWidth: 1.5 },
+  specialtyLabel: { fontSize: 13, fontWeight: '600' },
 });

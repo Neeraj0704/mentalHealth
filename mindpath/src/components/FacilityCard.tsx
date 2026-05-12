@@ -16,7 +16,7 @@ export function FacilityCard({ facility, onPress }: Props) {
   const saved = isFacilitySaved(facility.id);
   const isFree = facility.payment.some(p => p.toLowerCase().includes('free'));
   const isSliding = facility.payment.some(p => p.toLowerCase().includes('sliding'));
-  const costLabel = isFree ? 'Free' : isSliding ? 'Sliding Scale' : 'Low-Cost';
+  const costLabel = isFree ? 'Free' : isSliding ? 'Low-Cost' : 'Low-Cost';
   const costColor = isFree ? '#16a34a' : '#b45309';
   const costBg = isFree ? '#dcfce7' : '#fef3c7';
   const serviceText = facility.services?.join('; ') || facility.keywords || '';

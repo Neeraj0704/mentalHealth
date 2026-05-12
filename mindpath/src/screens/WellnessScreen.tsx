@@ -14,17 +14,16 @@ type Props = NativeStackScreenProps<HomeStackParamList, 'Wellness'>;
 
 const MOODS = [
   { icon: 'alert-circle-outline' as const, color: '#f59e0b', label: 'Anxious',     tool: 'Breathing' as const, pattern: 'box' as const },
-  { icon: 'water-outline' as const,        color: '#60a5fa', label: 'Sad',         tool: 'SafeSpace' as const },
+  { icon: 'water-outline' as const,        color: '#60a5fa', label: 'Sad',         tool: 'Grounding' as const },
   { icon: 'flame-outline' as const,        color: '#f87171', label: 'Angry',       tool: 'Breathing' as const, pattern: '4-6' as const },
   { icon: 'thunderstorm-outline' as const, color: '#c084fc', label: 'Overwhelmed', tool: 'Grounding' as const },
-  { icon: 'moon-outline' as const,         color: '#94a3b8', label: 'Exhausted',   tool: 'SafeSpace' as const },
+  { icon: 'moon-outline' as const,         color: '#94a3b8', label: 'Exhausted',   tool: 'Grounding' as const },
   { icon: 'remove-circle-outline' as const,color: '#6ee7b7', label: 'Numb',        tool: 'Grounding' as const },
 ];
 
 const TOOLS = [
   { icon: 'radio-button-on-outline' as const, label: 'Breathing', sub: 'Calm your nervous system', screen: 'Breathing' as const, color: '#2E6A7E', bg: '#EEF6F9' },
   { icon: 'hand-left-outline' as const,       label: 'Grounding', sub: '5-4-3-2-1 technique',      screen: 'Grounding' as const, color: '#6BAF92', bg: '#EEF7F2' },
-  { icon: 'moon-outline' as const,            label: 'Safe Space', sub: 'Calming environment',      screen: 'SafeSpace' as const, color: '#8B6BAF', bg: '#F7EEF9' },
   { icon: 'alert-circle-outline' as const,    label: 'SOS',        sub: 'Crisis resources',          screen: 'SOSResources' as const, color: '#E05C5C', bg: '#FEF0F0' },
 ];
 
@@ -36,7 +35,6 @@ export default function WellnessScreen({ navigation }: Props) {
     const mood = MOODS[idx];
     setTimeout(() => {
       if (mood.tool === 'Breathing') navigation.navigate('Breathing', { pattern: mood.pattern });
-      else if (mood.tool === 'SafeSpace') navigation.navigate('SafeSpace');
       else if (mood.tool === 'Grounding') navigation.navigate('Grounding');
     }, 300);
   };

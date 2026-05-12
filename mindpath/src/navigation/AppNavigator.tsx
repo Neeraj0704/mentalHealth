@@ -37,7 +37,6 @@ import WellnessScreen from '../screens/WellnessScreen';
 import BreathingScreen from '../screens/BreathingScreen';
 import PanicModeScreen from '../screens/PanicModeScreen';
 import GroundingScreen from '../screens/GroundingScreen';
-import SafeSpaceScreen from '../screens/SafeSpaceScreen';
 import SOSScreen from '../screens/SOSScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -66,7 +65,6 @@ function HomeNavigator() {
       <HomeStack.Screen name="Breathing" component={BreathingScreen} />
       <HomeStack.Screen name="PanicMode" component={PanicModeScreen} />
       <HomeStack.Screen name="Grounding" component={GroundingScreen} />
-      <HomeStack.Screen name="SafeSpace" component={SafeSpaceScreen} />
       <HomeStack.Screen name="SOSResources" component={SOSScreen} />
     </HomeStack.Navigator>
   );

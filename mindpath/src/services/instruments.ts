@@ -65,10 +65,10 @@ const PHQ9: Instrument = {
     { text: 'How often have you had trouble falling or staying asleep, or been sleeping too much?' },
     { text: 'How often have you been feeling tired or having little energy?' },
     { text: 'How often have you had poor appetite or been overeating?' },
-    { text: 'How often have you been feeling bad about yourself — or that you are a failure?' },
+    { text: 'How often have you been feeling bad about yourself, or that you are a failure?' },
     { text: 'How often have you had trouble concentrating on things like reading or watching TV?' },
     {
-      text: 'How often have you been moving or speaking so slowly that others noticed — or the opposite, being fidgety or restless?',
+      text: 'How often have you been moving or speaking so slowly that others noticed, or being fidgety or restless?',
     },
     { text: 'How often have you had thoughts that you would be better off dead, or thoughts of hurting yourself?' },
   ],

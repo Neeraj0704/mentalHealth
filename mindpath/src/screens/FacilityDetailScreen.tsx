@@ -84,7 +84,7 @@ export default function FacilityDetailScreen({ navigation, route }: Props) {
 
   const isFree = facility.payment.some(p => p.toLowerCase().includes('free'));
   const isSliding = facility.payment.some(p => p.toLowerCase().includes('sliding'));
-  const costLabel = isFree ? 'Free' : isSliding ? 'Sliding Scale' : 'Insurance / Self-Pay';
+  const costLabel = isFree ? 'Free' : isSliding ? 'Low-Cost' : 'Insurance / Self-Pay';
   const costColor = isFree ? '#16a34a' : isSliding ? '#b45309' : Colors.textSecondary;
   const costBg = isFree ? '#dcfce7' : isSliding ? '#fef3c7' : Colors.surfaceAlt;
 

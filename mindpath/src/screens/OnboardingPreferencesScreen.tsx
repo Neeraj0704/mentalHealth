@@ -12,7 +12,8 @@ import { savePreferences } from '../services/preferences';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PreferencesSetup'>;
 
-const AGE_OPTIONS = ['18–24', '25–34', '35–44', '45–54', '55+', 'Prefer not to say'];
+const GENDER_OPTIONS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+const AGE_OPTIONS = ['18-24', '25-34', '35-44', '45-54', '55+', 'Prefer not to say'];
 const INSURANCE_OPTIONS = ['Aetna', 'Blue Cross Blue Shield', 'Cigna', 'UnitedHealth', 'Medicare', 'Medicaid', 'Self-pay'];
 const LANGUAGE_OPTIONS = ['English', 'Spanish', 'Chinese', 'Mandarin', 'Polish', 'Hindi', 'Russian', 'Arabic'];
 const PROVIDER_GENDER_OPTIONS = ['No preference', 'Female', 'Male'];
@@ -26,7 +27,7 @@ const SERVICE_OPTIONS = ['Counseling', 'Psychiatry', 'Trauma', 'ADHD', 'Family T
 const COST_OPTIONS = [
   { label: 'Any', value: 'any' as const },
   { label: 'Free', value: 'free' as const },
-  { label: 'Sliding Scale', value: 'sliding' as const },
+  { label: 'Low-Cost', value: 'sliding' as const },
   { label: 'Accepts Medicaid', value: 'medicaid' as const },
 ];
 
@@ -58,9 +59,10 @@ function SectionGroupHeader({ label }: { label: string }) {
 }
 
 export default function OnboardingPreferencesScreen({ navigation }: Props) {
+  const [gender, setGender] = useState('Prefer not to say');
   const [ageGroup, setAgeGroup] = useState('Prefer not to say');
-  const [insurance, setInsurance] = useState('');
   const [language, setLanguage] = useState('');
+  const [insurance, setInsurance] = useState('');
   const [providerGender, setProviderGender] = useState('No preference');
   const [maxDistance, setMaxDistance] = useState(25);
   const [sessionType, setSessionType] = useState<'any' | 'telehealth' | 'in-person'>('any');
@@ -78,7 +80,7 @@ export default function OnboardingPreferencesScreen({ navigation }: Props) {
   const handleContinue = async () => {
     setSaving(true);
     await savePreferences({
-      ageGroup, insurance, language,
+      gender, ageGroup, insurance, language,
       providerGenderPreference: providerGender,
       maxDistanceMiles: maxDistance,
       sessionType, serviceType, costPreference,
@@ -106,27 +108,20 @@ export default function OnboardingPreferencesScreen({ navigation }: Props) {
         {/* ABOUT YOU */}
         <SectionGroupHeader label="About you" />
 
+        <SectionCard title="Your gender">
+          <View style={styles.chipRow}>
+            {GENDER_OPTIONS.map(g => (
+              <Chip key={g} label={g} selected={gender === g} onPress={() => setGender(g)} />
+            ))}
+          </View>
+        </SectionCard>
+
         <SectionCard title="Your age group">
           <View style={styles.chipRow}>
             {AGE_OPTIONS.map(a => (
               <Chip key={a} label={a} selected={ageGroup === a} onPress={() => setAgeGroup(a)} />
             ))}
           </View>
-        </SectionCard>
-
-        <SectionCard title="Your insurance" subtitle="We'll show providers and clinics that accept your plan.">
-          <View style={styles.chipRow}>
-            {INSURANCE_OPTIONS.map(ins => (
-              <Chip key={ins} label={ins} selected={insurance === ins} onPress={() => setInsurance(ins === insurance ? '' : ins)} />
-            ))}
-          </View>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Or type your insurance plan…"
-            placeholderTextColor={Colors.textTertiary}
-            value={insurance}
-            onChangeText={setInsurance}
-          />
         </SectionCard>
 
         <SectionCard title="Language you prefer" subtitle="We'll prioritize providers and clinics that speak your language.">
@@ -164,12 +159,30 @@ export default function OnboardingPreferencesScreen({ navigation }: Props) {
           </View>
         </SectionCard>
 
-        <SectionCard title="Service you're looking for" subtitle="We'll surface providers and clinics that specialise in this area.">
+        <SectionCard title="Service you are looking for" subtitle="We'll surface providers and clinics that specialise in this area.">
           <View style={styles.chipRow}>
             {SERVICE_OPTIONS.map(s => (
               <Chip key={s} label={s} selected={serviceType === s} onPress={() => setServiceType(s === serviceType ? '' : s)} />
             ))}
           </View>
+        </SectionCard>
+
+        {/* INSURANCE & COST */}
+        <SectionGroupHeader label="Insurance & cost" />
+
+        <SectionCard title="Your insurance" subtitle="We'll show providers and clinics that accept your plan.">
+          <View style={styles.chipRow}>
+            {INSURANCE_OPTIONS.map(ins => (
+              <Chip key={ins} label={ins} selected={insurance === ins} onPress={() => setInsurance(ins === insurance ? '' : ins)} />
+            ))}
+          </View>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Or type your insurance plan"
+            placeholderTextColor={Colors.textTertiary}
+            value={insurance}
+            onChangeText={setInsurance}
+          />
         </SectionCard>
 
         <SectionCard title="Cost preference" subtitle="Filter clinics by what you can afford.">
