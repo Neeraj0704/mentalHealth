@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, StatusBar, KeyboardAvoidingView,
-  Platform, ActivityIndicator, Alert, ScrollView,
+  StyleSheet, StatusBar,
+  ActivityIndicator, Alert, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -48,7 +48,7 @@ export default function SignUpScreen({ navigation }: Props) {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <View style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
       <LinearGradient colors={['#2E6A7E', '#4A8B9F']} style={styles.header}>
         <SafeAreaView edges={['top']} style={styles.headerInner}>
@@ -66,7 +66,12 @@ export default function SignUpScreen({ navigation }: Props) {
         </SafeAreaView>
       </LinearGradient>
 
-      <ScrollView style={{ flex: 1, backgroundColor: Colors.background }} contentContainerStyle={styles.form} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={{ flex: 1, backgroundColor: Colors.background }}
+        contentContainerStyle={styles.form}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
+      >
         <Text style={styles.label}>Full Name</Text>
         <View style={styles.inputWrap}>
           <Ionicons name="person-outline" size={18} color={Colors.textTertiary} />
@@ -116,7 +121,7 @@ export default function SignUpScreen({ navigation }: Props) {
 
         <View style={{ height: 40 }} />
       </ScrollView>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

@@ -78,7 +78,7 @@ async def converse_node(state: ConversationState) -> dict:
         }
 
     current_turn = state.get("turn_count", 0) + 1
-    MIN_TURNS = 3  # never signal ready before 3 full exchanges
+    MIN_TURNS = 2  # never signal ready before 2 full exchanges
 
     match = READY_TAG_PATTERN.search(reply)
     ready = bool(match) and current_turn >= MIN_TURNS

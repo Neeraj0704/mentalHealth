@@ -85,9 +85,10 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
   const [summaryText, setSummaryText] = useState('');
   const [showCrisisModal, setShowCrisisModal] = useState(false);
 
-  const sessionId     = useRef(makeSessionId());
-  const recordingRef  = useRef<Audio.Recording | null>(null);
-  const doneRef       = useRef(false);
+  const sessionId          = useRef(makeSessionId());
+  const recordingRef       = useRef<Audio.Recording | null>(null);
+  const doneRef            = useRef(false);
+  const listenFailCount    = useRef(0);
   const stoppingRef   = useRef(false);   // prevent double VAD trigger
   const silenceSince  = useRef<number | null>(null);
   const hasSpokeRef   = useRef(false);   // don't trigger silence until user has spoken
@@ -251,11 +252,23 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
   const startListening = useCallback(async () => {
     if (doneRef.current) return;
 
+    // If we've failed 3 times in a row, stop trying and show text input fallback
+    if (listenFailCount.current >= 3) {
+      setShowTextInput(true);
+      setHint('Microphone unavailable — type your response below');
+      listenFailCount.current = 0;
+      return;
+    }
+
     const { granted } = await Audio.requestPermissionsAsync();
     if (!granted) { setHint('Microphone permission required'); return; }
 
     try {
       await stopSpeech();
+      // Give iOS audio session time to release from TTS before switching to record mode
+      await new Promise(r => setTimeout(r, 250));
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true });
+      await new Promise(r => setTimeout(r, 100));
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
 
       const { recording } = await Audio.Recording.createAsync({
@@ -284,11 +297,14 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
       recording.setProgressUpdateInterval(100);
 
       recordingRef.current = recording;
+      listenFailCount.current = 0;
       setPhase('recording');
       setHint('Listening… speak naturally');
     } catch (e) {
+      listenFailCount.current += 1;
       console.warn('startListening error', e);
-      setHint('Could not start recording');
+      setHint('Tap to try again');
+      setPhase('idle');
       Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }).catch(() => {});
     }
   }, [triggerAutoStop]);
