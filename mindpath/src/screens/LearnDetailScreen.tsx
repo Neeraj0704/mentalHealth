@@ -11,6 +11,8 @@ import { LearnStackParamList } from '../types';
 import { Colors, Spacing, Radius, Shadows, Typography } from '../theme';
 
 import { BASE_URL } from '../config';
+import { isCrisisMessage } from '../utils/crisisDetector';
+import CrisisModal from '../components/CrisisModal';
 
 type Props = NativeStackScreenProps<LearnStackParamList, 'LearnDetail'>;
 
@@ -42,6 +44,7 @@ export default function LearnDetailScreen({ navigation, route }: Props) {
   const [question, setQuestion] = useState('');
   const [qaHistory, setQaHistory] = useState<QAItem[]>([]);
   const [asking, setAsking] = useState(false);
+  const [showCrisisBanner, setShowCrisisBanner] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -54,6 +57,7 @@ export default function LearnDetailScreen({ navigation, route }: Props) {
   const handleAsk = async () => {
     const q = question.trim();
     if (!q || asking) return;
+    if (isCrisisMessage(q)) setShowCrisisBanner(true);
     setQuestion('');
     setAsking(true);
     try {
@@ -163,6 +167,8 @@ export default function LearnDetailScreen({ navigation, route }: Props) {
           <View style={styles.qaSection}>
             <Text style={styles.qaSectionTitle}>Ask a question</Text>
             <Text style={styles.qaSectionSub}>Answers are based on NIMH and APA clinical guidelines only.</Text>
+
+            <CrisisModal visible={showCrisisBanner} onClose={() => setShowCrisisBanner(false)} />
 
             {qaHistory.map((item, i) => (
               <View key={i} style={styles.qaItem}>

@@ -11,6 +11,8 @@ import { Colors, Spacing, Radius, Shadows } from '../theme';
 import { sendVoiceTurn, MindpathUI } from '../services/api';
 import { saveAssessmentSummary } from '../services/preferences';
 import { getInstrument, calculateScore, Instrument } from '../services/instruments';
+import { isCrisisMessage } from '../utils/crisisDetector';
+import CrisisModal from '../components/CrisisModal';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'MiraChat'>;
 
@@ -37,6 +39,8 @@ export default function MiraChatScreen({ navigation }: Props) {
   const [currentInstrument, setCurrentInstrument] = useState<Instrument | null>(null);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [instrumentAnswers, setInstrumentAnswers] = useState<number[]>([]);
+
+  const [showCrisisBanner, setShowCrisisBanner] = useState(false);
 
   const sessionId = useRef(Math.random().toString(36).slice(2) + Date.now().toString(36));
   const pendingUiRef = useRef<MindpathUI | null>(null);
@@ -137,6 +141,8 @@ export default function MiraChatScreen({ navigation }: Props) {
     const trimmed = text.trim();
     if (!trimmed || isThinking) return;
 
+    if (isCrisisMessage(trimmed)) setShowCrisisBanner(true);
+
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: trimmed };
     setMessages(prev => [userMsg, ...prev]);
     conversationRef.current = [...conversationRef.current, { role: 'user', content: trimmed }];
@@ -158,7 +164,9 @@ export default function MiraChatScreen({ navigation }: Props) {
 
       if (ui.options?.length) setOptions(ui.options);
 
-      if (ui.phase === 'instrument') {
+      if (ui.phase === 'crisis') {
+        setShowCrisisBanner(true);
+      } else if (ui.phase === 'instrument') {
         startInstrument(ui);
       } else if (ui.phase === 'completed') {
         // Fallback: backend completed without instrument phase
@@ -246,6 +254,8 @@ export default function MiraChatScreen({ navigation }: Props) {
           ) : null
         }
       />
+
+      <CrisisModal visible={showCrisisBanner} onClose={() => setShowCrisisBanner(false)} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Instrument answer buttons */}

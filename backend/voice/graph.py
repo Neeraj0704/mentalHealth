@@ -21,6 +21,7 @@ from .scoring import score_gad7, score_phq9, score_generic
 logger = logging.getLogger(__name__)
 
 READY_TAG_PATTERN = re.compile(r'\[READY_TO_MATCH(?::([^\]]+))?\]', re.IGNORECASE)
+CRISIS_TAG_PATTERN = re.compile(r'\[CRISIS\]', re.IGNORECASE)
 
 SCORED_CONDITIONS   = {"Anxiety", "Depression"}
 GENERIC_CONDITIONS  = {"ADHD", "Trauma", "Bipolar", "Grief", "Relationships", "General"}
@@ -58,18 +59,38 @@ async def converse_node(state: ConversationState) -> dict:
 
     reply = await chat(history)
 
+    # Check for crisis signal first — highest priority
+    is_crisis = bool(CRISIS_TAG_PATTERN.search(reply))
+    clean_reply = CRISIS_TAG_PATTERN.sub("", reply).strip()
+
+    if is_crisis:
+        clean_reply = READY_TAG_PATTERN.sub("", clean_reply).strip()
+        updated_messages = list(messages)
+        if user_input:
+            updated_messages.append({"role": "user", "content": user_input})
+        updated_messages.append({"role": "assistant", "content": clean_reply})
+        return {
+            "phase": "crisis",
+            "messages": updated_messages,
+            "turn_count": state.get("turn_count", 0) + 1,
+            "detected_condition": None,
+            "speech": clean_reply,
+        }
+
+    current_turn = state.get("turn_count", 0) + 1
+    MIN_TURNS = 3  # never signal ready before 3 full exchanges
+
     match = READY_TAG_PATTERN.search(reply)
-    ready = bool(match)
+    ready = bool(match) and current_turn >= MIN_TURNS
     detected_condition = None
     if match:
         raw_cond = (match.group(1) or "").strip()
-        # Case-insensitive lookup so "ADHD", "adhd", "Adhd" all resolve correctly
         detected_condition = next(
             (c for c in VALID_CONDITIONS if c.lower() == raw_cond.lower()),
             "General"
         )
 
-    clean_reply = READY_TAG_PATTERN.sub("", reply).strip()
+    clean_reply = READY_TAG_PATTERN.sub("", clean_reply).strip()
 
     updated_messages = list(messages)
     if user_input:
@@ -144,7 +165,7 @@ def _entry_router(state: ConversationState) -> str:
     phase = state.get("phase", "conversing")
     if phase == "extracting":
         return "extract"
-    if phase in ("completed", "instrument"):
+    if phase in ("completed", "instrument", "crisis"):
         return "__end__"
     return "converse"
 

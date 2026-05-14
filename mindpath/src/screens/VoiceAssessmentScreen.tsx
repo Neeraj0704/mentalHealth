@@ -30,6 +30,8 @@ import { HomeStackParamList } from '../types';
 import { MindpathUI, sendVoiceTurn } from '../services/api';
 import { speak, stopSpeech } from '../services/elevenLabsTTS';
 import { saveAssessmentSummary } from '../services/preferences';
+import { isCrisisMessage } from '../utils/crisisDetector';
+import CrisisModal from '../components/CrisisModal';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'VoiceAssessment'>;
 
@@ -81,6 +83,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
   const [showTextInput, setShowTextInput] = useState(false);
   const [textVal, setTextVal]       = useState('');
   const [summaryText, setSummaryText] = useState('');
+  const [showCrisisModal, setShowCrisisModal] = useState(false);
 
   const sessionId     = useRef(makeSessionId());
   const recordingRef  = useRef<Audio.Recording | null>(null);
@@ -157,6 +160,9 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
 
   const sendTurn = useCallback(async (transcript: string) => {
     if (!transcript || doneRef.current) return;
+
+    if (isCrisisMessage(transcript)) setShowCrisisModal(true);
+
     setPhase('processing');
     setHint('Thinking…');
     setShowTextInput(false);
@@ -174,6 +180,13 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
 
     if (doneRef.current) return;
     setUi(response.mindpath_ui);
+
+    if (response.mindpath_ui.phase === 'crisis') {
+      setShowCrisisModal(true);
+      setPhase('idle');
+      setHint('Tap to continue');
+      return;
+    }
 
     if (response.mindpath_ui.phase === 'completed') {
       doneRef.current = true;
@@ -335,6 +348,7 @@ export default function VoiceAssessmentScreen({ navigation }: Props) {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" />
+      <CrisisModal visible={showCrisisModal} onClose={() => setShowCrisisModal(false)} />
 
       <SafeAreaView edges={['top']} style={styles.safeHeader}>
         <View style={styles.header}>

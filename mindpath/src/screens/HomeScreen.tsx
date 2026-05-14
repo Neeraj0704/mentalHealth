@@ -503,7 +503,7 @@ export default function HomeScreen({ navigation }: Props) {
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
               <Text style={styles.greeting}>{getGreeting()}{user ? `, ${user.name.split(' ')[0]}` : ''}</Text>
-              <Text style={styles.headerTitle}>Find your provider</Text>
+              <Text style={styles.headerTitle}>{activeTab === 'clinics' ? 'Find a clinic' : 'Find your mental health provider'}</Text>
             </View>
             <TouchableOpacity style={styles.notifBtn}>
               <Ionicons name="notifications-outline" size={22} color="rgba(255,255,255,0.9)" />
